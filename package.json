@@ -1,0 +1,32 @@
+{
+  "name": "backlog-notify",
+  "version": "0.0.1",
+  "description": "Notify commit messages to Backlog issue",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "prettier --write ./src/**/* && ncc build ./src/main.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TakanoriOishi/backlog-notify.git"
+  },
+  "keywords": [
+    "Backlog",
+    "Notify",
+    "Project management"
+  ],
+  "author": "Takanori Oishi",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "lodash": "^4.17.15",
+    "querystring": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.147",
+    "@types/node": "^12.12.7",
+    "@zeit/ncc": "^0.20.5",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.2"
+  }
+}
