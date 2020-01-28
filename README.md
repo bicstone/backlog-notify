@@ -68,3 +68,8 @@ PROJECT-123 不具合修正 #fix
 |PROJECT_KEY|プロジェクトキー|○|
 |API_HOST|APIのURL|○|
 |API_KEY|APIキー|○|
+
+# ライセンス
+MIT License
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify?ref=badge_large)
