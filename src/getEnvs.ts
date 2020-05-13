@@ -1,5 +1,5 @@
 const projectKeyRegex = /^[A-Z\d_]+$/; // プロジェクトキーの正規表現
-const apiHostRegex = /^[a-z\d]+\.backlog(\.com|\.jp|tool\.com)$/; // HOSTの正規表現
+const apiHostRegex = /^[a-z-\d]+\.backlog(\.com|\.jp|tool\.com)$/; // HOSTの正規表現
 const apiKeyRegex = /^[a-zA-z\d]+$/; // API キーの正規表現
 const githubEventPathRegex = /event\.json$/; // event.jsonの 正規表現
 
