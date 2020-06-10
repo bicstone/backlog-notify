@@ -1,6 +1,6 @@
 {
   "name": "backlog-notify",
-  "version": "0.0.2",
+  "version": "0.1.2",
   "description": "Notify commit messages to Backlog issue",
   "main": "dist/index.js",
   "scripts": {

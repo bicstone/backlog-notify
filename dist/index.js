@@ -2324,7 +2324,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const template_1 = __importDefault(__webpack_require__(410));
 const fixKeywords = ["#fix", "#fixes", "#fixed"]; // 処理済みにするキーワード
 const closeKeywords = ["#close", "#closes", "#closed"]; // 完了にするキーワード
-const commitKeywordRegexTemplate = template_1.default(`^(<%=PROJECT_KEY%>\\-\\d+?)\\s?` + // 課題キー
+const commitKeywordRegexTemplate = template_1.default(`^(<%=PROJECT_KEY%>\\-\\d+)\\s?` + // 課題キー
     `(.*?)?` + // メッセージ
     `\\s?(${fixKeywords.join("|")}|${closeKeywords.join("|")})?$`); // コミットメッセージを解析する正規表現テンプレート
 /**
