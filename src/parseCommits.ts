@@ -4,7 +4,7 @@ import { commits } from "./fetchCommits";
 const fixKeywords = ["#fix", "#fixes", "#fixed"]; // 処理済みにするキーワード
 const closeKeywords = ["#close", "#closes", "#closed"]; // 完了にするキーワード
 const commitKeywordRegexTemplate = template(
-  `^(<%=PROJECT_KEY%>\\-\\d+?)\\s?` + // 課題キー
+  `^(<%=PROJECT_KEY%>\\-\\d+)\\s?` + // 課題キー
   `(.*?)?` + // メッセージ
     `\\s?(${fixKeywords.join("|")}|${closeKeywords.join("|")})?$`
 ); // コミットメッセージを解析する正規表現テンプレート
