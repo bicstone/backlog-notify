@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.19.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "querystring": "^0.2.0"
   },
   "devDependencies": {
