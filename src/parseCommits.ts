@@ -5,7 +5,7 @@ const fixKeywords = ["#fix", "#fixes", "#fixed"]; // 処理済みにするキー
 const closeKeywords = ["#close", "#closes", "#closed"]; // 完了にするキーワード
 const commitKeywordRegexTemplate = template(
   `^(<%=PROJECT_KEY%>\\-\\d+)\\s?` + // 課題キー
-  `(.*?)?` + // メッセージ
+    `(.*?)?` + // メッセージ
     `\\s?(${fixKeywords.join("|")}|${closeKeywords.join("|")})?$`
 ); // コミットメッセージを解析する正規表現テンプレート
 
@@ -44,7 +44,7 @@ const parseCommits = (
   new Promise((resolve, reject) => {
     let ret: parsedCommits = {};
 
-    data.commits.forEach(commit => {
+    data.commits.forEach((commit) => {
       // コミットメッセージを正規表現にかける
       // [1] => 課題キー(必須) PROJECT_1-1
       // [2] => コミットメッセージ(任意) テスト
@@ -73,7 +73,7 @@ const parseCommits = (
         message: result[2],
         timestamp: commit.timestamp,
         tree_id: commit.tree_id,
-        url: commit.url
+        url: commit.url,
       };
 
       // 返却オブジェクトに代入

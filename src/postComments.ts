@@ -32,22 +32,22 @@ const postComments = (
 ): Promise<any> => {
   let promiseArray: Array<Promise<any>> = [];
   // アクセスを並列で行うため、Promiseのリストを作る
-  Object.values(parsedCommits).map(parsedCommit => {
+  Object.values(parsedCommits).map((parsedCommit) => {
     // 各種パメータを作成
     // API URL
     const apiUrl = updateIssueApiUrlTemplate({
       apiHost: API_HOST,
       apiKey: API_KEY,
-      issueKey: parsedCommit[0].issueKey
+      issueKey: parsedCommit[0].issueKey,
     });
     // コメント本文
     const comment = commentTemplate({
       commits: parsedCommit,
-      ...parsedCommit[0]
+      ...parsedCommit[0],
     });
     // キーワード判定による状態変更
-    const isFix = parsedCommit.map(commit => commit.isFix).includes(true);
-    const isClose = parsedCommit.map(commit => commit.isClose).includes(true);
+    const isFix = parsedCommit.map((commit) => commit.isFix).includes(true);
+    const isClose = parsedCommit.map((commit) => commit.isClose).includes(true);
     const status = isClose
       ? { statusId: closeId }
       : isFix
@@ -60,12 +60,12 @@ const postComments = (
         apiUrl,
         querystring.stringify({
           comment: comment,
-          ...status
+          ...status,
         }),
         {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          }
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         }
       )
     );

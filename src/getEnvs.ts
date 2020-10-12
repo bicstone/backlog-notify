@@ -50,7 +50,7 @@ export const getEnvs = (): Promise<Envs> =>
       PROJECT_KEY: PROJECT_KEY,
       API_HOST: API_HOST,
       API_KEY: API_KEY,
-      GITHUB_EVENT_PATH: GITHUB_EVENT_PATH
+      GITHUB_EVENT_PATH: GITHUB_EVENT_PATH,
     });
   });
 

@@ -22,7 +22,7 @@ import postComments from "./postComments";
     // 正常終了(catchに送るためreject)
     Promise.reject("正常に送信しました。")
   )
-  .catch(error => {
+  .catch((error) => {
     // String ならば、info ログを残し正常終了。
     // Error ならば、error ログを残し異常終了。
     if (typeof error === "string") {
