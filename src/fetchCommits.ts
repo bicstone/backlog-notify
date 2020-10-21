@@ -1,9 +1,5 @@
-import fs from "fs";
-import has from "lodash/has";
-
-export interface commits {
-  commits: Array<commit>;
-}
+import fs from 'fs'
+import has from 'lodash/has'
 
 interface commit {
   author: {
@@ -20,8 +16,13 @@ interface commit {
   id: string;
   message: string;
   timestamp: string;
+  // eslint-disable-next-line camelcase
   tree_id: string;
   url: string;
+}
+
+export interface commits {
+  commits: Array<commit>;
 }
 
 /**
@@ -38,11 +39,11 @@ const fetchCommits = (path: string): Promise<commits> =>
   readFile(path)
     .then((json) => JSON.parse(json))
     .then((data) => {
-      if (has(data, "commits") === false) {
-        return Promise.reject("コミットが1件もありません。");
+      if (has(data, 'commits') === false) {
+        return Promise.reject('コミットが1件もありません。')
       }
-      return Promise.resolve(data);
-    });
+      return Promise.resolve(data)
+    })
 
 /**
  * ファイルを読み込む
@@ -55,10 +56,10 @@ const fetchCommits = (path: string): Promise<commits> =>
 
 const readFile = (path: string): Promise<string> =>
   new Promise((resolve, reject) => {
-    fs.readFile(path, "utf8", (err, data) => {
-      if (err) reject(err);
-      resolve(data);
-    });
-  });
+    fs.readFile(path, 'utf8', (err, data) => {
+      if (err) reject(err)
+      resolve(data)
+    })
+  })
 
-export default fetchCommits;
+export default fetchCommits
