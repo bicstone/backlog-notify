@@ -8,7 +8,7 @@ Notify commit messages to [Backlog.com](https://backlog.com/) issue.
 
 :warning: 大量にプッシュするとそのまま投稿され、 Backlog に負荷がかかるのでご注意ください。
 
-:warning: 個人が開発した Action です。Backlog へのお問い合わせはご遠慮ください。何かございましたらお気軽に issue へお願いいたします。 Pull request も歓迎します。
+:warning: 個人が開発した Action です。Backlog へのお問い合わせはご遠慮ください。
 
 ## 設定方法
 

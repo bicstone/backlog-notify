@@ -32,7 +32,7 @@ const postComments = (
 ): Promise<any> => {
   let promiseArray: Array<Promise<any>> = [];
   // アクセスを並列で行うため、Promiseのリストを作る
-  Object.values(parsedCommits).map((parsedCommit) => {
+  Object.values(parsedCommits).forEach((parsedCommit) => {
     // 各種パメータを作成
     // API URL
     const apiUrl = updateIssueApiUrlTemplate({
