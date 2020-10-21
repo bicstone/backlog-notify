@@ -1,5 +1,4 @@
 import fs from 'fs'
-import has from 'lodash/has'
 
 interface commit {
   author: {
@@ -39,7 +38,7 @@ const fetchCommits = (path: string): Promise<commits> =>
   readFile(path)
     .then((json) => JSON.parse(json))
     .then((data) => {
-      if (has(data, 'commits') === false) {
+      if (!data?.commits) {
         return Promise.reject('コミットが1件もありません。')
       }
       return Promise.resolve(data)

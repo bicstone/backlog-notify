@@ -1,7 +1,7 @@
 import getEnvs from './getEnvs'
 import fetchCommits from './fetchCommits'
 import parseCommits from './parseCommits'
-import postComments from './postComments';
+import postComments from './postComments'
 
 (async (): Promise<any> => {
   // 環境変数の読み込み
