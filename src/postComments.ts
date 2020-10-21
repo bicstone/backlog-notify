@@ -1,5 +1,5 @@
-import axios from 'axios'
 import querystring from 'querystring'
+import axios from 'axios'
 import template from 'lodash/template'
 import { parsedCommits } from './parseCommits'
 

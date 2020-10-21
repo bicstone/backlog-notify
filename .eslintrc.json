@@ -4,7 +4,8 @@
         "node": true
     },
     "extends": [
-        "standard"
+        "standard",
+        "plugin:@typescript-eslint/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -15,6 +16,7 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "prefer-promise-reject-errors": "off"
+        "prefer-promise-reject-errors": "off",
+        "@typescript-eslint/no-explicit-any": "off"
     }
 }

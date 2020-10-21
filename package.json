@@ -4,7 +4,7 @@
   "description": "Notify commit messages to Backlog issue",
   "main": "dist/index.js",
   "scripts": {
-    "build": "prettier --write ./src/**/* && ncc build ./src/main.ts",
+    "build": "yarn lint:fix && ncc build ./src/main.ts",
     "lint": "eslint --ext .ts ./src/ --max-warnings 0",
     "lint:fix": "eslint --fix --ext .ts ./src/ --max-warnings 0"
   },
@@ -37,7 +37,6 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^4.3.0",
-    "prettier": "^2.1.2",
     "typescript": "^4.0.3"
   },
   "husky": {
