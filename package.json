@@ -20,7 +20,7 @@
   "author": "Takanori Oishi",
   "license": "MIT",
   "dependencies": {
-    "axios": "0.20.0",
+    "axios": "0.21.1",
     "lodash": "4.17.20",
     "querystring": "0.2.0"
   },
