@@ -1,0 +1,13 @@
+{
+  "extends": ["config:base"],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["before 6:00am"],
+  "assignees": ["bicstone"],
+  "reviewers": ["bicstone"],
+  "packageRules": [
+    {
+      "packagePatterns": ["*"],
+      "groupName": "dependencies"
+    }
+  ]
+}
