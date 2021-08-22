@@ -1,10 +1,8 @@
-import querystring from 'querystring'
-import axios from 'axios'
 import template from 'lodash.template'
 import { parsedCommits } from './parseCommits'
 
-const fixId = 3 // 処理済みの状態 ID
-const closeId = 4 // 完了の状態 ID
+const fixId = '3' // 処理済みの状態 ID
+const closeId = '4' // 完了の状態 ID
 const updateIssueApiUrlTemplate = template(
   'https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>'
 ) // 「課題情報の更新」APIのURLテンプレート
@@ -54,21 +52,20 @@ const postComments = (
         ? { statusId: fixId }
         : undefined
 
-    // axiosのPromiseをリストに追加
-    promiseArray.push(
-      axios.patch(
-        apiUrl,
-        querystring.stringify({
-          comment: comment,
-          ...status
-        }),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        }
-      )
-    )
+    // fetchのPromiseをリストに追加
+    const fetchBody = {
+      comment: comment,
+      ...status
+    }
+    const fetchOptions = {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams(fetchBody).toString()
+    }
+    promiseArray.push(fetch(apiUrl, fetchOptions).then(response => response.json()))
 
     // 投稿内容をログに残す
     console.info(`${parsedCommit[0].issueKey}:\n${comment}`)
