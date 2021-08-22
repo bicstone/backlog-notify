@@ -10,24 +10,24 @@ const commitKeywordRegexTemplate = template(
 ) // コミットメッセージを解析する正規表現テンプレート
 
 export interface parsedCommit {
-  issueKey: string;
-  isFix: boolean;
-  isClose: boolean;
-  email: string;
-  name: string;
-  username: string;
-  distinct: boolean;
-  id: string;
-  idShort: string;
-  message: string;
-  timestamp: string;
+  issueKey: string
+  isFix: boolean
+  isClose: boolean
+  email: string
+  name: string
+  username: string
+  distinct: boolean
+  id: string
+  idShort: string
+  message: string
+  timestamp: string
   // eslint-disable-next-line camelcase
-  tree_id: string;
-  url: string;
+  tree_id: string
+  url: string
 }
 
 export interface parsedCommits {
-  [key: string]: Array<parsedCommit>;
+  [key: string]: parsedCommit[]
 }
 
 /**
@@ -38,11 +38,11 @@ export interface parsedCommits {
  * - resolve {Object} 解析済みのオブジェクト
  * - reject {string} 1件もない場合
  */
-const parseCommits = (
+const parseCommits = async (
   data: commits,
   PROJECT_KEY: string
 ): Promise<parsedCommits> =>
-  new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     const ret: parsedCommits = {}
 
     data.commits.forEach((commit) => {

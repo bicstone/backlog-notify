@@ -2171,6 +2171,15 @@ var __webpack_exports__ = {};
 __nccwpck_require__.r(__webpack_exports__);
 
 ;// CONCATENATED MODULE: ./src/getEnvs.ts
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 const projectKeyRegex = /^[A-Z\d_]+$/; // プロジェクトキーの正規表現
 const apiHostRegex = /^[a-z-\d]+\.backlog(\.com|\.jp|tool\.com)$/; // HOSTの正規表現
 const apiKeyRegex = /^[a-zA-Z\d]+$/; // API キーの正規表現
@@ -2181,32 +2190,35 @@ const githubEventPathRegex = /event\.json$/; // event.jsonの 正規表現
  * - resolve {Object} 環境変数オブジェクト
  * - reject {Error} バリデーションエラー
  */
-const getEnvs = () => new Promise((resolve, reject) => {
-    // PROJECT_KEY のチェック
-    const PROJECT_KEY = process.env.PROJECT_KEY || '';
-    if (projectKeyRegex.test(PROJECT_KEY) === false) {
-        return reject(new Error(`PROJECT_KEY が正しくありません。 (${PROJECT_KEY})`));
-    }
-    // API_HOST のチェック
-    const API_HOST = process.env.API_HOST || '';
-    if (apiHostRegex.test(API_HOST) === false) {
-        return reject(new Error(`API_HOST が正しくありません。 (${API_HOST})`));
-    }
-    // API_KEY のチェック
-    const API_KEY = process.env.API_KEY || '';
-    if (apiKeyRegex.test(API_KEY) === false) {
-        return reject(new Error('API_KEY が正しくありません。'));
-    }
-    // GITHUB_EVENT_PATH のチェック
-    const GITHUB_EVENT_PATH = process.env.GITHUB_EVENT_PATH || '';
-    if (githubEventPathRegex.test(GITHUB_EVENT_PATH) === false) {
-        return reject(new Error(`event.json を受け取れません。 (${GITHUB_EVENT_PATH})`));
-    }
-    return resolve({
-        PROJECT_KEY: PROJECT_KEY,
-        API_HOST: API_HOST,
-        API_KEY: API_KEY,
-        GITHUB_EVENT_PATH: GITHUB_EVENT_PATH
+const getEnvs = () => __awaiter(void 0, void 0, void 0, function* () {
+    return yield new Promise((resolve, reject) => {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        // PROJECT_KEY のチェック
+        const PROJECT_KEY = (_b = (_a = process.env) === null || _a === void 0 ? void 0 : _a.PROJECT_KEY) !== null && _b !== void 0 ? _b : '';
+        if (!projectKeyRegex.test(PROJECT_KEY)) {
+            return reject(new Error(`PROJECT_KEY が正しくありません。 (${PROJECT_KEY})`));
+        }
+        // API_HOST のチェック
+        const API_HOST = (_d = (_c = process.env) === null || _c === void 0 ? void 0 : _c.API_HOST) !== null && _d !== void 0 ? _d : '';
+        if (!apiHostRegex.test(API_HOST)) {
+            return reject(new Error(`API_HOST が正しくありません。 (${API_HOST})`));
+        }
+        // API_KEY のチェック
+        const API_KEY = (_f = (_e = process.env) === null || _e === void 0 ? void 0 : _e.API_KEY) !== null && _f !== void 0 ? _f : '';
+        if (!apiKeyRegex.test(API_KEY)) {
+            return reject(new Error('API_KEY が正しくありません。'));
+        }
+        // GITHUB_EVENT_PATH のチェック
+        const GITHUB_EVENT_PATH = (_h = (_g = process.env) === null || _g === void 0 ? void 0 : _g.GITHUB_EVENT_PATH) !== null && _h !== void 0 ? _h : '';
+        if (!githubEventPathRegex.test(GITHUB_EVENT_PATH)) {
+            return reject(new Error(`event.json を受け取れません。 (${GITHUB_EVENT_PATH})`));
+        }
+        return resolve({
+            PROJECT_KEY: PROJECT_KEY,
+            API_HOST: API_HOST,
+            API_KEY: API_KEY,
+            GITHUB_EVENT_PATH: GITHUB_EVENT_PATH
+        });
     });
 });
 /* harmony default export */ const src_getEnvs = (getEnvs);
@@ -2215,6 +2227,15 @@ const getEnvs = () => new Promise((resolve, reject) => {
 const external_fs_namespaceObject = require("fs");
 var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_namespaceObject);
 ;// CONCATENATED MODULE: ./src/fetchCommits.ts
+var fetchCommits_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 /**
  * GitHub の event.json からコミット情報の JSON を取得してパースする
@@ -2225,13 +2246,18 @@ var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_namespa
  * - reject {Error} 取得できない場合、想定しない JSON の場合
  * - reject {string} コミットが1件もない場合
  */
-const fetchCommits = (path) => readFile(path)
-    .then((json) => JSON.parse(json))
-    .then((data) => {
-    if (!(data === null || data === void 0 ? void 0 : data.commits)) {
-        return Promise.reject('コミットが1件もありません。');
-    }
-    return Promise.resolve(data);
+const fetchCommits = (path) => fetchCommits_awaiter(void 0, void 0, void 0, function* () {
+    return yield readFile(path)
+        .then((json) => JSON.parse(json))
+        .then((data) => fetchCommits_awaiter(void 0, void 0, void 0, function* () {
+        if (!Array.isArray(data === null || data === void 0 ? void 0 : data.commits)) {
+            return yield Promise.reject('コミットが1件もありません。');
+        }
+        if (data.commits.length === 0) {
+            return yield Promise.reject('コミットが1件もありません。');
+        }
+        return yield Promise.resolve(data);
+    }));
 });
 /**
  * ファイルを読み込む
@@ -2241,11 +2267,13 @@ const fetchCommits = (path) => readFile(path)
  * - resolve {string} ファイルの内容
  * - reject {Error} I/O エラー
  */
-const readFile = (path) => new Promise((resolve, reject) => {
-    external_fs_default().readFile(path, 'utf8', (err, data) => {
-        if (err)
-            reject(err);
-        resolve(data);
+const readFile = (path) => fetchCommits_awaiter(void 0, void 0, void 0, function* () {
+    return yield new Promise((resolve, reject) => {
+        external_fs_default().readFile(path, 'utf8', (err, data) => {
+            if (err != null)
+                reject(err);
+            resolve(data);
+        });
     });
 });
 /* harmony default export */ const src_fetchCommits = (fetchCommits);
@@ -2254,6 +2282,15 @@ const readFile = (path) => new Promise((resolve, reject) => {
 var lodash_template = __nccwpck_require__(417);
 var lodash_template_default = /*#__PURE__*/__nccwpck_require__.n(lodash_template);
 ;// CONCATENATED MODULE: ./src/parseCommits.ts
+var parseCommits_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 const fixKeywords = ['#fix', '#fixes', '#fixed']; // 処理済みにするキーワード
 const closeKeywords = ['#close', '#closes', '#closed']; // 完了にするキーワード
@@ -2268,50 +2305,61 @@ const commitKeywordRegexTemplate = lodash_template_default()('^(<%=PROJECT_KEY%>
  * - resolve {Object} 解析済みのオブジェクト
  * - reject {string} 1件もない場合
  */
-const parseCommits = (data, PROJECT_KEY) => new Promise((resolve, reject) => {
-    const ret = {};
-    data.commits.forEach((commit) => {
-        // コミットメッセージを正規表現にかける
-        // [1] => 課題キー(必須) PROJECT_1-1
-        // [2] => コミットメッセージ(任意) テスト
-        // [3] => キーワード(任意) #fix
-        // TODO: 複数の課題キーがある場合
-        const result = commit.message.match(RegExp(commitKeywordRegexTemplate({ PROJECT_KEY: PROJECT_KEY }), 's'));
-        // 課題キーがなければスキップ
-        if (result === null) {
-            return;
+const parseCommits = (data, PROJECT_KEY) => parseCommits_awaiter(void 0, void 0, void 0, function* () {
+    return yield new Promise((resolve, reject) => {
+        const ret = {};
+        data.commits.forEach((commit) => {
+            // コミットメッセージを正規表現にかける
+            // [1] => 課題キー(必須) PROJECT_1-1
+            // [2] => コミットメッセージ(任意) テスト
+            // [3] => キーワード(任意) #fix
+            // TODO: 複数の課題キーがある場合
+            const result = commit.message.match(RegExp(commitKeywordRegexTemplate({ PROJECT_KEY: PROJECT_KEY }), 's'));
+            // 課題キーがなければスキップ
+            if (result === null) {
+                return;
+            }
+            // オブジェクトを作成
+            const parse = {
+                issueKey: result[1],
+                isFix: fixKeywords.includes(result[3]),
+                isClose: closeKeywords.includes(result[3]),
+                email: commit.author.email,
+                name: commit.author.name,
+                username: commit.author.username,
+                distinct: commit.distinct,
+                id: commit.id,
+                idShort: commit.id.slice(0, 10),
+                message: result[2],
+                timestamp: commit.timestamp,
+                tree_id: commit.tree_id,
+                url: commit.url
+            };
+            // 返却オブジェクトに代入
+            if (ret[result[1]] === undefined) {
+                ret[result[1]] = [];
+            }
+            ret[result[1]].push(parse);
+        });
+        // 課題キーの付いたコミットがなければ終了
+        if (Object.keys(ret).length === 0) {
+            return reject('課題キーの付いたコミットが1件もありません。');
         }
-        // オブジェクトを作成
-        const parse = {
-            issueKey: result[1],
-            isFix: fixKeywords.includes(result[3]),
-            isClose: closeKeywords.includes(result[3]),
-            email: commit.author.email,
-            name: commit.author.name,
-            username: commit.author.username,
-            distinct: commit.distinct,
-            id: commit.id,
-            idShort: commit.id.slice(0, 10),
-            message: result[2],
-            timestamp: commit.timestamp,
-            tree_id: commit.tree_id,
-            url: commit.url
-        };
-        // 返却オブジェクトに代入
-        if (ret[result[1]] === undefined) {
-            ret[result[1]] = [];
-        }
-        ret[result[1]].push(parse);
+        return resolve(ret);
     });
-    // 課題キーの付いたコミットがなければ終了
-    if (Object.keys(ret).length === 0) {
-        return reject('課題キーの付いたコミットが1件もありません。');
-    }
-    return resolve(ret);
 });
 /* harmony default export */ const src_parseCommits = (parseCommits);
 
 ;// CONCATENATED MODULE: ./src/postComments.ts
+var postComments_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 const fixId = '3'; // 処理済みの状態 ID
 const closeId = '4'; // 完了の状態 ID
@@ -2329,7 +2377,7 @@ const commentTemplate = lodash_template_default()('<%=name%>さんがプッシ�
  * - resolve {any} Backlog APIからの返却(使わない)
  * - reject {Error} 送信に失敗
  */
-const postComments = (API_HOST, API_KEY, parsedCommits) => {
+const postComments = (API_HOST, API_KEY, parsedCommits) => postComments_awaiter(void 0, void 0, void 0, function* () {
     const promiseArray = [];
     // アクセスを並列で行うため、Promiseのリストを作る
     Object.values(parsedCommits).forEach((parsedCommit) => {
@@ -2360,19 +2408,19 @@ const postComments = (API_HOST, API_KEY, parsedCommits) => {
             },
             body: new URLSearchParams(fetchBody).toString()
         };
-        promiseArray.push(fetch(apiUrl, fetchOptions).then(response => response.json()));
+        promiseArray.push(fetch(apiUrl, fetchOptions).then((response) => postComments_awaiter(void 0, void 0, void 0, function* () { return yield response.json(); })));
         // 投稿内容をログに残す
         console.info(`${parsedCommit[0].issueKey}:\n${comment}`);
         isFix && console.info(`${parsedCommit[0].issueKey}を処理済みにしました。`);
         isClose && console.info(`${parsedCommit[0].issueKey}を完了にしました。`);
     });
     // 準備したaxiosのPromiseを並列で実行する
-    return Promise.all(promiseArray);
-};
+    return yield Promise.all(promiseArray);
+});
 /* harmony default export */ const src_postComments = (postComments);
 
 ;// CONCATENATED MODULE: ./src/main.ts
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var main_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -2385,7 +2433,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-(() => __awaiter(void 0, void 0, void 0, function* () {
+(() => main_awaiter(void 0, void 0, void 0, function* () {
     // 環境変数の読み込み
     const { PROJECT_KEY, API_HOST, API_KEY, GITHUB_EVENT_PATH } = yield src_getEnvs();
     // event.json の読み込み
@@ -2394,11 +2442,11 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
     const parsedCommits = yield src_parseCommits(commits, PROJECT_KEY);
     // バックログAPIへ送信
     const response = yield src_postComments(API_HOST, API_KEY, parsedCommits);
-    return Promise.resolve(response);
+    return yield Promise.resolve(response);
 }))()
-    .then(() => 
+    .then(() => main_awaiter(void 0, void 0, void 0, function* () { 
 // 正常終了(catchに送るためreject)
-Promise.reject('正常に送信しました。'))
+return yield Promise.reject('正常に送信しました。'); }))
     .catch((error) => {
     // String ならば、info ログを残し正常終了。
     // Error ならば、error ログを残し異常終了。

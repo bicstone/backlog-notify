@@ -23,7 +23,7 @@ const commentTemplate = template(
  * - reject {Error} 送信に失敗
  */
 
-const postComments = (
+const postComments = async (
   API_HOST: string,
   API_KEY: string,
   parsedCommits: parsedCommits
@@ -65,7 +65,7 @@ const postComments = (
       },
       body: new URLSearchParams(fetchBody).toString()
     }
-    promiseArray.push(fetch(apiUrl, fetchOptions).then(response => response.json()))
+    promiseArray.push(fetch(apiUrl, fetchOptions).then(async response => await response.json()))
 
     // 投稿内容をログに残す
     console.info(`${parsedCommit[0].issueKey}:\n${comment}`)
@@ -74,7 +74,7 @@ const postComments = (
   })
 
   // 準備したaxiosのPromiseを並列で実行する
-  return Promise.all(promiseArray)
+  return await Promise.all(promiseArray)
 }
 
 export default postComments

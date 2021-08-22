@@ -16,11 +16,11 @@ import postComments from './postComments'
   // バックログAPIへ送信
   const response = await postComments(API_HOST, API_KEY, parsedCommits)
 
-  return Promise.resolve(response)
+  return await Promise.resolve(response)
 })()
-  .then(() =>
+  .then(async () =>
     // 正常終了(catchに送るためreject)
-    Promise.reject('正常に送信しました。')
+    await Promise.reject('正常に送信しました。')
   )
   .catch((error) => {
     // String ならば、info ログを残し正常終了。
