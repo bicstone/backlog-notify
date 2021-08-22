@@ -1,4 +1,4 @@
-import template from 'lodash/template'
+import template from 'lodash.template'
 import { commits } from './fetchCommits'
 
 const fixKeywords = ['#fix', '#fixes', '#fixed'] // 処理済みにするキーワード

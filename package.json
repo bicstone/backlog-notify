@@ -22,11 +22,11 @@
   "license": "MIT",
   "dependencies": {
     "axios": "0.21.1",
-    "lodash": "4.17.21",
+    "lodash.template": "4.5.0",
     "querystring": "0.2.1"
   },
   "devDependencies": {
-    "@types/lodash": "4.14.172",
+    "@types/lodash.template": "4.5.0",
     "@types/node": "^12",
     "@typescript-eslint/eslint-plugin": "4.29.2",
     "@typescript-eslint/parser": "4.29.2",

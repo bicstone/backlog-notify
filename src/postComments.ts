@@ -1,6 +1,6 @@
 import querystring from 'querystring'
 import axios from 'axios'
-import template from 'lodash/template'
+import template from 'lodash.template'
 import { parsedCommits } from './parseCommits'
 
 const fixId = 3 // 処理済みの状態 ID
