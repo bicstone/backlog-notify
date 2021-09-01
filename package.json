@@ -4,9 +4,11 @@
   "description": "Notify commit messages to Backlog issue",
   "main": "dist/index.js",
   "scripts": {
-    "build": "yarn lint --fix && ncc build ./src/main.ts",
+    "build": "yarn lint --fix && yarn format && ncc build ./src/main.ts --target es2019",
     "lint": "eslint --ext .ts ./src/ --max-warnings 0",
-    "prepare": "husky install"
+    "format": "prettier --write .",
+    "prepare": "husky install",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,21 +23,28 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@types/lodash": "4.14.172",
+    "@actions/core": "1.5.0",
+    "@octokit/webhooks-examples": "4.4.0",
+    "@octokit/webhooks-types": "4.4.0",
+    "@types/jest": "27.0.1",
+    "@types/lodash.template": "4.5.0",
     "@types/node": "12.x.x",
-    "@typescript-eslint/eslint-plugin": "4.29.3",
-    "@typescript-eslint/parser": "4.29.3",
-    "@zeit/ncc": "0.22.3",
+    "@typescript-eslint/eslint-plugin": "4.30.0",
+    "@typescript-eslint/parser": "4.30.0",
+    "@vercel/ncc": "0.30.0",
     "all-contributors-cli": "6.20.0",
-    "axios": "0.21.1",
+    "axios": "0.21.2",
     "eslint": "7.32.0",
-    "eslint-config-standard": "16.0.3",
+    "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.24.2",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "5.1.0",
     "husky": "7.0.2",
-    "lodash": "4.17.21",
-    "querystring": "0.2.1",
-    "typescript": "4.3.5"
+    "jest": "27.1.0",
+    "lodash.template": "4.5.0",
+    "prettier": "2.3.2",
+    "ts-jest": "27.0.5",
+    "ts-node": "10.2.1",
+    "typescript": "4.4.2"
   }
 }
