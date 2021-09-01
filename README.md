@@ -21,12 +21,12 @@ Notify commit messages to [Backlog.com](https://backlog.com/) issue.
     1. 登録した BOT アカウントにログインします。
     1. `個人設定` → `API` → `登録` で発行します。
 1. API キーの登録
-    1. GitGub のリポジトリページに移動します。
+    1. GitHub のリポジトリページに移動します。
     1. `Setting` → `Secrets` → `Add a new secret` を選択します。
     1. `Name` は `BACKLOG_API_KEY` とし、 `Value` に API キーをそのまま貼り付けます。
     1. 登録します。
 1. GitHub Actions workflow の作成
-    1. GitGubのリポジトリページに移動します。
+    1. GitHubのリポジトリページに移動します。
     1. `Actions` → `New workflow` → `Set up a workflow yourself` を選択します。
     1. `main.yml` を `backlog-notify` などの名前に変更します。
     1. 入力欄にYAMLを下記を参考に設定します。
