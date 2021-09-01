@@ -1,34 +1,40 @@
-import getEnvs from './getEnvs'
-import fetchCommits from './fetchCommits'
-import parseCommits from './parseCommits'
-import postComments from './postComments'
+import core from "@actions/core"
+import { getConfigs } from "./getConfigs"
+import { fetchEvent } from "./fetchEvent"
+import { parseCommits } from "./parseCommits"
+import { postComments } from "./postComments"
 
-(async (): Promise<any> => {
-  // 環境変数の読み込み
-  const { PROJECT_KEY, API_HOST, API_KEY, GITHUB_EVENT_PATH } = await getEnvs()
+const main = async (): Promise<void> => {
+  core.startGroup(`初期化中`)
+  const { projectKey, apiHost, apiKey, githubEventPath } = getConfigs()
+  core.endGroup()
 
-  // event.json の読み込み
-  const commits = await fetchCommits(GITHUB_EVENT_PATH)
+  core.startGroup(`コミット取得中`)
+  const event = fetchEvent(githubEventPath)
+  if (!event?.commits?.length) {
+    core.info("コミットが1件も見つかりませんでした。")
+    return Promise.resolve()
+  }
 
-  // コミットの解析
-  const parsedCommits = await parseCommits(commits, PROJECT_KEY)
+  const parsedCommits = parseCommits(event.commits, projectKey)
+  if (!parsedCommits) {
+    core.info("課題キーのついたコミットが1件も見つかりませんでした。")
+    return Promise.resolve()
+  }
+  core.endGroup()
 
-  // バックログAPIへ送信
-  const response = await postComments(API_HOST, API_KEY, parsedCommits)
+  core.startGroup(`コミット取得中`)
+  await postComments(parsedCommits, apiHost, apiKey)
+  core.info("正常に送信しました。")
+  return Promise.resolve()
+}
 
-  return Promise.resolve(response)
-})()
-  .then(() =>
-    // 正常終了(catchに送るためreject)
-    Promise.reject('正常に送信しました。')
-  )
+main()
+  .then(() => {
+    core.endGroup()
+  })
   .catch((error) => {
-    // String ならば、info ログを残し正常終了。
-    // Error ならば、error ログを残し異常終了。
-    if (typeof error === 'string') {
-      console.info(error)
-      process.exit(0)
-    }
-    console.error(error)
-    process.exit(1)
+    core.debug(error.stack || "No error stack trace")
+    core.setFailed(error.message)
+    core.endGroup()
   })

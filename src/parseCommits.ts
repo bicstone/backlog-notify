@@ -1,96 +1,90 @@
-import template from 'lodash/template'
-import { commits } from './fetchCommits'
+import { Commit } from "@octokit/webhooks-types"
+import template from "lodash.template"
 
-const fixKeywords = ['#fix', '#fixes', '#fixed'] // 処理済みにするキーワード
-const closeKeywords = ['#close', '#closes', '#closed'] // 完了にするキーワード
+// FIXME: 2.0でinput受け取りにする
+const fixKeywords = ["#fix", "#fixes", "#fixed"] // 処理済みにするキーワード
+const closeKeywords = ["#close", "#closes", "#closed"] // 完了にするキーワード
 const commitKeywordRegexTemplate = template(
-  '^(<%=PROJECT_KEY%>\\-\\d+)\\s?' + // 課題キー
-    '(.*?)?' + // メッセージ
-    `\\s?(${fixKeywords.join('|')}|${closeKeywords.join('|')})?$`
+  "^(<%=project_key%>\\-\\d+)\\s?" + // 課題キー
+    "(.*?)?" + // メッセージ
+    `\\s?(${fixKeywords.join("|")}|${closeKeywords.join("|")})?$`
 ) // コミットメッセージを解析する正規表現テンプレート
 
-export interface parsedCommit {
-  issueKey: string;
-  isFix: boolean;
-  isClose: boolean;
-  email: string;
-  name: string;
-  username: string;
-  distinct: boolean;
-  id: string;
-  idShort: string;
-  message: string;
-  timestamp: string;
-  // eslint-disable-next-line camelcase
-  tree_id: string;
-  url: string;
-}
+export type ParsedCommits = Record<string, ParsedCommit[]>
 
-export interface parsedCommits {
-  [key: string]: Array<parsedCommit>;
+export type ParsedCommit = {
+  original_message: string
+  id_short: string
+  tree_id_short: string
+  issue_key: string | null
+  keywords: string
+  is_fix: boolean
+  is_close: boolean
+} & Commit
+
+/**
+ * Parse commits from the event commits
+ * @param commits commits from the event commits
+ * @param projectKey Backlog project key
+ * @returns ParsedCommits | null
+ */
+export const parseCommits = (
+  commits: Commit[],
+  projectKey: string
+): ParsedCommits | null => {
+  const parsedCommits: ParsedCommits = {}
+
+  commits.forEach((commit) => {
+    const parsedCommit = parseCommit(commit, projectKey)
+    if (!parsedCommit?.issue_key) return
+
+    if (parsedCommits[parsedCommit.issue_key]) {
+      parsedCommits[parsedCommit.issue_key].push(parsedCommit)
+    } else {
+      parsedCommits[parsedCommit.issue_key] = [parsedCommit]
+    }
+  })
+
+  const commitCount = Object.keys(parsedCommits).length
+  if (commitCount === 0) {
+    return null
+  }
+
+  return parsedCommits
 }
 
 /**
- * コミットメッセージを解析して解析済みのオブジェクトで返す
- * @param {Object} コミットのオブジェクト
- * @param {string} 課題キー
- * @returns {Promise}
- * - resolve {Object} 解析済みのオブジェクト
- * - reject {string} 1件もない場合
+ * Parse commit from the event commit
+ * @param commit commit from the event commit
+ * @param projectKey Backlog project key
+ * @returns ParsedCommit
  */
-const parseCommits = (
-  data: commits,
-  PROJECT_KEY: string
-): Promise<parsedCommits> =>
-  new Promise((resolve, reject) => {
-    const ret: parsedCommits = {}
+const parseCommit = (
+  commit: Commit,
+  projectKey: string
+): ParsedCommit | null => {
+  const match = commit.message.match(
+    RegExp(commitKeywordRegexTemplate({ project_key: projectKey }), "s")
+  )
 
-    data.commits.forEach((commit) => {
-      // コミットメッセージを正規表現にかける
-      // [1] => 課題キー(必須) PROJECT_1-1
-      // [2] => コミットメッセージ(任意) テスト
-      // [3] => キーワード(任意) #fix
-      // TODO: 複数の課題キーがある場合
-      const result = commit.message.match(
-        RegExp(commitKeywordRegexTemplate({ PROJECT_KEY: PROJECT_KEY }), 's')
-      )
+  if (!match) {
+    return null
+  }
 
-      // 課題キーがなければスキップ
-      if (result === null) {
-        return
-      }
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const [, issue_key = null, message = "", keywords = ""] = match
 
-      // オブジェクトを作成
-      const parse = {
-        issueKey: result[1],
-        isFix: fixKeywords.includes(result[3]),
-        isClose: closeKeywords.includes(result[3]),
-        email: commit.author.email,
-        name: commit.author.name,
-        username: commit.author.username,
-        distinct: commit.distinct,
-        id: commit.id,
-        idShort: commit.id.slice(0, 10),
-        message: result[2],
-        timestamp: commit.timestamp,
-        tree_id: commit.tree_id,
-        url: commit.url
-      }
+  const parsedCommit = {
+    ...commit,
+    message,
+    original_message: commit.message,
+    id_short: commit.id.slice(0, 10),
+    tree_id_short: commit.tree_id.slice(0, 10),
+    issue_key,
+    keywords,
+    is_fix: fixKeywords.includes(keywords),
+    is_close: closeKeywords.includes(keywords),
+  }
 
-      // 返却オブジェクトに代入
-      if (ret[result[1]] === undefined) {
-        ret[result[1]] = []
-      }
-
-      ret[result[1]].push(parse)
-    })
-
-    // 課題キーの付いたコミットがなければ終了
-    if (Object.keys(ret).length === 0) {
-      return reject('課題キーの付いたコミットが1件もありません。')
-    }
-
-    return resolve(ret)
-  })
-
-export default parseCommits
+  return parsedCommit
+}
