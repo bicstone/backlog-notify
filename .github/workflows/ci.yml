@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 12
           cache: 'yarn'
-        run: yarn install
+      - run: yarn install
       - name: test
         run: yarn test
       - name: lint & build
