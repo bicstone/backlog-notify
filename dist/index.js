@@ -6576,13 +6576,12 @@ var core_default = /*#__PURE__*/__nccwpck_require__.n(core);
  * @throws {Error} Will throw an error if missing required input
  */
 const getConfigs = () => {
-    const configs = {
+    return {
         projectKey: getConfig("project_key", { required: true }),
         apiHost: getConfig("api_host", { required: true }),
         apiKey: getConfig("api_key", { required: true }),
         githubEventPath: getConfig("github_event_path", { required: true }),
     };
-    return configs;
 };
 /**
  * First gets the value of the action configuration. If not defined,
@@ -6615,8 +6614,7 @@ var external_fs_ = __nccwpck_require__(5747);
  */
 const fetchEvent = (path) => {
     const event = (0,external_fs_.readFileSync)(path, "utf8");
-    const data = JSON.parse(event);
-    return data;
+    return JSON.parse(event);
 };
 
 // EXTERNAL MODULE: ./node_modules/lodash.template/index.js
@@ -6624,7 +6622,7 @@ var lodash_template = __nccwpck_require__(417);
 var lodash_template_default = /*#__PURE__*/__nccwpck_require__.n(lodash_template);
 ;// CONCATENATED MODULE: ./src/parseCommits.ts
 
-// FIXME: 2.0でinput受け取りにする
+// 2.0でinput受け取りにする
 const fixKeywords = ["#fix", "#fixes", "#fixed"]; // 処理済みにするキーワード
 const closeKeywords = ["#close", "#closes", "#closed"]; // 完了にするキーワード
 const commitKeywordRegexTemplate = lodash_template_default()("^(<%=project_key%>\\-\\d+)\\s?" + // 課題キー
@@ -6668,7 +6666,7 @@ const parseCommit = (commit, projectKey) => {
     }
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [, issue_key = null, message = "", keywords = ""] = match;
-    const parsedCommit = {
+    return {
         ...commit,
         message,
         original_message: commit.message,
@@ -6679,7 +6677,6 @@ const parseCommit = (commit, projectKey) => {
         is_fix: fixKeywords.includes(keywords),
         is_close: closeKeywords.includes(keywords),
     };
-    return parsedCommit;
 };
 
 // EXTERNAL MODULE: external "url"
@@ -6692,7 +6689,7 @@ var axios_default = /*#__PURE__*/__nccwpck_require__.n(axios);
 
 
 
-// FIXME: 2.0でinput受け取りにする
+// 2.0でinput受け取りにする
 const fixId = "3"; // 処理済みの状態 ID
 const closeId = "4"; // 完了の状態 ID
 const updateIssueApiUrlTemplate = lodash_template_default()("https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"); // 「課題情報の更新」APIのURLテンプレート

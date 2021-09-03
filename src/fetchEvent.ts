@@ -9,5 +9,5 @@ import type { PushEvent } from "@octokit/webhooks-types"
 
 export const fetchEvent = (path: string): PushEvent => {
   const event = readFileSync(path, "utf8")
-  return  JSON.parse(event) as PushEvent
+  return JSON.parse(event) as PushEvent
 }
