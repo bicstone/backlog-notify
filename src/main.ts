@@ -1,10 +1,10 @@
-import core from "@actions/core"
+import * as core from "@actions/core"
 import { getConfigs } from "./getConfigs"
 import { fetchEvent } from "./fetchEvent"
 import { parseCommits } from "./parseCommits"
 import { postComments } from "./postComments"
 
-const main = async (): Promise<void> => {
+export const main = async (): Promise<string> => {
   // init
   core.startGroup(`初期化中`)
   const { projectKey, apiHost, apiKey, githubEventPath } = getConfigs()
@@ -14,15 +14,15 @@ const main = async (): Promise<void> => {
   core.startGroup(`コミット取得中`)
   const event = fetchEvent(githubEventPath)
   if (!event?.commits?.length) {
-    core.info("コミットが1件も見つかりませんでした。")
-    return Promise.resolve()
+    return Promise.resolve("コミットが1件も見つかりませんでした。")
   }
 
   // parse commits
   const parsedCommits = parseCommits(event.commits, projectKey)
   if (!parsedCommits) {
-    core.info("課題キーのついたコミットが1件も見つかりませんでした。")
-    return Promise.resolve()
+    return Promise.resolve(
+      "課題キーのついたコミットが1件も見つかりませんでした。"
+    )
   }
   core.endGroup()
 
@@ -47,12 +47,12 @@ const main = async (): Promise<void> => {
       core.endGroup()
     })
   })
-  core.info("正常に送信しました。")
-  return Promise.resolve()
+  return Promise.resolve("正常に送信しました。")
 }
 
 main()
-  .then(() => {
+  .then((message) => {
+    core.info(message)
     core.endGroup()
   })
   .catch((error) => {

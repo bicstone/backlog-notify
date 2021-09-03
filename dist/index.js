@@ -6566,9 +6566,13 @@ var __webpack_exports__ = {};
 // ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
 
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  "main": () => (/* binding */ main)
+});
+
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
-var core_default = /*#__PURE__*/__nccwpck_require__.n(core);
 ;// CONCATENATED MODULE: ./src/getConfigs.ts
 /**
  * Parses and validations the action configuration
@@ -6681,7 +6685,6 @@ const parseCommit = (commit, projectKey) => {
 
 // EXTERNAL MODULE: external "url"
 var external_url_ = __nccwpck_require__(8835);
-var external_url_default = /*#__PURE__*/__nccwpck_require__.n(external_url_);
 // EXTERNAL MODULE: ./node_modules/axios/index.js
 var axios = __nccwpck_require__(6545);
 var axios_default = /*#__PURE__*/__nccwpck_require__.n(axios);
@@ -6738,7 +6741,7 @@ const createPatchCommentRequest = (commits, issueKey, apiHost, apiKey) => {
             return undefined;
     })();
     const body = { comment, ...status };
-    return axios_default().patch(endpoint, new (external_url_default()).URLSearchParams(body).toString())
+    return axios_default().patch(endpoint, new external_url_.URLSearchParams(body).toString())
         .then((response) => {
         return { response, commits, issueKey, isFix, isClose };
     });
@@ -6753,51 +6756,49 @@ const createPatchCommentRequest = (commits, issueKey, apiHost, apiKey) => {
 const main = async () => {
     var _a;
     // init
-    core_default().startGroup(`初期化中`);
+    core.startGroup(`初期化中`);
     const { projectKey, apiHost, apiKey, githubEventPath } = getConfigs();
-    core_default().endGroup();
+    core.endGroup();
     // fetch event
-    core_default().startGroup(`コミット取得中`);
+    core.startGroup(`コミット取得中`);
     const event = fetchEvent(githubEventPath);
     if (!((_a = event === null || event === void 0 ? void 0 : event.commits) === null || _a === void 0 ? void 0 : _a.length)) {
-        core_default().info("コミットが1件も見つかりませんでした。");
-        return Promise.resolve();
+        return Promise.resolve("コミットが1件も見つかりませんでした。");
     }
     // parse commits
     const parsedCommits = parseCommits(event.commits, projectKey);
     if (!parsedCommits) {
-        core_default().info("課題キーのついたコミットが1件も見つかりませんでした。");
-        return Promise.resolve();
+        return Promise.resolve("課題キーのついたコミットが1件も見つかりませんでした。");
     }
-    core_default().endGroup();
+    core.endGroup();
     // post comments
-    core_default().startGroup(`コメント送信中`);
+    core.startGroup(`コメント送信中`);
     await postComments(parsedCommits, apiHost, apiKey).then((data) => {
         data.forEach(({ commits, issueKey, isFix, isClose }) => {
-            core_default().startGroup(`${commits[0].issue_key}:`);
+            core.startGroup(`${commits[0].issue_key}:`);
             commits.forEach(({ message }) => {
-                core_default().info(message);
+                core.info(message);
             });
             if (isFix) {
-                core_default().info(`${issueKey}を処理済みにしました。`);
+                core.info(`${issueKey}を処理済みにしました。`);
             }
             if (isClose) {
-                core_default().info(`${issueKey}を完了にしました。`);
+                core.info(`${issueKey}を完了にしました。`);
             }
-            core_default().endGroup();
+            core.endGroup();
         });
     });
-    core_default().info("正常に送信しました。");
-    return Promise.resolve();
+    return Promise.resolve("正常に送信しました。");
 };
 main()
-    .then(() => {
-    core_default().endGroup();
+    .then((message) => {
+    core.info(message);
+    core.endGroup();
 })
     .catch((error) => {
-    core_default().debug(error.stack || "No error stack trace");
-    core_default().setFailed(error.message);
-    core_default().endGroup();
+    core.debug(error.stack || "No error stack trace");
+    core.setFailed(error.message);
+    core.endGroup();
 });
 
 })();

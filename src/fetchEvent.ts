@@ -1,5 +1,5 @@
 import { readFileSync } from "fs"
-import type { PushEvent } from "@octokit/webhooks-types"
+import { PushEvent } from "@octokit/webhooks-types"
 
 /**
  * Fetch and Parses event from event.json file
