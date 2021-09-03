@@ -3,7 +3,6 @@ import { PushEvent } from "@octokit/webhooks-types"
 import push from "./github/events/push.json"
 import pushWithoutCommits from "./github/events/pushWithoutCommits.json"
 import { AxiosResponse } from "axios"
-import * as core from "@actions/core"
 import { main } from "../src/main"
 import * as getConfigs from "../src/getConfigs"
 import * as fetchEvent from "../src/fetchEvent"
@@ -25,8 +24,25 @@ const axiosResponse: AxiosResponse = {
   request: {},
 }
 
+const message = "message"
+const issueKey = "issueKey"
+
+const basePostCommentsResponse: postComments.Response = {
+  response: axiosResponse,
+  commits: [
+    {
+      message,
+    },
+  ] as parseCommits.ParsedCommit[],
+  issueKey,
+  isFix: false,
+  isClose: false,
+}
+
 describe("main", () => {
   beforeEach(() => {
+    // mocked(core.info, true).mockImplementation((message) => message) // doesn't work :(
+    // jest.spyOn(core, 'info').mockImplementation((message) => message) // doesn't work :(
     mocked(getConfigs.getConfigs).mockImplementation(() => {
       return {
         projectKey: "",
@@ -35,86 +51,41 @@ describe("main", () => {
         githubEventPath: "",
       }
     })
+    mocked(fetchEvent.fetchEvent).mockImplementation(() => push as PushEvent)
+    mocked(parseCommits.parseCommits).mockImplementation(() => ({ key: [] }))
   })
-  mocked(core.info).mockImplementation((message) => message)
+
+  test.todo("core.infoのスパイができない理由がわからない...")
 
   test("main resolve with the message", () => {
-    const message = "message"
-    const issueKey = "issueKey"
-
-    mocked(fetchEvent.fetchEvent).mockImplementation(() => push as PushEvent)
-    mocked(parseCommits.parseCommits).mockImplementation(() => ({ key: [] }))
+    const postCommentsResponse: postComments.Response = basePostCommentsResponse
     mocked(postComments.postComments).mockImplementation(() =>
-      Promise.resolve([
-        {
-          response: axiosResponse,
-          commits: [
-            {
-              message,
-            },
-          ] as parseCommits.ParsedCommit[],
-          issueKey,
-          isFix: false,
-          isClose: false,
-        },
-      ])
+      Promise.resolve([postCommentsResponse])
     )
     expect(main()).resolves.toBe("正常に送信しました。")
   })
-
-  test.todo("↑expect(core.info)ができない理由がわからない...")
 
   test("main resolve with the message when commits with fix_keyword", () => {
-    const message = "message"
-    const issueKey = "issueKey"
-
-    mocked(fetchEvent.fetchEvent).mockImplementation(() => push as PushEvent)
-    mocked(parseCommits.parseCommits).mockImplementation(() => ({ key: [] }))
+    const postCommentsResponse: postComments.Response = {
+      ...basePostCommentsResponse,
+      isFix: true,
+    }
     mocked(postComments.postComments).mockImplementation(() =>
-      Promise.resolve([
-        {
-          response: axiosResponse,
-          commits: [
-            {
-              message,
-            },
-          ] as parseCommits.ParsedCommit[],
-          issueKey,
-          isFix: true,
-          isClose: false,
-        },
-      ])
+      Promise.resolve([postCommentsResponse])
     )
     expect(main()).resolves.toBe("正常に送信しました。")
   })
-
-  test.todo("↑expect(core.info)ができない理由がわからない...")
 
   test("main resolve with the message when commits with close_keyword", () => {
-    const message = "message"
-    const issueKey = "issueKey"
-
-    mocked(fetchEvent.fetchEvent).mockImplementation(() => push as PushEvent)
-    mocked(parseCommits.parseCommits).mockImplementation(() => ({ key: [] }))
+    const postCommentsResponse: postComments.Response = {
+      ...basePostCommentsResponse,
+      isClose: true,
+    }
     mocked(postComments.postComments).mockImplementation(() =>
-      Promise.resolve([
-        {
-          response: axiosResponse,
-          commits: [
-            {
-              message,
-            },
-          ] as parseCommits.ParsedCommit[],
-          issueKey,
-          isFix: false,
-          isClose: true,
-        },
-      ])
+      Promise.resolve([postCommentsResponse])
     )
     expect(main()).resolves.toBe("正常に送信しました。")
   })
-
-  test.todo("↑expect(core.info)ができない理由がわからない...")
 
   test("main not continue and resolve processing when 0 commits", () => {
     mocked(fetchEvent.fetchEvent).mockImplementation(
