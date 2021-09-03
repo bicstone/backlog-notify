@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios"
 import template from "lodash.template"
 import { ParsedCommits, ParsedCommit } from "../src/parseCommits"
 
-// FIXME: 2.0でinput受け取りにする
+// 2.0でinput受け取りにする
 const fixId = "3" // 処理済みの状態 ID
 const closeId = "4" // 完了の状態 ID
 const updateIssueApiUrlTemplate = template(

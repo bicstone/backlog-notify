@@ -12,14 +12,12 @@ export type Configs = {
  */
 
 export const getConfigs = (): Configs => {
-  const configs = {
+  return {
     projectKey: getConfig("project_key", { required: true }),
     apiHost: getConfig("api_host", { required: true }),
     apiKey: getConfig("api_key", { required: true }),
     githubEventPath: getConfig("github_event_path", { required: true }),
   }
-
-  return configs
 }
 
 type InputOptions = {

@@ -1,7 +1,7 @@
 import { Commit } from "@octokit/webhooks-types"
 import template from "lodash.template"
 
-// FIXME: 2.0でinput受け取りにする
+// 2.0でinput受け取りにする
 const fixKeywords = ["#fix", "#fixes", "#fixed"] // 処理済みにするキーワード
 const closeKeywords = ["#close", "#closes", "#closed"] // 完了にするキーワード
 const commitKeywordRegexTemplate = template(
@@ -74,7 +74,7 @@ const parseCommit = (
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const [, issue_key = null, message = "", keywords = ""] = match
 
-  const parsedCommit = {
+  return {
     ...commit,
     message,
     original_message: commit.message,
@@ -85,6 +85,4 @@ const parseCommit = (
     is_fix: fixKeywords.includes(keywords),
     is_close: closeKeywords.includes(keywords),
   }
-
-  return parsedCommit
 }
