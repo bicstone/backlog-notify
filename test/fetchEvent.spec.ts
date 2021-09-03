@@ -14,6 +14,7 @@ describe("fetchEvent", () => {
 
     expect(fetchEvent(path)).toStrictEqual(pushEvent)
     expect(fs.readFileSync).toHaveBeenCalled()
+    expect(fs.readFileSync).toHaveBeenCalledTimes(1)
     expect(fs.readFileSync).toHaveBeenCalledWith(path, encoding)
   })
 })

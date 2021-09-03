@@ -5,10 +5,12 @@ import { parseCommits } from "./parseCommits"
 import { postComments } from "./postComments"
 
 const main = async (): Promise<void> => {
+  // init
   core.startGroup(`初期化中`)
   const { projectKey, apiHost, apiKey, githubEventPath } = getConfigs()
   core.endGroup()
 
+  // fetch event
   core.startGroup(`コミット取得中`)
   const event = fetchEvent(githubEventPath)
   if (!event?.commits?.length) {
@@ -16,6 +18,7 @@ const main = async (): Promise<void> => {
     return Promise.resolve()
   }
 
+  // parse commits
   const parsedCommits = parseCommits(event.commits, projectKey)
   if (!parsedCommits) {
     core.info("課題キーのついたコミットが1件も見つかりませんでした。")
@@ -23,8 +26,27 @@ const main = async (): Promise<void> => {
   }
   core.endGroup()
 
-  core.startGroup(`コミット取得中`)
-  await postComments(parsedCommits, apiHost, apiKey)
+  // post comments
+  core.startGroup(`コメント送信中`)
+  await postComments(parsedCommits, apiHost, apiKey).then((data) => {
+    data.forEach(({ commits, issueKey, isFix, isClose }) => {
+      core.startGroup(`${commits[0].issue_key}:`)
+
+      commits.forEach(({ message }) => {
+        core.info(message)
+      })
+
+      if (isFix) {
+        core.info(`${issueKey}を処理済みにしました。`)
+      }
+
+      if (isClose) {
+        core.info(`${issueKey}を完了にしました。`)
+      }
+
+      core.endGroup()
+    })
+  })
   core.info("正常に送信しました。")
   return Promise.resolve()
 }

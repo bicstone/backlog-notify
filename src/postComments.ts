@@ -1,4 +1,5 @@
-import core from "@actions/core"
+import url from "url"
+import axios, { AxiosResponse } from "axios"
 import template from "lodash.template"
 import { ParsedCommits, ParsedCommit } from "../src/parseCommits"
 
@@ -15,6 +16,14 @@ const commentTemplate = template(
     "<% }); %>"
 ) // 通知文章のテンプレート
 
+export type Response = {
+  response: AxiosResponse<Record<string, unknown>>
+  commits: ParsedCommit[]
+  issueKey: string
+  isFix: boolean
+  isClose: boolean
+}
+
 /**
  * Post the comment to Backlog API
  * @param parsedCommits parsed Commits (create by parseCommits.ts)
@@ -27,8 +36,8 @@ export const postComments = (
   parsedCommits: ParsedCommits,
   apiHost: string,
   apiKey: string
-): Promise<void[]> => {
-  const promiseArray: Promise<void>[] = []
+): Promise<Response[]> => {
+  const promiseArray: Promise<Response>[] = []
 
   for (const [key, value] of Object.entries(parsedCommits)) {
     promiseArray.push(createPatchCommentRequest(value, key, apiHost, apiKey))
@@ -43,7 +52,7 @@ export const postComments = (
  * @param issueKey Backlog issue key
  * @param apiHost Backlog API Host
  * @param apiKey Backlog API Key
- * @returns Patch comment request promise
+ * @returns commits param (for use in console messages)
  * @see https://developer.nulab.com/docs/backlog/api/2/update-issue/
  */
 const createPatchCommentRequest = (
@@ -51,7 +60,7 @@ const createPatchCommentRequest = (
   issueKey: string,
   apiHost: string,
   apiKey: string
-): Promise<void> => {
+): Promise<Response> => {
   const endpoint = updateIssueApiUrlTemplate({
     apiHost: apiHost,
     apiKey: apiKey,
@@ -59,7 +68,6 @@ const createPatchCommentRequest = (
   })
 
   const comment = commentTemplate({ commits })
-
   const isFix = commits.map((commit) => commit.is_fix).includes(true)
   const isClose = commits.map((commit) => commit.is_close).includes(true)
   const status = (() => {
@@ -67,23 +75,11 @@ const createPatchCommentRequest = (
     if (isClose) return { statusId: closeId }
     else return undefined
   })()
+  const body = { comment, ...status }
 
-  const body = {
-    comment: comment,
-    ...status,
-  }
-  const options = {
-    method: "PATCH",
-    headers: {
-      accept: "application/json",
-      "content-type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams(body).toString(),
-  }
-
-  return fetch(endpoint, options).then(() => {
-    core.info(`${issueKey}:\n${comment}`)
-    isFix && core.info(`${issueKey}を処理済みにしました。`)
-    isClose && core.info(`${issueKey}を完了にしました。`)
-  })
+  return axios
+    .patch(endpoint, new url.URLSearchParams(body).toString())
+    .then((response) => {
+      return { response, commits, issueKey, isFix, isClose }
+    })
 }
