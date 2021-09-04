@@ -1,0 +1,33 @@
+{
+  "projectName": "backlog-notify",
+  "projectOwner": "Takanori Oishi",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "eslint",
+  "contributors": [
+    {
+      "login": "stmon19",
+      "name": "takeshi.kondo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1284496?v=4",
+      "profile": "https://github.com/stmon19",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "suzuken",
+      "name": "Kenta SUZUKI",
+      "avatar_url": "https://avatars.githubusercontent.com/u/491428?v=4",
+      "profile": "http://suzuken.hatenablog.jp/",
+      "contributions": [
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}

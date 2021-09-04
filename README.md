@@ -100,9 +100,21 @@ PROJECT-123 不具合修正 #fix
 
 貢献はいつでも大歓迎いたします。事前に [CONTRIBUTING.md](CONTRIBUTING.md) をご確認ください。
 
-Contributions are always welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions of any kind welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/stmon19"><img src="https://avatars.githubusercontent.com/u/1284496?v=4?s=100" width="100px;" alt=""/><br /><sub><b>takeshi.kondo</b></sub></a><br /><a href="https://github.com/Takanori Oishi/backlog-notify/issues?q=author%3Astmon19" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://suzuken.hatenablog.jp/"><img src="https://avatars.githubusercontent.com/u/491428?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kenta SUZUKI</b></sub></a><br /><a href="https://github.com/Takanori Oishi/backlog-notify/commits?author=suzuken" title="Documentation">📖</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## ライセンス
