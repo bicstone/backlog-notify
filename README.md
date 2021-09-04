@@ -98,12 +98,29 @@ PROJECT-123 不具合修正 #fix
 
 ## 貢献
 
-貢献はいつでも大歓迎いたします。事前に [CONTRIBUTING.md](CONTRIBUTING.md) をご確認ください。
+コントリビューターの皆様に感謝いたします。
 
-Contributions are always welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md).
+Thanks goes to these contributors.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://bicstone.me/"><img src="https://avatars.githubusercontent.com/u/47806818?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Takanori Oishi</b></sub></a><br /><a href="#ideas-bicstone" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/bicstone/backlog-notify/commits?author=bicstone" title="Code">💻</a> <a href="#maintenance-bicstone" title="Maintenance">🚧</a> <a href="#question-bicstone" title="Answering Questions">💬</a> <a href="https://github.com/bicstone/backlog-notify/commits?author=bicstone" title="Documentation">📖</a> <a href="https://github.com/bicstone/backlog-notify/pulls?q=is%3Apr+reviewed-by%3Abicstone" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://github.com/stmon19"><img src="https://avatars.githubusercontent.com/u/1284496?v=4?s=100" width="100px;" alt=""/><br /><sub><b>takeshi.kondo</b></sub></a><br /><a href="https://github.com/bicstone/backlog-notify/issues?q=author%3Astmon19" title="Bug reports">🐛</a> <a href="https://github.com/bicstone/backlog-notify/commits?author=stmon19" title="Code">💻</a></td>
+    <td align="center"><a href="http://suzuken.hatenablog.jp/"><img src="https://avatars.githubusercontent.com/u/491428?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kenta SUZUKI</b></sub></a><br /><a href="https://github.com/bicstone/backlog-notify/commits?author=suzuken" title="Documentation">📖</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+貢献はいつでも大歓迎です。事前に [CONTRIBUTING.md](CONTRIBUTING.md) をご確認ください。
+
+Contributions of any kind welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## ライセンス
 
