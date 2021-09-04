@@ -100,9 +100,9 @@ PROJECT-123 不具合修正 #fix
 
 ## 貢献
 
-貢献はいつでも大歓迎いたします。事前に [./CONTRIBUTING.md](CONTRIBUTING.md) をご確認ください。
+貢献はいつでも大歓迎いたします。事前に [CONTRIBUTING.md](CONTRIBUTING.md) をご確認ください。
 
-contributions are always welcome. Please read [./CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions are always welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
