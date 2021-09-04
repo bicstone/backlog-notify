@@ -6573,6 +6573,20 @@ __nccwpck_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(5747);
+;// CONCATENATED MODULE: ./src/fetchEvent.ts
+
+/**
+ * Fetch and Parses event from event.json file
+ * @param path Path to event.json
+ * @returns Parsed event from event.json
+ */
+const fetchEvent = (path) => {
+    const event = (0,external_fs_.readFileSync)(path, "utf8");
+    return JSON.parse(event);
+};
+
 ;// CONCATENATED MODULE: ./src/getConfigs.ts
 /**
  * Parses and validations the action configuration
@@ -6605,20 +6619,6 @@ const getConfig = (name, options = {}) => {
         throw new Error(`Input required and not supplied: ${name}`);
     }
     return val.trim();
-};
-
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __nccwpck_require__(5747);
-;// CONCATENATED MODULE: ./src/fetchEvent.ts
-
-/**
- * Fetch and Parses event from event.json file
- * @param path Path to event.json
- * @returns Parsed event from event.json
- */
-const fetchEvent = (path) => {
-    const event = (0,external_fs_.readFileSync)(path, "utf8");
-    return JSON.parse(event);
 };
 
 // EXTERNAL MODULE: ./node_modules/lodash.template/index.js

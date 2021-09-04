@@ -1,6 +1,6 @@
 import * as core from "@actions/core"
-import { getConfigs } from "./getConfigs"
 import { fetchEvent } from "./fetchEvent"
+import { getConfigs } from "./getConfigs"
 import { parseCommits } from "./parseCommits"
 import { postComments } from "./postComments"
 
@@ -55,7 +55,7 @@ main()
     core.info(message)
     core.endGroup()
   })
-  .catch((error) => {
+  .catch((error: Error) => {
     core.debug(error.stack || "No error stack trace")
     core.setFailed(error.message)
     core.endGroup()
