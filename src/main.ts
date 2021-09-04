@@ -1,34 +1,62 @@
-import getEnvs from './getEnvs'
-import fetchCommits from './fetchCommits'
-import parseCommits from './parseCommits'
-import postComments from './postComments'
+import * as core from "@actions/core"
+import { fetchEvent } from "./fetchEvent"
+import { getConfigs } from "./getConfigs"
+import { parseCommits } from "./parseCommits"
+import { postComments } from "./postComments"
 
-(async (): Promise<any> => {
-  // 環境変数の読み込み
-  const { PROJECT_KEY, API_HOST, API_KEY, GITHUB_EVENT_PATH } = await getEnvs()
+export const main = async (): Promise<string> => {
+  // init
+  core.startGroup(`初期化中`)
+  const { projectKey, apiHost, apiKey, githubEventPath } = getConfigs()
+  core.endGroup()
 
-  // event.json の読み込み
-  const commits = await fetchCommits(GITHUB_EVENT_PATH)
+  // fetch event
+  core.startGroup(`コミット取得中`)
+  const event = fetchEvent(githubEventPath)
+  if (!event?.commits?.length) {
+    return Promise.resolve("コミットが1件も見つかりませんでした。")
+  }
 
-  // コミットの解析
-  const parsedCommits = await parseCommits(commits, PROJECT_KEY)
+  // parse commits
+  const parsedCommits = parseCommits(event.commits, projectKey)
+  if (!parsedCommits) {
+    return Promise.resolve(
+      "課題キーのついたコミットが1件も見つかりませんでした。"
+    )
+  }
+  core.endGroup()
 
-  // バックログAPIへ送信
-  const response = await postComments(API_HOST, API_KEY, parsedCommits)
+  // post comments
+  core.startGroup(`コメント送信中`)
+  await postComments(parsedCommits, apiHost, apiKey).then((data) => {
+    data.forEach(({ commits, issueKey, isFix, isClose }) => {
+      core.startGroup(`${commits[0].issue_key}:`)
 
-  return Promise.resolve(response)
-})()
-  .then(() =>
-    // 正常終了(catchに送るためreject)
-    Promise.reject('正常に送信しました。')
-  )
-  .catch((error) => {
-    // String ならば、info ログを残し正常終了。
-    // Error ならば、error ログを残し異常終了。
-    if (typeof error === 'string') {
-      console.info(error)
-      process.exit(0)
-    }
-    console.error(error)
-    process.exit(1)
+      commits.forEach(({ message }) => {
+        core.info(message)
+      })
+
+      if (isFix) {
+        core.info(`${issueKey}を処理済みにしました。`)
+      }
+
+      if (isClose) {
+        core.info(`${issueKey}を完了にしました。`)
+      }
+
+      core.endGroup()
+    })
+  })
+  return Promise.resolve("正常に送信しました。")
+}
+
+main()
+  .then((message) => {
+    core.info(message)
+    core.endGroup()
+  })
+  .catch((error: Error) => {
+    core.debug(error.stack || "No error stack trace")
+    core.setFailed(error.message)
+    core.endGroup()
   })

@@ -1,9 +1,9 @@
-name: 'Backlog Notify'
-description: 'Notify commit messages to Backlog issue'
-author: 'Takanori Oishi'
+name: "Backlog Notify"
+description: "Notify commit messages to Backlog issue"
+author: "Takanori Oishi"
 branding:
-  icon: 'bell'
-  color: 'green'
+  icon: "bell"
+  color: "green"
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"

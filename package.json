@@ -1,13 +1,14 @@
 {
   "name": "backlog-notify",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Notify commit messages to Backlog issue",
   "main": "dist/index.js",
   "scripts": {
-    "build": "yarn lint:fix && ncc build ./src/main.ts",
+    "build": "yarn lint --fix && yarn format && ncc build ./src/main.ts --target es2019",
     "lint": "eslint --ext .ts ./src/ --max-warnings 0",
-    "lint:fix": "eslint --fix --ext .ts ./src/ --max-warnings 0",
-    "prepare": "husky install"
+    "format": "prettier --write .",
+    "prepare": "husky install",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,24 +21,30 @@
   ],
   "author": "Takanori Oishi",
   "license": "MIT",
-  "dependencies": {
-    "axios": "0.21.1",
-    "lodash": "4.17.21",
-    "querystring": "0.2.1"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/lodash": "4.14.170",
-    "@types/node": "15.6.1",
-    "@typescript-eslint/eslint-plugin": "4.25.0",
-    "@typescript-eslint/parser": "4.25.0",
-    "@zeit/ncc": "0.22.3",
+    "@actions/core": "1.5.0",
+    "@octokit/webhooks-examples": "4.4.0",
+    "@octokit/webhooks-types": "4.4.0",
+    "@types/jest": "27.0.1",
+    "@types/lodash.template": "4.5.0",
+    "@types/node": "12.x.x",
+    "@typescript-eslint/eslint-plugin": "4.30.0",
+    "@typescript-eslint/parser": "4.30.0",
+    "@vercel/ncc": "0.30.0",
     "all-contributors-cli": "6.20.0",
-    "eslint": "7.27.0",
-    "eslint-config-standard": "16.0.3",
-    "eslint-plugin-import": "2.23.4",
+    "axios": "0.21.2",
+    "eslint": "7.32.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.24.2",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "5.1.0",
-    "husky": "^6.0.0",
-    "typescript": "4.3.2"
+    "husky": "7.0.2",
+    "jest": "27.1.0",
+    "lodash.template": "4.5.0",
+    "prettier": "2.3.2",
+    "ts-jest": "27.0.5",
+    "ts-node": "10.2.1",
+    "typescript": "4.4.2"
   }
 }
