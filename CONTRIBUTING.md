@@ -17,36 +17,17 @@ This repository has adopted the [Contributor Covenant 2.0](https://www.contribut
 Pull Requests are always welcome, but please discuss larger changes via issue before your work.
 
 1. Fork the repository.
-
 1. Clone the fork to your local machine
-
 1. Install the dependencies with yarn
-
-```sh
-yarn install
-```
-
+   `yarn install`
 1. Create a new topic branch
-
-```sh
-git checkout -b fix/topic
-```
-
+   `git checkout -b fix/topic`
 1. Make changes
-
 1. Run build & test
-
-```sh
-yarn build
-yarn test
-```
-
+   `yarn build`
+   `yarn test`
 1. commit and push
-
-```sh
-git push -u origin HEAD
-```
-
+   `git push -u origin HEAD`
 1. make a Pull Request.
 
 ## License

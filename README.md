@@ -13,8 +13,6 @@ Notify commit messages to [Backlog.com](https://backlog.com/) issue.
 
 個人が開発した Action です。Backlog へのお問い合わせはご遠慮ください。
 
-## スクリーンショット
-
 ## 設定方法
 
 ### Backlog API キーの取得
@@ -24,7 +22,7 @@ Notify commit messages to [Backlog.com](https://backlog.com/) issue.
 1. クラシックプランの場合は `一般ユーザ` 、新プランの場合は `ゲスト` を選択します。
 1. 登録します。
 1. 登録した BOT アカウントにログインします。
-1. `個人設定` → `API` → `登録` で API キーを発行します。
+1. 個人設定 → API → 登録 で API キーを発行します。
 
 ### API キーを GitHub に登録
 
@@ -57,7 +55,7 @@ jobs:
 
     steps:
       - name: Backlog Notify
-        uses: bicstone/backlog-notify@v1
+        uses: bicstone/backlog-notify@master
         env:
           PROJECT_KEY: PROJECT_KEY
           API_HOST: example.backlog.jp
@@ -92,10 +90,10 @@ PROJECT-123 不具合修正 #fix
 
 ## よくある質問と回答
 
-- 何をプッシュしても実行に失敗し、ログに 401 エラーとある
+- 何をプッシュしても実行に失敗し、ログに 401 エラーとある  
   →API キーが誤っている可能性があります。
 
-- プロジェクトキーと課題キーが正しいのに実行に失敗し、ログに 404 エラーとある
+- プロジェクトキーと課題キーが正しいのに実行に失敗し、ログに 404 エラーとある  
   → 該当 API キーのユーザーがプロジェクトに参加していない可能性があります。
 
 ## 貢献
