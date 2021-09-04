@@ -41,8 +41,6 @@ const basePostCommentsResponse: postComments.Response = {
 
 describe("main", () => {
   beforeEach(() => {
-    // mocked(core.info, true).mockImplementation((message) => message) // doesn't work :(
-    // jest.spyOn(core, 'info').mockImplementation((message) => message) // doesn't work :(
     mocked(getConfigs.getConfigs).mockImplementation(() => {
       return {
         projectKey: "",
