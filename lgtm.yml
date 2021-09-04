@@ -1,2 +1,3 @@
-queries:
-  exclude: "dist/*"
+path_classifiers:
+  generated:
+    - dist
