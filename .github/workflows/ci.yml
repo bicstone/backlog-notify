@@ -10,9 +10,8 @@ on:
     branches: [master]
 
 jobs:
-  build:
+  Setup:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -20,7 +19,29 @@ jobs:
           node-version: 12
           cache: "yarn"
       - run: yarn install
+  Build:
+    runs-on: ubuntu-latest
+    needs: Setup
+    steps:
       - run: yarn build
+  Lint:
+    runs-on: ubuntu-latest
+    needs: Setup
+    steps:
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          eslint: true
+          eslint_dir: ./frontend
+          eslint_extensions: js,jsx,vue,ts,tsx
+          prettier: true
+          prettier_dir: ./frontend
+          prettier_extensions: js,jsx,vue,ts,tsx
+          auto_fix: true
+  Test:
+    runs-on: ubuntu-latest
+    needs: Setup
+    steps:
       - run: yarn test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
