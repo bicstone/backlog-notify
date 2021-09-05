@@ -43,5 +43,5 @@ jobs:
           auto_fix: true
           eslint: true
           eslint_dir: ./src
-          eslint_extensions: tsx
+          eslint_extensions: .ts
           prettier: true
