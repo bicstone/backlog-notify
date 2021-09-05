@@ -10,9 +10,9 @@ on:
     branches: [master]
 
 jobs:
-  build:
+  Build:
+    name: Build and Test
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -27,3 +27,19 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./coverage/
+  Lint:
+    name: Run linters
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12
+          cache: "yarn"
+      - run: yarn install
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          eslint: true
+          eslint_args: "--ext .ts ./src/ --max-warnings 0"
+          prettier: true
