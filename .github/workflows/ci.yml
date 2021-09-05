@@ -40,8 +40,6 @@ jobs:
       - name: Run linters
         uses: wearerequired/lint-action@v1
         with:
-          auto_fix: true
           eslint: true
-          eslint_dir: ./src
-          eslint_extensions: .ts
+          eslint_args: "--ext .ts ./src/ --max-warnings 0"
           prettier: true
