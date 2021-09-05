@@ -5,7 +5,7 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify?ref=badge_shield)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bicstone_backlog-notify&metric=alert_status)](https://sonarcloud.io/dashboard?id=bicstone_backlog-notify)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/bicstone/backlog-notify.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bicstone/backlog-notify/alerts/)
-[![Coverage Status](https://coveralls.io/repos/github/bicstone/backlog-notify/badge.svg?branch=master)](https://coveralls.io/github/bicstone/backlog-notify?branch=master)
+[![codecov](https://codecov.io/gh/bicstone/backlog-notify/branch/master/graph/badge.svg?token=QRLLFDZD15)](https://codecov.io/gh/bicstone/backlog-notify)
 
 Notify commit messages to [Backlog.com](https://backlog.com/) issue.
 
