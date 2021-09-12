@@ -4,7 +4,7 @@
   "description": "Notify commit messages to Backlog issue",
   "main": "dist/index.js",
   "scripts": {
-    "build": "yarn lint --fix && yarn format && ncc build ./src/main.ts --target es2019",
+    "build": "yarn lint --fix && yarn format && ncc build ./src/main.ts --target es2019 --license index.js.LICENSE.txt",
     "lint": "eslint --ext .ts ./src/ --max-warnings 0",
     "format": "prettier --write .",
     "prepare": "husky install",
