@@ -1,6 +1,7 @@
 {
   "name": "backlog-notify",
-  "version": "1.0.2",
+  "private": true,
+  "version": "1.0.3",
   "description": "Notify commit messages to Backlog issue",
   "main": "dist/index.js",
   "scripts": {
@@ -15,36 +16,41 @@
     "url": "git+https://github.com/bicstone/backlog-notify/backlog-notify.git"
   },
   "keywords": [
+    "GitHub Actions",
+    "actions",
+    "Nulab",
     "Backlog",
+    "Nulab Backlog",
     "Notify",
     "Project management"
   ],
   "author": "Takanori Oishi",
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "@actions/core": "1.5.0",
-    "@octokit/webhooks-examples": "4.4.0",
-    "@octokit/webhooks-types": "4.4.0",
-    "@types/jest": "27.0.1",
+    "@octokit/webhooks-examples": "4.8.0",
+    "axios": "0.21.4",
+    "lodash.template": "4.5.0"
+  },
+  "devDependencies": {
+    "@octokit/webhooks-types": "4.8.0",
+    "@types/jest": "27.0.2",
     "@types/lodash.template": "4.5.0",
     "@types/node": "12.x.x",
-    "@typescript-eslint/eslint-plugin": "4.30.0",
-    "@typescript-eslint/parser": "4.30.0",
-    "@vercel/ncc": "0.30.0",
+    "@typescript-eslint/eslint-plugin": "4.31.2",
+    "@typescript-eslint/parser": "4.31.2",
+    "@vercel/ncc": "0.31.1",
     "all-contributors-cli": "6.20.0",
-    "axios": "0.21.2",
     "eslint": "7.32.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.24.2",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "5.1.0",
     "husky": "7.0.2",
-    "jest": "27.1.0",
-    "lodash.template": "4.5.0",
-    "prettier": "2.3.2",
+    "jest": "27.2.1",
+    "prettier": "2.4.1",
     "ts-jest": "27.0.5",
     "ts-node": "10.2.1",
-    "typescript": "4.4.2"
+    "typescript": "4.4.3"
   }
 }

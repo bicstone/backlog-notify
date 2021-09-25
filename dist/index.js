@@ -1306,7 +1306,7 @@ Axios.prototype.request = function request(config) {
     var chain = [dispatchRequest, undefined];
 
     Array.prototype.unshift.apply(chain, requestInterceptorChain);
-    chain.concat(responseInterceptorChain);
+    chain = chain.concat(responseInterceptorChain);
 
     promise = Promise.resolve(config);
     while (chain.length) {
@@ -1821,6 +1821,21 @@ function getDefaultAdapter() {
   return adapter;
 }
 
+function stringifySafely(rawValue, parser, encoder) {
+  if (utils.isString(rawValue)) {
+    try {
+      (parser || JSON.parse)(rawValue);
+      return utils.trim(rawValue);
+    } catch (e) {
+      if (e.name !== 'SyntaxError') {
+        throw e;
+      }
+    }
+  }
+
+  return (encoder || JSON.stringify)(rawValue);
+}
+
 var defaults = {
 
   transitional: {
@@ -1853,7 +1868,7 @@ var defaults = {
     }
     if (utils.isObject(data) || (headers && headers['Content-Type'] === 'application/json')) {
       setContentTypeIfUnset(headers, 'application/json');
-      return JSON.stringify(data);
+      return stringifySafely(data);
     }
     return data;
   }],
@@ -3817,10 +3832,8 @@ RedirectableRequest.prototype.removeHeader = function (name) {
 // Global timeout for all underlying requests
 RedirectableRequest.prototype.setTimeout = function (msecs, callback) {
   var self = this;
-  if (callback) {
-    this.on("timeout", callback);
-  }
 
+  // Destroys the socket on timeout
   function destroyOnTimeout(socket) {
     socket.setTimeout(msecs);
     socket.removeListener("timeout", socket.destroy);
@@ -3839,18 +3852,26 @@ RedirectableRequest.prototype.setTimeout = function (msecs, callback) {
     destroyOnTimeout(socket);
   }
 
-  // Prevent a timeout from triggering
+  // Stops a timeout from triggering
   function clearTimer() {
-    clearTimeout(self._timeout);
+    if (self._timeout) {
+      clearTimeout(self._timeout);
+      self._timeout = null;
+    }
     if (callback) {
       self.removeListener("timeout", callback);
     }
-    if (!this.socket) {
+    if (!self.socket) {
       self._currentRequest.removeListener("socket", startTimer);
     }
   }
 
-  // Start the timer when the socket is opened
+  // Attach callback if passed
+  if (callback) {
+    this.on("timeout", callback);
+  }
+
+  // Start the timer if or when the socket is opened
   if (this.socket) {
     startTimer(this.socket);
   }
@@ -3858,6 +3879,7 @@ RedirectableRequest.prototype.setTimeout = function (msecs, callback) {
     this._currentRequest.once("socket", startTimer);
   }
 
+  // Clean up on events
   this.on("socket", destroyOnTimeout);
   this.once("response", clearTimer);
   this.once("error", clearTimer);
@@ -6603,11 +6625,305 @@ module.exports = {
 
 /***/ }),
 
+/***/ 803:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.fetchEvent = void 0;
+const fs_1 = __nccwpck_require__(5747);
+/**
+ * Fetch and Parses event from event.json file
+ * @param path Path to event.json
+ * @returns Parsed event from event.json
+ */
+const fetchEvent = (path) => {
+    const event = (0, fs_1.readFileSync)(path, "utf8");
+    return JSON.parse(event);
+};
+exports.fetchEvent = fetchEvent;
+
+
+/***/ }),
+
+/***/ 2732:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getConfigs = void 0;
+/**
+ * Parses and validations the action configuration
+ * @returns Parsed the action configuration
+ * @throws {Error} Will throw an error if missing required input
+ */
+const getConfigs = () => {
+    return {
+        projectKey: getConfig("project_key", { required: true }),
+        apiHost: getConfig("api_host", { required: true }),
+        apiKey: getConfig("api_key", { required: true }),
+        githubEventPath: getConfig("github_event_path", { required: true }),
+    };
+};
+exports.getConfigs = getConfigs;
+/**
+ * First gets the value of the action configuration. If not defined,
+ * gets the value of the environment variable. If not defined,
+ * returns an empty string.
+ *
+ * @param name Name of the input or env to get
+ * @param options See InputOptions type
+ * @returns Trimmed value
+ */
+const getConfig = (name, options = {}) => {
+    const key = name.toUpperCase();
+    const input = process.env[`INPUT_${key}`];
+    const env = process.env[key];
+    const val = input || env || "";
+    if (options.required && !val) {
+        throw new Error(`Input required and not supplied: ${name}`);
+    }
+    return val.trim();
+};
+
+
+/***/ }),
+
+/***/ 399:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.main = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const fetchEvent_1 = __nccwpck_require__(803);
+const getConfigs_1 = __nccwpck_require__(2732);
+const parseCommits_1 = __nccwpck_require__(9752);
+const postComments_1 = __nccwpck_require__(6082);
+const main = async () => {
+    var _a;
+    // init
+    core.startGroup(`初期化中`);
+    const { projectKey, apiHost, apiKey, githubEventPath } = (0, getConfigs_1.getConfigs)();
+    core.endGroup();
+    // fetch event
+    core.startGroup(`コミット取得中`);
+    const event = (0, fetchEvent_1.fetchEvent)(githubEventPath);
+    if (!((_a = event === null || event === void 0 ? void 0 : event.commits) === null || _a === void 0 ? void 0 : _a.length)) {
+        return Promise.resolve("コミットが1件も見つかりませんでした。");
+    }
+    // parse commits
+    const parsedCommits = (0, parseCommits_1.parseCommits)(event.commits, projectKey);
+    if (!parsedCommits) {
+        return Promise.resolve("課題キーのついたコミットが1件も見つかりませんでした。");
+    }
+    core.endGroup();
+    // post comments
+    core.startGroup(`コメント送信中`);
+    await (0, postComments_1.postComments)(parsedCommits, apiHost, apiKey).then((data) => {
+        data.forEach(({ commits, issueKey, isFix, isClose }) => {
+            core.startGroup(`${commits[0].issue_key}:`);
+            commits.forEach(({ message }) => {
+                core.info(message);
+            });
+            if (isFix) {
+                core.info(`${issueKey}を処理済みにしました。`);
+            }
+            if (isClose) {
+                core.info(`${issueKey}を完了にしました。`);
+            }
+            core.endGroup();
+        });
+    });
+    return Promise.resolve("正常に送信しました。");
+};
+exports.main = main;
+(0, exports.main)()
+    .then((message) => {
+    core.info(message);
+    core.endGroup();
+})
+    .catch((error) => {
+    core.debug(error.stack || "No error stack trace");
+    core.setFailed(error.message);
+    core.endGroup();
+});
+
+
+/***/ }),
+
+/***/ 9752:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.parseCommits = void 0;
+const lodash_template_1 = __importDefault(__nccwpck_require__(417));
+// 2.0でinput受け取りにする
+const fixKeywords = ["#fix", "#fixes", "#fixed"]; // 処理済みにするキーワード
+const closeKeywords = ["#close", "#closes", "#closed"]; // 完了にするキーワード
+const commitKeywordRegexTemplate = (0, lodash_template_1.default)("^(<%=project_key%>\\-\\d+)\\s?" + // 課題キー
+    "(.*?)?" + // メッセージ
+    `\\s?(${fixKeywords.join("|")}|${closeKeywords.join("|")})?$`); // コミットメッセージを解析する正規表現テンプレート
+/**
+ * Parse commits from the event commits
+ * @param commits commits from the event commits
+ * @param projectKey Backlog project key
+ * @returns ParsedCommits | null
+ */
+const parseCommits = (commits, projectKey) => {
+    const parsedCommits = {};
+    commits.forEach((commit) => {
+        const parsedCommit = parseCommit(commit, projectKey);
+        if (!(parsedCommit === null || parsedCommit === void 0 ? void 0 : parsedCommit.issue_key))
+            return;
+        if (parsedCommits[parsedCommit.issue_key]) {
+            parsedCommits[parsedCommit.issue_key].push(parsedCommit);
+        }
+        else {
+            parsedCommits[parsedCommit.issue_key] = [parsedCommit];
+        }
+    });
+    const commitCount = Object.keys(parsedCommits).length;
+    if (commitCount === 0) {
+        return null;
+    }
+    return parsedCommits;
+};
+exports.parseCommits = parseCommits;
+/**
+ * Parse commit from the event commit
+ * @param commit commit from the event commit
+ * @param projectKey Backlog project key
+ * @returns ParsedCommit
+ */
+const parseCommit = (commit, projectKey) => {
+    const match = commit.message.match(RegExp(commitKeywordRegexTemplate({ project_key: projectKey }), "s"));
+    if (!match) {
+        return null;
+    }
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const [, issue_key = null, message = "", keywords = ""] = match;
+    return {
+        ...commit,
+        message,
+        original_message: commit.message,
+        id_short: commit.id.slice(0, 10),
+        tree_id_short: commit.tree_id.slice(0, 10),
+        issue_key,
+        keywords,
+        is_fix: fixKeywords.includes(keywords),
+        is_close: closeKeywords.includes(keywords),
+    };
+};
+
+
+/***/ }),
+
+/***/ 6082:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.postComments = void 0;
+const url_1 = __nccwpck_require__(8835);
+const axios_1 = __importDefault(__nccwpck_require__(6545));
+const lodash_template_1 = __importDefault(__nccwpck_require__(417));
+// 2.0でinput受け取りにする
+const fixId = "3"; // 処理済みの状態 ID
+const closeId = "4"; // 完了の状態 ID
+const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"); // 「課題情報の更新」APIのURLテンプレート
+const commentTemplate = (0, lodash_template_1.default)("<%=commits[0].author.name%>さんがプッシュしました\n" +
+    "<% commits.forEach(commit=>{%>" +
+    "\n+ <%=commit.message%> ([<%=commit.id_short%>](<%=commit.url%>))" +
+    "<% }); %>"); // 通知文章のテンプレート
+/**
+ * Post the comment to Backlog API
+ * @param parsedCommits parsed Commits (create by parseCommits.ts)
+ * @param apiHost Backlog API Host
+ * @param apiKey Backlog API Key
+ * @returns Patch comment request promises
+ */
+const postComments = (parsedCommits, apiHost, apiKey) => {
+    const promiseArray = [];
+    for (const [key, value] of Object.entries(parsedCommits)) {
+        promiseArray.push(createPatchCommentRequest(value, key, apiHost, apiKey));
+    }
+    return Promise.all(promiseArray);
+};
+exports.postComments = postComments;
+/**
+ * Create patch comment request promise
+ * @param commits parsed commits
+ * @param issueKey Backlog issue key
+ * @param apiHost Backlog API Host
+ * @param apiKey Backlog API Key
+ * @returns commits param (for use in console messages)
+ * @see https://developer.nulab.com/docs/backlog/api/2/update-issue/
+ */
+const createPatchCommentRequest = (commits, issueKey, apiHost, apiKey) => {
+    const endpoint = updateIssueApiUrlTemplate({
+        apiHost: apiHost,
+        apiKey: apiKey,
+        issueKey,
+    });
+    const comment = commentTemplate({ commits });
+    const isFix = commits.map((commit) => commit.is_fix).includes(true);
+    const isClose = commits.map((commit) => commit.is_close).includes(true);
+    const status = (() => {
+        if (isFix)
+            return { statusId: fixId };
+        if (isClose)
+            return { statusId: closeId };
+        else
+            return undefined;
+    })();
+    const body = { comment, ...status };
+    return axios_1.default
+        .patch(endpoint, new url_1.URLSearchParams(body).toString())
+        .then((response) => {
+        return { response, commits, issueKey, isFix, isClose };
+    });
+};
+
+
+/***/ }),
+
 /***/ 696:
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"axios","version":"0.21.2","description":"Promise based HTTP client for the browser and node.js","main":"index.js","scripts":{"test":"grunt test","start":"node ./sandbox/server.js","build":"NODE_ENV=production grunt build","preversion":"npm test","version":"npm run build && grunt version && git add -A dist && git add CHANGELOG.md bower.json package.json","postversion":"git push && git push --tags","examples":"node ./examples/server.js","coveralls":"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js","fix":"eslint --fix lib/**/*.js"},"repository":{"type":"git","url":"https://github.com/axios/axios.git"},"keywords":["xhr","http","ajax","promise","node"],"author":"Matt Zabriskie","license":"MIT","bugs":{"url":"https://github.com/axios/axios/issues"},"homepage":"https://axios-http.com","devDependencies":{"coveralls":"^3.0.0","es6-promise":"^4.2.4","grunt":"^1.3.0","grunt-banner":"^0.6.0","grunt-cli":"^1.2.0","grunt-contrib-clean":"^1.1.0","grunt-contrib-watch":"^1.0.0","grunt-eslint":"^23.0.0","grunt-karma":"^4.0.0","grunt-mocha-test":"^0.13.3","grunt-ts":"^6.0.0-beta.19","grunt-webpack":"^4.0.2","istanbul-instrumenter-loader":"^1.0.0","jasmine-core":"^2.4.1","karma":"^6.3.2","karma-chrome-launcher":"^3.1.0","karma-firefox-launcher":"^2.1.0","karma-jasmine":"^1.1.1","karma-jasmine-ajax":"^0.1.13","karma-safari-launcher":"^1.0.0","karma-sauce-launcher":"^4.3.6","karma-sinon":"^1.0.5","karma-sourcemap-loader":"^0.3.8","karma-webpack":"^4.0.2","load-grunt-tasks":"^3.5.2","minimist":"^1.2.0","mocha":"^8.2.1","sinon":"^4.5.0","terser-webpack-plugin":"^4.2.3","typescript":"^4.0.5","url-search-params":"^0.10.0","webpack":"^4.44.2","webpack-dev-server":"^3.11.0"},"browser":{"./lib/adapters/http.js":"./lib/adapters/xhr.js"},"jsdelivr":"dist/axios.min.js","unpkg":"dist/axios.min.js","typings":"./index.d.ts","dependencies":{"follow-redirects":"^1.14.0"},"bundlesize":[{"path":"./dist/axios.min.js","threshold":"5kB"}]}');
+module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"Promise based HTTP client for the browser and node.js","main":"index.js","scripts":{"test":"grunt test","start":"node ./sandbox/server.js","build":"NODE_ENV=production grunt build","preversion":"npm test","version":"npm run build && grunt version && git add -A dist && git add CHANGELOG.md bower.json package.json","postversion":"git push && git push --tags","examples":"node ./examples/server.js","coveralls":"cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js","fix":"eslint --fix lib/**/*.js"},"repository":{"type":"git","url":"https://github.com/axios/axios.git"},"keywords":["xhr","http","ajax","promise","node"],"author":"Matt Zabriskie","license":"MIT","bugs":{"url":"https://github.com/axios/axios/issues"},"homepage":"https://axios-http.com","devDependencies":{"coveralls":"^3.0.0","es6-promise":"^4.2.4","grunt":"^1.3.0","grunt-banner":"^0.6.0","grunt-cli":"^1.2.0","grunt-contrib-clean":"^1.1.0","grunt-contrib-watch":"^1.0.0","grunt-eslint":"^23.0.0","grunt-karma":"^4.0.0","grunt-mocha-test":"^0.13.3","grunt-ts":"^6.0.0-beta.19","grunt-webpack":"^4.0.2","istanbul-instrumenter-loader":"^1.0.0","jasmine-core":"^2.4.1","karma":"^6.3.2","karma-chrome-launcher":"^3.1.0","karma-firefox-launcher":"^2.1.0","karma-jasmine":"^1.1.1","karma-jasmine-ajax":"^0.1.13","karma-safari-launcher":"^1.0.0","karma-sauce-launcher":"^4.3.6","karma-sinon":"^1.0.5","karma-sourcemap-loader":"^0.3.8","karma-webpack":"^4.0.2","load-grunt-tasks":"^3.5.2","minimist":"^1.2.0","mocha":"^8.2.1","sinon":"^4.5.0","terser-webpack-plugin":"^4.2.3","typescript":"^4.0.5","url-search-params":"^0.10.0","webpack":"^4.44.2","webpack-dev-server":"^3.11.0"},"browser":{"./lib/adapters/http.js":"./lib/adapters/xhr.js"},"jsdelivr":"dist/axios.min.js","unpkg":"dist/axios.min.js","typings":"./index.d.ts","dependencies":{"follow-redirects":"^1.14.0"},"bundlesize":[{"path":"./dist/axios.min.js","threshold":"5kB"}]}');
 
 /***/ }),
 
@@ -6735,46 +7051,6 @@ module.exports = require("zlib");
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/node module decorator */
 /******/ 	(() => {
 /******/ 		__nccwpck_require__.nmd = (module) => {
@@ -6789,250 +7065,12 @@ module.exports = require("zlib");
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-// ESM COMPAT FLAG
-__nccwpck_require__.r(__webpack_exports__);
-
-// EXPORTS
-__nccwpck_require__.d(__webpack_exports__, {
-  "main": () => (/* binding */ main)
-});
-
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(2186);
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __nccwpck_require__(5747);
-;// CONCATENATED MODULE: ./src/fetchEvent.ts
-
-/**
- * Fetch and Parses event from event.json file
- * @param path Path to event.json
- * @returns Parsed event from event.json
- */
-const fetchEvent = (path) => {
-    const event = (0,external_fs_.readFileSync)(path, "utf8");
-    return JSON.parse(event);
-};
-
-;// CONCATENATED MODULE: ./src/getConfigs.ts
-/**
- * Parses and validations the action configuration
- * @returns Parsed the action configuration
- * @throws {Error} Will throw an error if missing required input
- */
-const getConfigs = () => {
-    return {
-        projectKey: getConfig("project_key", { required: true }),
-        apiHost: getConfig("api_host", { required: true }),
-        apiKey: getConfig("api_key", { required: true }),
-        githubEventPath: getConfig("github_event_path", { required: true }),
-    };
-};
-/**
- * First gets the value of the action configuration. If not defined,
- * gets the value of the environment variable. If not defined,
- * returns an empty string.
- *
- * @param name Name of the input or env to get
- * @param options See InputOptions type
- * @returns Trimmed value
- */
-const getConfig = (name, options = {}) => {
-    const key = name.toUpperCase();
-    const input = process.env[`INPUT_${key}`];
-    const env = process.env[key];
-    const val = input || env || "";
-    if (options.required && !val) {
-        throw new Error(`Input required and not supplied: ${name}`);
-    }
-    return val.trim();
-};
-
-// EXTERNAL MODULE: ./node_modules/lodash.template/index.js
-var lodash_template = __nccwpck_require__(417);
-var lodash_template_default = /*#__PURE__*/__nccwpck_require__.n(lodash_template);
-;// CONCATENATED MODULE: ./src/parseCommits.ts
-
-// 2.0でinput受け取りにする
-const fixKeywords = ["#fix", "#fixes", "#fixed"]; // 処理済みにするキーワード
-const closeKeywords = ["#close", "#closes", "#closed"]; // 完了にするキーワード
-const commitKeywordRegexTemplate = lodash_template_default()("^(<%=project_key%>\\-\\d+)\\s?" + // 課題キー
-    "(.*?)?" + // メッセージ
-    `\\s?(${fixKeywords.join("|")}|${closeKeywords.join("|")})?$`); // コミットメッセージを解析する正規表現テンプレート
-/**
- * Parse commits from the event commits
- * @param commits commits from the event commits
- * @param projectKey Backlog project key
- * @returns ParsedCommits | null
- */
-const parseCommits = (commits, projectKey) => {
-    const parsedCommits = {};
-    commits.forEach((commit) => {
-        const parsedCommit = parseCommit(commit, projectKey);
-        if (!(parsedCommit === null || parsedCommit === void 0 ? void 0 : parsedCommit.issue_key))
-            return;
-        if (parsedCommits[parsedCommit.issue_key]) {
-            parsedCommits[parsedCommit.issue_key].push(parsedCommit);
-        }
-        else {
-            parsedCommits[parsedCommit.issue_key] = [parsedCommit];
-        }
-    });
-    const commitCount = Object.keys(parsedCommits).length;
-    if (commitCount === 0) {
-        return null;
-    }
-    return parsedCommits;
-};
-/**
- * Parse commit from the event commit
- * @param commit commit from the event commit
- * @param projectKey Backlog project key
- * @returns ParsedCommit
- */
-const parseCommit = (commit, projectKey) => {
-    const match = commit.message.match(RegExp(commitKeywordRegexTemplate({ project_key: projectKey }), "s"));
-    if (!match) {
-        return null;
-    }
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const [, issue_key = null, message = "", keywords = ""] = match;
-    return {
-        ...commit,
-        message,
-        original_message: commit.message,
-        id_short: commit.id.slice(0, 10),
-        tree_id_short: commit.tree_id.slice(0, 10),
-        issue_key,
-        keywords,
-        is_fix: fixKeywords.includes(keywords),
-        is_close: closeKeywords.includes(keywords),
-    };
-};
-
-// EXTERNAL MODULE: external "url"
-var external_url_ = __nccwpck_require__(8835);
-// EXTERNAL MODULE: ./node_modules/axios/index.js
-var axios = __nccwpck_require__(6545);
-var axios_default = /*#__PURE__*/__nccwpck_require__.n(axios);
-;// CONCATENATED MODULE: ./src/postComments.ts
-
-
-
-// 2.0でinput受け取りにする
-const fixId = "3"; // 処理済みの状態 ID
-const closeId = "4"; // 完了の状態 ID
-const updateIssueApiUrlTemplate = lodash_template_default()("https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"); // 「課題情報の更新」APIのURLテンプレート
-const commentTemplate = lodash_template_default()("<%=commits[0].author.name%>さんがプッシュしました\n" +
-    "<% commits.forEach(commit=>{%>" +
-    "\n+ <%=commit.message%> ([<%=commit.id_short%>](<%=commit.url%>))" +
-    "<% }); %>"); // 通知文章のテンプレート
-/**
- * Post the comment to Backlog API
- * @param parsedCommits parsed Commits (create by parseCommits.ts)
- * @param apiHost Backlog API Host
- * @param apiKey Backlog API Key
- * @returns Patch comment request promises
- */
-const postComments = (parsedCommits, apiHost, apiKey) => {
-    const promiseArray = [];
-    for (const [key, value] of Object.entries(parsedCommits)) {
-        promiseArray.push(createPatchCommentRequest(value, key, apiHost, apiKey));
-    }
-    return Promise.all(promiseArray);
-};
-/**
- * Create patch comment request promise
- * @param commits parsed commits
- * @param issueKey Backlog issue key
- * @param apiHost Backlog API Host
- * @param apiKey Backlog API Key
- * @returns commits param (for use in console messages)
- * @see https://developer.nulab.com/docs/backlog/api/2/update-issue/
- */
-const createPatchCommentRequest = (commits, issueKey, apiHost, apiKey) => {
-    const endpoint = updateIssueApiUrlTemplate({
-        apiHost: apiHost,
-        apiKey: apiKey,
-        issueKey,
-    });
-    const comment = commentTemplate({ commits });
-    const isFix = commits.map((commit) => commit.is_fix).includes(true);
-    const isClose = commits.map((commit) => commit.is_close).includes(true);
-    const status = (() => {
-        if (isFix)
-            return { statusId: fixId };
-        if (isClose)
-            return { statusId: closeId };
-        else
-            return undefined;
-    })();
-    const body = { comment, ...status };
-    return axios_default().patch(endpoint, new external_url_.URLSearchParams(body).toString())
-        .then((response) => {
-        return { response, commits, issueKey, isFix, isClose };
-    });
-};
-
-;// CONCATENATED MODULE: ./src/main.ts
-
-
-
-
-
-const main = async () => {
-    var _a;
-    // init
-    core.startGroup(`初期化中`);
-    const { projectKey, apiHost, apiKey, githubEventPath } = getConfigs();
-    core.endGroup();
-    // fetch event
-    core.startGroup(`コミット取得中`);
-    const event = fetchEvent(githubEventPath);
-    if (!((_a = event === null || event === void 0 ? void 0 : event.commits) === null || _a === void 0 ? void 0 : _a.length)) {
-        return Promise.resolve("コミットが1件も見つかりませんでした。");
-    }
-    // parse commits
-    const parsedCommits = parseCommits(event.commits, projectKey);
-    if (!parsedCommits) {
-        return Promise.resolve("課題キーのついたコミットが1件も見つかりませんでした。");
-    }
-    core.endGroup();
-    // post comments
-    core.startGroup(`コメント送信中`);
-    await postComments(parsedCommits, apiHost, apiKey).then((data) => {
-        data.forEach(({ commits, issueKey, isFix, isClose }) => {
-            core.startGroup(`${commits[0].issue_key}:`);
-            commits.forEach(({ message }) => {
-                core.info(message);
-            });
-            if (isFix) {
-                core.info(`${issueKey}を処理済みにしました。`);
-            }
-            if (isClose) {
-                core.info(`${issueKey}を完了にしました。`);
-            }
-            core.endGroup();
-        });
-    });
-    return Promise.resolve("正常に送信しました。");
-};
-main()
-    .then((message) => {
-    core.info(message);
-    core.endGroup();
-})
-    .catch((error) => {
-    core.debug(error.stack || "No error stack trace");
-    core.setFailed(error.message);
-    core.endGroup();
-});
-
-})();
-
-module.exports = __webpack_exports__;
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nccwpck_require__(399);
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
