@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/bicstone/backlog-notify/actions/workflows/ci.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/ci.yml)
 [![coverage](https://github.com/bicstone/backlog-notify/actions/workflows/coverage.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/coverage.yml)
+[![njsscan sarif](https://github.com/bicstone/backlog-notify/actions/workflows/njsscan-analysis.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/njsscan-analysis.yml)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify?ref=badge_shield)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bicstone_backlog-notify&metric=alert_status)](https://sonarcloud.io/dashboard?id=bicstone_backlog-notify)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/bicstone/backlog-notify.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bicstone/backlog-notify/alerts/)
@@ -11,7 +12,9 @@ Notify commit messages to [Backlog.com](https://backlog.com/) issue.
 
 プッシュされたコミットメッセージを Backlog 課題のコメントに追加する GitHub Action です。キーワードによる課題の状態変更も可能です。
 
-個人が開発した Action です。Backlog へのお問い合わせはご遠慮ください。
+個人が開発した Action です。ヌーラボさまへのお問い合わせはご遠慮ください。
+
+![configuration selector](./docs/readme_images/backlog-notify.png)
 
 ## 設定方法
 
