@@ -14,7 +14,7 @@ Notify commit messages to [Backlog.com](https://backlog.com/) issue.
 
 個人が開発した Action です。ヌーラボさまへのお問い合わせはご遠慮ください。
 
-![configuration selector](./docs/readme_images/backlog-notify.png)
+![Backlog Notifyの動作をイメージした図](./docs/readme_images/backlog-notify.png)
 
 ## 設定方法
 
