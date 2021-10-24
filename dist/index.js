@@ -6797,10 +6797,10 @@ const commitKeywordRegexTemplate = (0, lodash_template_1.default)("^(<%=project_
  * @param projectKey Backlog project key
  * @returns ParsedCommits | null
  */
-const parseCommits = ({ commits, projectKey, }) => {
+const parseCommits = ({ commits, ...configs }) => {
     const parsedCommits = {};
     commits.forEach((commit) => {
-        const { parsedCommit } = parseCommit({ commit, projectKey });
+        const { parsedCommit } = parseCommit({ commit, ...configs });
         if (!(parsedCommit === null || parsedCommit === void 0 ? void 0 : parsedCommit.issue_key))
             return;
         if (parsedCommits[parsedCommit.issue_key]) {

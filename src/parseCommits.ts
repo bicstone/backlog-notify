@@ -35,12 +35,12 @@ type ParseCommitsProps = {
  */
 export const parseCommits = ({
   commits,
-  projectKey,
+  ...configs
 }: ParseCommitsProps): { parsedCommits: ParsedCommits | null } => {
   const parsedCommits: ParsedCommits = {}
 
   commits.forEach((commit) => {
-    const { parsedCommit } = parseCommit({ commit, projectKey })
+    const { parsedCommit } = parseCommit({ commit, ...configs })
     if (!parsedCommit?.issue_key) return
 
     if (parsedCommits[parsedCommit.issue_key]) {
