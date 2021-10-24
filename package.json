@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bicstone/backlog-notify/backlog-notify.git"
+    "url": "git+https://github.com/bicstone/backlog-notify.git"
   },
   "keywords": [
     "GitHub Actions",
