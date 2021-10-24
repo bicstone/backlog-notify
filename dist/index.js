@@ -6638,7 +6638,7 @@ const fs_1 = __nccwpck_require__(5747);
  * @param path Path to event.json
  * @returns Parsed event from event.json
  */
-const fetchEvent = ({ path }) => {
+const fetchEvent = ({ path, }) => {
     const event = (0, fs_1.readFileSync)(path, "utf8");
     return { event: JSON.parse(event) };
 };
@@ -6735,7 +6735,7 @@ const main = async () => {
         return Promise.resolve("コミットが1件も見つかりませんでした。");
     }
     // parse commits
-    const parsedCommits = (0, parseCommits_1.parseCommits)(event.commits, projectKey);
+    const { parsedCommits } = (0, parseCommits_1.parseCommits)({ commits: event.commits, projectKey });
     if (!parsedCommits) {
         return Promise.resolve("課題キーのついたコミットが1件も見つかりませんでした。");
     }
@@ -6797,10 +6797,10 @@ const commitKeywordRegexTemplate = (0, lodash_template_1.default)("^(<%=project_
  * @param projectKey Backlog project key
  * @returns ParsedCommits | null
  */
-const parseCommits = (commits, projectKey) => {
+const parseCommits = ({ commits, projectKey, }) => {
     const parsedCommits = {};
     commits.forEach((commit) => {
-        const parsedCommit = parseCommit(commit, projectKey);
+        const { parsedCommit } = parseCommit({ commit, projectKey });
         if (!(parsedCommit === null || parsedCommit === void 0 ? void 0 : parsedCommit.issue_key))
             return;
         if (parsedCommits[parsedCommit.issue_key]) {
@@ -6812,9 +6812,9 @@ const parseCommits = (commits, projectKey) => {
     });
     const commitCount = Object.keys(parsedCommits).length;
     if (commitCount === 0) {
-        return null;
+        return { parsedCommits: null };
     }
-    return parsedCommits;
+    return { parsedCommits };
 };
 exports.parseCommits = parseCommits;
 /**
@@ -6823,23 +6823,25 @@ exports.parseCommits = parseCommits;
  * @param projectKey Backlog project key
  * @returns ParsedCommit
  */
-const parseCommit = (commit, projectKey) => {
+const parseCommit = ({ commit, projectKey, }) => {
     const match = commit.message.match(RegExp(commitKeywordRegexTemplate({ project_key: projectKey }), "s"));
     if (!match) {
-        return null;
+        return { parsedCommit: null };
     }
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [, issue_key = null, message = "", keywords = ""] = match;
     return {
-        ...commit,
-        message,
-        original_message: commit.message,
-        id_short: commit.id.slice(0, 10),
-        tree_id_short: commit.tree_id.slice(0, 10),
-        issue_key,
-        keywords,
-        is_fix: fixKeywords.includes(keywords),
-        is_close: closeKeywords.includes(keywords),
+        parsedCommit: {
+            ...commit,
+            message,
+            original_message: commit.message,
+            id_short: commit.id.slice(0, 10),
+            tree_id_short: commit.tree_id.slice(0, 10),
+            issue_key,
+            keywords,
+            is_fix: fixKeywords.includes(keywords),
+            is_close: closeKeywords.includes(keywords),
+        },
     };
 };
 

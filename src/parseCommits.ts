@@ -55,7 +55,7 @@ export const parseCommits = ({
     return { parsedCommits: null }
   }
 
-  return {parsedCommits}
+  return { parsedCommits }
 }
 
 type ParseCommitProps = {
@@ -69,7 +69,10 @@ type ParseCommitProps = {
  * @param projectKey Backlog project key
  * @returns ParsedCommit
  */
-const parseCommit = ({ commit, projectKey, }: ParseCommitProps): { parsedCommit: ParsedCommit | null } => {
+const parseCommit = ({
+  commit,
+  projectKey,
+}: ParseCommitProps): { parsedCommit: ParsedCommit | null } => {
   const match = commit.message.match(
     RegExp(commitKeywordRegexTemplate({ project_key: projectKey }), "s")
   )
@@ -92,6 +95,6 @@ const parseCommit = ({ commit, projectKey, }: ParseCommitProps): { parsedCommit:
       keywords,
       is_fix: fixKeywords.includes(keywords),
       is_close: closeKeywords.includes(keywords),
-    }
+    },
   }
 }
