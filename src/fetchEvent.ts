@@ -7,7 +7,7 @@ import { PushEvent } from "@octokit/webhooks-types"
  * @returns Parsed event from event.json
  */
 
-export const fetchEvent = (path: string): PushEvent => {
+export const fetchEvent = (path: string): { event: PushEvent } => {
   const event = readFileSync(path, "utf8")
-  return JSON.parse(event) as PushEvent
+  return { event: JSON.parse(event) as PushEvent }
 }

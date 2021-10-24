@@ -6640,7 +6640,7 @@ const fs_1 = __nccwpck_require__(5747);
  */
 const fetchEvent = (path) => {
     const event = (0, fs_1.readFileSync)(path, "utf8");
-    return JSON.parse(event);
+    return { event: JSON.parse(event) };
 };
 exports.fetchEvent = fetchEvent;
 
@@ -6730,7 +6730,7 @@ const main = async () => {
     core.endGroup();
     // fetch event
     core.startGroup(`コミット取得中`);
-    const event = (0, fetchEvent_1.fetchEvent)(githubEventPath);
+    const { event } = (0, fetchEvent_1.fetchEvent)(githubEventPath);
     if (!((_a = event === null || event === void 0 ? void 0 : event.commits) === null || _a === void 0 ? void 0 : _a.length)) {
         return Promise.resolve("コミットが1件も見つかりませんでした。");
     }
