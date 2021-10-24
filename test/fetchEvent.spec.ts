@@ -13,7 +13,6 @@ describe("fetchEvent", () => {
     mocked(fs.readFileSync).mockImplementation(() => JSON.stringify(pushEvent))
 
     expect(fetchEvent({ path })).toStrictEqual({ event: pushEvent })
-    expect(fs.readFileSync).toHaveBeenCalled()
     expect(fs.readFileSync).toHaveBeenCalledTimes(1)
     expect(fs.readFileSync).toHaveBeenCalledWith(path, encoding)
   })

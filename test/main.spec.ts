@@ -1,8 +1,11 @@
 import { mocked } from "ts-jest/utils"
-import { PushEvent } from "@octokit/webhooks-types"
+import * as core from "@actions/core"
 import push from "./github/events/push.json"
 import pushWithoutCommits from "./github/events/pushWithoutCommits.json"
-import { AxiosResponse } from "axios"
+
+import type { PushEvent } from "@octokit/webhooks-types"
+import type { AxiosResponse } from "axios"
+
 import { main } from "../src/main"
 import * as getConfigs from "../src/getConfigs"
 import * as fetchEvent from "../src/fetchEvent"
@@ -55,19 +58,22 @@ describe("main", () => {
     mocked(parseCommits.parseCommits).mockImplementation(() => ({
       parsedCommits: { key: [] },
     }))
+    mocked(core.info).mockImplementation((message) => message)
+    mocked(core.setFailed).mockImplementation((message) => message)
   })
 
-  test.todo("core.infoのスパイができない理由がわからない...")
-
-  test("main resolve with the message", () => {
+  test("main resolve with the message", async () => {
     const postCommentsResponse: postComments.Response = basePostCommentsResponse
     mocked(postComments.postComments).mockImplementation(() =>
       Promise.resolve([postCommentsResponse])
     )
-    expect(main()).resolves.toBe("正常に送信しました。")
+    await expect(main()).resolves.not.toThrow()
+    expect(core.info).toHaveBeenCalledTimes(2)
+    expect(core.info).toHaveBeenCalledWith(message)
+    expect(core.info).toHaveBeenCalledWith("正常に送信しました。")
   })
 
-  test("main resolve with the message when commits with fix_keyword", () => {
+  test("main resolve with the message when commits with fix_keyword", async () => {
     const postCommentsResponse: postComments.Response = {
       ...basePostCommentsResponse,
       isFix: true,
@@ -75,10 +81,14 @@ describe("main", () => {
     mocked(postComments.postComments).mockImplementation(() =>
       Promise.resolve([postCommentsResponse])
     )
-    expect(main()).resolves.toBe("正常に送信しました。")
+    await expect(main()).resolves.not.toThrow()
+    expect(core.info).toHaveBeenCalledTimes(3)
+    expect(core.info).toHaveBeenCalledWith(message)
+    expect(core.info).toHaveBeenCalledWith(`${issueKey}を処理済みにしました。`)
+    expect(core.info).toHaveBeenCalledWith("正常に送信しました。")
   })
 
-  test("main resolve with the message when commits with close_keyword", () => {
+  test("main resolve with the message when commits with close_keyword", async () => {
     const postCommentsResponse: postComments.Response = {
       ...basePostCommentsResponse,
       isClose: true,
@@ -86,25 +96,77 @@ describe("main", () => {
     mocked(postComments.postComments).mockImplementation(() =>
       Promise.resolve([postCommentsResponse])
     )
-    expect(main()).resolves.toBe("正常に送信しました。")
+    await expect(main()).resolves.not.toThrow()
+    expect(core.info).toHaveBeenCalledTimes(3)
+    expect(core.info).toHaveBeenCalledWith(message)
+    expect(core.info).toHaveBeenCalledWith(`${issueKey}を完了にしました。`)
+    expect(core.info).toHaveBeenCalledWith("正常に送信しました。")
   })
 
-  test("main not continue and resolve processing when 0 commits", () => {
+  test("main not continue and resolve processing when 0 commits", async () => {
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
       event: pushWithoutCommits as PushEvent,
     }))
-    expect(main()).resolves.toBe("コミットが1件も見つかりませんでした。")
+    await expect(main()).resolves.not.toThrow()
+    expect(core.info).toHaveBeenCalledTimes(1)
+    expect(core.info).toHaveBeenCalledWith(
+      "コミットが1件も見つかりませんでした。"
+    )
   })
 
-  test("main not continue and resolve processing when commits without issue_key", () => {
+  test("main not continue and resolve processing when the event cannot be loaded", async () => {
+    mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
+      event: null as unknown as PushEvent,
+    }))
+    await expect(main()).resolves.not.toThrow()
+    expect(core.info).toHaveBeenCalledTimes(1)
+    expect(core.info).toHaveBeenCalledWith(
+      "コミットが1件も見つかりませんでした。"
+    )
+  })
+
+  test("main not continue and resolve processing when the event is invalid", async () => {
+    mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
+      event: { commits: null } as unknown as PushEvent,
+    }))
+    await expect(main()).resolves.not.toThrow()
+    expect(core.info).toHaveBeenCalledTimes(1)
+    expect(core.info).toHaveBeenCalledWith(
+      "コミットが1件も見つかりませんでした。"
+    )
+  })
+
+  test("main not continue and resolve processing when commits without issue_key", async () => {
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
       event: push as PushEvent,
     }))
     mocked(parseCommits.parseCommits).mockImplementation(() => ({
       parsedCommits: null,
     }))
-    expect(main()).resolves.toBe(
+    await expect(main()).resolves.not.toThrow()
+    expect(core.info).toHaveBeenCalledTimes(1)
+    expect(core.info).toHaveBeenCalledWith(
       "課題キーのついたコミットが1件も見つかりませんでした。"
     )
+  })
+
+  test("main calls setFailed when an error", async () => {
+    const error = Error("error!")
+    mocked(fetchEvent.fetchEvent).mockImplementation(() => {
+      throw error
+    })
+    await expect(main()).resolves.not.toThrow()
+    expect(core.setFailed).toHaveBeenCalledTimes(1)
+    expect(core.setFailed).toHaveBeenCalledWith(error)
+  })
+
+  test("main calls setFailed when an unexpected error", async () => {
+    const error = "error!"
+    mocked(fetchEvent.fetchEvent).mockImplementation(() => {
+      throw error
+    })
+    await expect(main()).resolves.not.toThrow()
+    expect(core.setFailed).toHaveBeenCalledTimes(1)
+    expect(core.setFailed).toHaveBeenCalledWith(error)
   })
 })

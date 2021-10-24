@@ -6722,7 +6722,7 @@ const fetchEvent_1 = __nccwpck_require__(803);
 const getConfigs_1 = __nccwpck_require__(2732);
 const parseCommits_1 = __nccwpck_require__(9752);
 const postComments_1 = __nccwpck_require__(6082);
-const main = async () => {
+const runAction = async () => {
     var _a;
     // init
     core.startGroup(`初期化中`);
@@ -6732,12 +6732,12 @@ const main = async () => {
     core.startGroup(`コミット取得中`);
     const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
     if (!((_a = event === null || event === void 0 ? void 0 : event.commits) === null || _a === void 0 ? void 0 : _a.length)) {
-        return Promise.resolve("コミットが1件も見つかりませんでした。");
+        return "コミットが1件も見つかりませんでした。";
     }
     // parse commits
     const { parsedCommits } = (0, parseCommits_1.parseCommits)({ commits: event.commits, projectKey });
     if (!parsedCommits) {
-        return Promise.resolve("課題キーのついたコミットが1件も見つかりませんでした。");
+        return "課題キーのついたコミットが1件も見つかりませんでした。";
     }
     core.endGroup();
     // post comments
@@ -6757,19 +6757,25 @@ const main = async () => {
             core.endGroup();
         });
     });
-    return Promise.resolve("正常に送信しました。");
+    return "正常に送信しました。";
+};
+const main = async () => {
+    try {
+        const message = await runAction();
+        core.info(message);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            core.setFailed(error);
+        }
+        else {
+            core.setFailed(String(error));
+        }
+    }
+    core.endGroup();
 };
 exports.main = main;
-(0, exports.main)()
-    .then((message) => {
-    core.info(message);
-    core.endGroup();
-})
-    .catch((error) => {
-    core.debug(error.stack || "No error stack trace");
-    core.setFailed(error.message);
-    core.endGroup();
-});
+(0, exports.main)();
 
 
 /***/ }),

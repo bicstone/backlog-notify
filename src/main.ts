@@ -4,7 +4,7 @@ import { getConfigs } from "./getConfigs"
 import { parseCommits } from "./parseCommits"
 import { postComments } from "./postComments"
 
-export const main = async (): Promise<string> => {
+const runAction = async (): Promise<string> => {
   // init
   core.startGroup(`初期化中`)
   const { projectKey, apiHost, apiKey, githubEventPath } = getConfigs()
@@ -14,15 +14,13 @@ export const main = async (): Promise<string> => {
   core.startGroup(`コミット取得中`)
   const { event } = fetchEvent({ path: githubEventPath })
   if (!event?.commits?.length) {
-    return Promise.resolve("コミットが1件も見つかりませんでした。")
+    return "コミットが1件も見つかりませんでした。"
   }
 
   // parse commits
   const { parsedCommits } = parseCommits({ commits: event.commits, projectKey })
   if (!parsedCommits) {
-    return Promise.resolve(
-      "課題キーのついたコミットが1件も見つかりませんでした。"
-    )
+    return "課題キーのついたコミットが1件も見つかりませんでした。"
   }
   core.endGroup()
 
@@ -47,16 +45,21 @@ export const main = async (): Promise<string> => {
       core.endGroup()
     })
   })
-  return Promise.resolve("正常に送信しました。")
+  return "正常に送信しました。"
+}
+
+export const main = async (): Promise<void> => {
+  try {
+    const message = await runAction()
+    core.info(message)
+  } catch (error) {
+    if (error instanceof Error) {
+      core.setFailed(error)
+    } else {
+      core.setFailed(String(error))
+    }
+  }
+  core.endGroup()
 }
 
 main()
-  .then((message) => {
-    core.info(message)
-    core.endGroup()
-  })
-  .catch((error: Error) => {
-    core.debug(error.stack || "No error stack trace")
-    core.setFailed(error.message)
-    core.endGroup()
-  })
