@@ -52,7 +52,7 @@ describe("main", () => {
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
       event: push as PushEvent,
     }))
-    mocked(parseCommits.parseCommits).mockImplementation(() => ({ key: [] }))
+    mocked(parseCommits.parseCommits).mockImplementation(() => ({ parsedCommits: { key: [] } }))
   })
 
   test.todo("core.infoのスパイができない理由がわからない...")
@@ -98,7 +98,7 @@ describe("main", () => {
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
       event: push as PushEvent,
     }))
-    mocked(parseCommits.parseCommits).mockImplementation(() => null)
+    mocked(parseCommits.parseCommits).mockImplementation(() => ({ parsedCommits: null }))
     expect(main()).resolves.toBe(
       "課題キーのついたコミットが1件も見つかりませんでした。"
     )

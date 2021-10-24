@@ -22,20 +22,25 @@ export type ParsedCommit = {
   is_close: boolean
 } & Commit
 
+type ParseCommitsProps = {
+  commits: Commit[]
+  projectKey: string
+}
+
 /**
  * Parse commits from the event commits
  * @param commits commits from the event commits
  * @param projectKey Backlog project key
  * @returns ParsedCommits | null
  */
-export const parseCommits = (
-  commits: Commit[],
-  projectKey: string
-): ParsedCommits | null => {
+export const parseCommits = ({
+  commits,
+  projectKey,
+}: ParseCommitsProps): { parsedCommits: ParsedCommits | null } => {
   const parsedCommits: ParsedCommits = {}
 
   commits.forEach((commit) => {
-    const parsedCommit = parseCommit(commit, projectKey)
+    const { parsedCommit } = parseCommit({ commit, projectKey })
     if (!parsedCommit?.issue_key) return
 
     if (parsedCommits[parsedCommit.issue_key]) {
@@ -47,10 +52,15 @@ export const parseCommits = (
 
   const commitCount = Object.keys(parsedCommits).length
   if (commitCount === 0) {
-    return null
+    return { parsedCommits: null }
   }
 
-  return parsedCommits
+  return {parsedCommits}
+}
+
+type ParseCommitProps = {
+  commit: Commit
+  projectKey: string
 }
 
 /**
@@ -59,30 +69,29 @@ export const parseCommits = (
  * @param projectKey Backlog project key
  * @returns ParsedCommit
  */
-const parseCommit = (
-  commit: Commit,
-  projectKey: string
-): ParsedCommit | null => {
+const parseCommit = ({ commit, projectKey, }: ParseCommitProps): { parsedCommit: ParsedCommit | null } => {
   const match = commit.message.match(
     RegExp(commitKeywordRegexTemplate({ project_key: projectKey }), "s")
   )
 
   if (!match) {
-    return null
+    return { parsedCommit: null }
   }
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const [, issue_key = null, message = "", keywords = ""] = match
 
   return {
-    ...commit,
-    message,
-    original_message: commit.message,
-    id_short: commit.id.slice(0, 10),
-    tree_id_short: commit.tree_id.slice(0, 10),
-    issue_key,
-    keywords,
-    is_fix: fixKeywords.includes(keywords),
-    is_close: closeKeywords.includes(keywords),
+    parsedCommit: {
+      ...commit,
+      message,
+      original_message: commit.message,
+      id_short: commit.id.slice(0, 10),
+      tree_id_short: commit.tree_id.slice(0, 10),
+      issue_key,
+      keywords,
+      is_fix: fixKeywords.includes(keywords),
+      is_close: closeKeywords.includes(keywords),
+    }
   }
 }

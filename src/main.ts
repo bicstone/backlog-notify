@@ -18,7 +18,7 @@ export const main = async (): Promise<string> => {
   }
 
   // parse commits
-  const parsedCommits = parseCommits(event.commits, projectKey)
+  const {parsedCommits} = parseCommits({ commits: event.commits, projectKey })
   if (!parsedCommits) {
     return Promise.resolve(
       "課題キーのついたコミットが1件も見つかりませんでした。"
