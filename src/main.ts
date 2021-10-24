@@ -12,7 +12,7 @@ export const main = async (): Promise<string> => {
 
   // fetch event
   core.startGroup(`コミット取得中`)
-  const { event } = fetchEvent(githubEventPath)
+  const { event } = fetchEvent({ path: githubEventPath })
   if (!event?.commits?.length) {
     return Promise.resolve("コミットが1件も見つかりませんでした。")
   }
