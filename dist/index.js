@@ -6742,7 +6742,7 @@ const main = async () => {
     core.endGroup();
     // post comments
     core.startGroup(`コメント送信中`);
-    await (0, postComments_1.postComments)(parsedCommits, apiHost, apiKey).then((data) => {
+    await (0, postComments_1.postComments)({ parsedCommits, apiHost, apiKey }).then((data) => {
         data.forEach(({ commits, issueKey, isFix, isClose }) => {
             core.startGroup(`${commits[0].issue_key}:`);
             commits.forEach(({ message }) => {
@@ -6876,10 +6876,10 @@ const commentTemplate = (0, lodash_template_1.default)("<%=commits[0].author.nam
  * @param apiKey Backlog API Key
  * @returns Patch comment request promises
  */
-const postComments = (parsedCommits, apiHost, apiKey) => {
+const postComments = ({ parsedCommits, ...configs }) => {
     const promiseArray = [];
-    for (const [key, value] of Object.entries(parsedCommits)) {
-        promiseArray.push(createPatchCommentRequest(value, key, apiHost, apiKey));
+    for (const [issueKey, commits] of Object.entries(parsedCommits)) {
+        promiseArray.push(createPatchCommentRequest({ commits, issueKey, ...configs }));
     }
     return Promise.all(promiseArray);
 };
@@ -6893,7 +6893,7 @@ exports.postComments = postComments;
  * @returns commits param (for use in console messages)
  * @see https://developer.nulab.com/docs/backlog/api/2/update-issue/
  */
-const createPatchCommentRequest = (commits, issueKey, apiHost, apiKey) => {
+const createPatchCommentRequest = ({ commits, issueKey, apiHost, apiKey, }) => {
     const endpoint = updateIssueApiUrlTemplate({
         apiHost: apiHost,
         apiKey: apiKey,

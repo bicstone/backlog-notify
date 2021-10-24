@@ -24,6 +24,12 @@ export type Response = {
   isClose: boolean
 }
 
+type PostCommentsProps = {
+  parsedCommits: ParsedCommits
+  apiHost: string
+  apiKey: string
+}
+
 /**
  * Post the comment to Backlog API
  * @param parsedCommits parsed Commits (create by parseCommits.ts)
@@ -32,18 +38,26 @@ export type Response = {
  * @returns Patch comment request promises
  */
 
-export const postComments = (
-  parsedCommits: ParsedCommits,
-  apiHost: string,
-  apiKey: string
-): Promise<Response[]> => {
+export const postComments = ({
+  parsedCommits,
+  ...configs
+}: PostCommentsProps): Promise<Response[]> => {
   const promiseArray: Promise<Response>[] = []
 
-  for (const [key, value] of Object.entries(parsedCommits)) {
-    promiseArray.push(createPatchCommentRequest(value, key, apiHost, apiKey))
+  for (const [issueKey, commits] of Object.entries(parsedCommits)) {
+    promiseArray.push(
+      createPatchCommentRequest({ commits, issueKey, ...configs })
+    )
   }
 
   return Promise.all(promiseArray)
+}
+
+type CreatePatchCommentRequestProps = {
+  commits: ParsedCommit[]
+  issueKey: string
+  apiHost: string
+  apiKey: string
 }
 
 /**
@@ -55,12 +69,12 @@ export const postComments = (
  * @returns commits param (for use in console messages)
  * @see https://developer.nulab.com/docs/backlog/api/2/update-issue/
  */
-const createPatchCommentRequest = (
-  commits: ParsedCommit[],
-  issueKey: string,
-  apiHost: string,
-  apiKey: string
-): Promise<Response> => {
+const createPatchCommentRequest = ({
+  commits,
+  issueKey,
+  apiHost,
+  apiKey,
+}: CreatePatchCommentRequestProps): Promise<Response> => {
   const endpoint = updateIssueApiUrlTemplate({
     apiHost: apiHost,
     apiKey: apiKey,

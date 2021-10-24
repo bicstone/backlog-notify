@@ -63,7 +63,7 @@ describe("postComments", () => {
 
   test("parseCommits post a comment to Backlog API", () => {
     const endpoint = `https://${apiHost}/api/v2/issues/${issue_key}?apiKey=${apiKey}`
-    const commits: ParsedCommits = baseCommits
+    const parsedCommits: ParsedCommits = baseCommits
     const body = {
       comment:
         `${baseCommit.author.name}さんがプッシュしました` +
@@ -75,15 +75,15 @@ describe("postComments", () => {
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
       response: axiosResponse,
-      commits: commits[issue_key],
+      commits: parsedCommits[issue_key],
       issueKey: issue_key,
       isFix: false,
       isClose: false,
     }
 
-    expect(postComments(commits, apiHost, apiKey)).resolves.toStrictEqual([
-      response,
-    ])
+    expect(
+      postComments({ parsedCommits, apiHost, apiKey })
+    ).resolves.toStrictEqual([response])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(1)
     expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
@@ -91,7 +91,7 @@ describe("postComments", () => {
 
   test("parseCommits post a comment and change status when change to fixed", () => {
     const endpoint = `https://${apiHost}/api/v2/issues/${issue_key}?apiKey=${apiKey}`
-    const commits: ParsedCommits = {
+    const parsedCommits: ParsedCommits = {
       [issue_key]: [
         {
           ...baseCommit,
@@ -113,15 +113,15 @@ describe("postComments", () => {
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
       response: axiosResponse,
-      commits: commits[issue_key],
+      commits: parsedCommits[issue_key],
       issueKey: issue_key,
       isFix: true,
       isClose: false,
     }
 
-    expect(postComments(commits, apiHost, apiKey)).resolves.toStrictEqual([
-      response,
-    ])
+    expect(
+      postComments({ parsedCommits, apiHost, apiKey })
+    ).resolves.toStrictEqual([response])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(1)
     expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
@@ -129,7 +129,7 @@ describe("postComments", () => {
 
   test("parseCommits post a comment and change status when change to close", () => {
     const endpoint = `https://${apiHost}/api/v2/issues/${issue_key}?apiKey=${apiKey}`
-    const commits: ParsedCommits = {
+    const parsedCommits: ParsedCommits = {
       [issue_key]: [
         {
           ...baseCommit,
@@ -151,22 +151,22 @@ describe("postComments", () => {
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
       response: axiosResponse,
-      commits: commits[issue_key],
+      commits: parsedCommits[issue_key],
       issueKey: issue_key,
       isFix: false,
       isClose: true,
     }
 
-    expect(postComments(commits, apiHost, apiKey)).resolves.toStrictEqual([
-      response,
-    ])
+    expect(
+      postComments({ parsedCommits, apiHost, apiKey })
+    ).resolves.toStrictEqual([response])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(1)
     expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
   })
 
   test("parseCommits post 2 comments to Backlog API when 2 issue_keys", () => {
-    const commits: ParsedCommits = {
+    const parsedCommits: ParsedCommits = {
       [`${projectKey}-1`]: [
         {
           ...baseCommit,
@@ -189,23 +189,22 @@ describe("postComments", () => {
     }
     const response1: Response = {
       response: axiosResponse,
-      commits: commits[`${projectKey}-1`],
+      commits: parsedCommits[`${projectKey}-1`],
       issueKey: `${projectKey}-1`,
       isFix: false,
       isClose: false,
     }
     const response2: Response = {
       response: axiosResponse,
-      commits: commits[`${projectKey}-2`],
+      commits: parsedCommits[`${projectKey}-2`],
       issueKey: `${projectKey}-2`,
       isFix: false,
       isClose: false,
     }
 
-    expect(postComments(commits, apiHost, apiKey)).resolves.toStrictEqual([
-      response1,
-      response2,
-    ])
+    expect(
+      postComments({ parsedCommits, apiHost, apiKey })
+    ).resolves.toStrictEqual([response1, response2])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(2)
   })

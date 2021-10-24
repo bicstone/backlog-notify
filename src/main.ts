@@ -28,7 +28,7 @@ export const main = async (): Promise<string> => {
 
   // post comments
   core.startGroup(`コメント送信中`)
-  await postComments(parsedCommits, apiHost, apiKey).then((data) => {
+  await postComments({ parsedCommits, apiHost, apiKey }).then((data) => {
     data.forEach(({ commits, issueKey, isFix, isClose }) => {
       core.startGroup(`${commits[0].issue_key}:`)
 
