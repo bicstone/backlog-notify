@@ -42,7 +42,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "mantaroh",
+      "name": "mantaroh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3241026?v=4",
+      "profile": "https://twitter.com/_mantaroh_",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
