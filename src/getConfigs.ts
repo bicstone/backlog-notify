@@ -1,8 +1,16 @@
+import * as core from "@actions/core"
+
 export type Configs = {
   projectKey: string
   apiHost: string
   apiKey: string
   githubEventPath: string
+  fixKeywords: string[]
+  closeKeywords: string[]
+  pushCommentTemplate: string
+  commitMessageRegTemplate: string
+  fixStatusId: string
+  closeStatusId: string
 }
 
 /**
@@ -17,6 +25,20 @@ export const getConfigs = (): Configs => {
     apiHost: getConfig("api_host", { required: true }),
     apiKey: getConfig("api_key", { required: true }),
     githubEventPath: getConfig("github_event_path", { required: true }),
+    fixKeywords: core.getMultilineInput("fix_keywords", {
+      trimWhitespace: true,
+    }) || ["#fix", "#fixes", "#fixed"],
+    closeKeywords: core.getMultilineInput("close_keywords", {
+      trimWhitespace: true,
+    }) || ["#close", "#closes", "#closed"],
+    pushCommentTemplate:
+      core.getInput("push_comment_template") ||
+      "<%= commits[0].author.name %>さんがプッシュしました\n<% commits.forEach(commit=>{ %>\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))<% }); %>",
+    commitMessageRegTemplate:
+      core.getInput("commit_message_reg_template") ||
+      '^ (<%= project_key %>\\-\\d +) \\s ? (.*?) ?\\s ? (<% fixKeywords.join("|") %>| <% closeKeywords.join("|") %>) ? $',
+    fixStatusId: core.getInput("fix_status_id") || "3",
+    closeStatusId: core.getInput("close_status_id") || "4",
   }
 }
 

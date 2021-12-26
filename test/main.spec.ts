@@ -46,10 +46,16 @@ describe("main", () => {
   beforeEach(() => {
     mocked(getConfigs.getConfigs).mockImplementation(() => {
       return {
-        projectKey: "",
-        apiHost: "",
-        apiKey: "",
-        githubEventPath: "",
+        projectKey: "projectKey",
+        apiHost: "apiHost",
+        apiKey: "apiKey",
+        githubEventPath: "githubEventPath",
+        fixKeywords: ["fixKeyword"],
+        closeKeywords: ["closeKeyword"],
+        pushCommentTemplate: "pushCommentTemplate",
+        commitMessageRegTemplate: "commitMessageRegTemplate",
+        fixStatusId: "fixStatusId",
+        closeStatusId: "closeStatusId",
       }
     })
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
