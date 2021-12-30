@@ -51,7 +51,7 @@ describe("getConfigs", () => {
   })
 
   test.each(Object.keys(requiredEnv))(
-    "getEnvs does not throw when %s is defined only by env",
+    "getConfigs does not throw when %s is defined only by env",
     (key) => {
       process.env[`INPUT_${key}`] = ""
       expect(getConfigs()).toStrictEqual(configs)
@@ -59,7 +59,7 @@ describe("getConfigs", () => {
   )
 
   test.each(Object.keys(requiredEnv))(
-    "getEnvs throw when %s is not defined",
+    "getConfigs throw when %s is not defined",
     (key) => {
       process.env[key] = ""
       process.env[`INPUT_${key}`] = ""
@@ -68,11 +68,38 @@ describe("getConfigs", () => {
   )
 
   test.each(Object.keys(optionalEnv))(
-    "getEnvs does not throw when %s is not defined",
+    "getConfigs does not throw when %s is not defined",
     (key) => {
       process.env[key] = ""
       process.env[`INPUT_${key}`] = ""
       expect(() => getConfigs()).not.toThrowError()
     }
   )
+
+  test("getConfigs return configs for current version when we set configs as of version 1.1.1", () => {
+    Object.keys(requiredEnv).forEach((key) => {
+      process.env[`INPUT_${key}`] = ``
+    })
+    Object.keys(optionalEnv).forEach((key) => {
+      process.env[`INPUT_${key}`] = ``
+    })
+    expect(getConfigs()).toStrictEqual({
+      ...configs,
+      // parseCommits.ts of version 1.1.1
+      fixKeywords: ["#fix", "#fixes", "#fixed"],
+      closeKeywords: ["#close", "#closes", "#closed"],
+      // postComments.ts of version 1.1.1
+      pushCommentTemplate:
+        "<%= commits[0].author.name %>さんがプッシュしました\n" +
+        "<% commits.forEach(commit => { %>" +
+        "\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))" +
+        "<% }); %>",
+      commitMessageRegTemplate:
+        "^(<%= project_key %>\\-\\d+)\\s?" +
+        "(.*?)?" +
+        `\\s?(<% fixKeywords.join("|") %>|<% closeKeywords.join("|") %>)?$`,
+      fixStatusId: "3",
+      closeStatusId: "4",
+    })
+  })
 })

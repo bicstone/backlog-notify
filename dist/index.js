@@ -6685,12 +6685,16 @@ const getConfigs = () => {
         apiHost: getConfig("api_host", { required: true }),
         apiKey: getConfig("api_key", { required: true }),
         githubEventPath: getConfig("github_event_path", { required: true }),
-        fixKeywords: core.getMultilineInput("fix_keywords", {
-            trimWhitespace: true,
-        }) || ["#fix", "#fixes", "#fixed"],
-        closeKeywords: core.getMultilineInput("close_keywords", {
-            trimWhitespace: true,
-        }) || ["#close", "#closes", "#closed"],
+        fixKeywords: core.getInput("fix_keywords")
+            ? core.getMultilineInput("fix_keywords", {
+                trimWhitespace: true,
+            })
+            : ["#fix", "#fixes", "#fixed"],
+        closeKeywords: core.getInput("close_keywords")
+            ? core.getMultilineInput("close_keywords", {
+                trimWhitespace: true,
+            })
+            : ["#close", "#closes", "#closed"],
         pushCommentTemplate: core.getInput("push_comment_template") ||
             "<%= commits[0].author.name %>さんがプッシュしました\n<% commits.forEach(commit=>{ %>\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))<% }); %>",
         commitMessageRegTemplate: core.getInput("commit_message_reg_template") ||
