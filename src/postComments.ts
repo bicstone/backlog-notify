@@ -12,7 +12,7 @@ const updateIssueApiUrlTemplate = template(
 const commentTemplate = template(
   "<%=commits[0].author.name%>さんがプッシュしました\n" +
     "<% commits.forEach(commit=>{%>" +
-    "\n+ <%=commit.message%> ([<%=commit.id_short%>](<%=commit.url%>))" +
+    "\n+ <%=commit.comment%> ([<%=commit.id%>](<%=commit.url%>))" +
     "<% }); %>"
 ) // 通知文章のテンプレート
 

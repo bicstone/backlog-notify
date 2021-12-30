@@ -5,14 +5,24 @@ import { Commit } from "@octokit/webhooks-types"
 type Commits = Commit[]
 
 const projectKey = "BUNBUN_NINE9"
+const fixKeyword = "#fix"
+const fixKeywords = [fixKeyword]
+const closeKeyword = "#close"
+const closeKeywords = [closeKeyword]
+const commitMessageRegTemplate =
+  "^" +
+  "(<%= projectKey %>\\-\\d+)\\s?" +
+  "(.*?)?\\s?" +
+  '(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?' +
+  "$"
 const issue_key = `${projectKey}-1`
-const message = "message"
+const comment = "Hare Hare Yukai!"
 
 const baseCommit: Commit = {
   id: "id3456789012345",
   tree_id: "tree_id89012345",
   distinct: true,
-  message: `${issue_key} ${message}`,
+  message: `${issue_key} ${comment}`,
   timestamp: "timestamp",
   url: "url",
   author: {
@@ -31,10 +41,7 @@ const baseCommit: Commit = {
 
 const baseParsedCommit: ParsedCommit = {
   ...baseCommit,
-  message,
-  original_message: baseCommit.message,
-  id_short: "id34567890",
-  tree_id_short: "tree_id890",
+  comment: comment,
   issue_key,
   keywords: "",
   is_fix: false,
@@ -46,7 +53,15 @@ describe("parseCommits", () => {
     const commits: Commits = [baseCommit]
     const parsedCommits: ParsedCommits = { [issue_key]: [baseParsedCommit] }
 
-    expect(parseCommits({ commits, projectKey })).toStrictEqual({
+    expect(
+      parseCommits({
+        commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+      })
+    ).toStrictEqual({
       parsedCommits,
     })
   })
@@ -57,7 +72,15 @@ describe("parseCommits", () => {
       [issue_key]: [baseParsedCommit, baseParsedCommit],
     }
 
-    expect(parseCommits({ commits, projectKey })).toStrictEqual({
+    expect(
+      parseCommits({
+        commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+      })
+    ).toStrictEqual({
       parsedCommits,
     })
   })
@@ -66,31 +89,39 @@ describe("parseCommits", () => {
     const commits: Commits = [
       {
         ...baseCommit,
-        message: `${projectKey}-1 ${message}`,
+        message: `${projectKey}-1 ${comment}`,
       },
       {
         ...baseCommit,
-        message: `${projectKey}-2 ${message}`,
+        message: `${projectKey}-2 ${comment}`,
       },
     ]
     const parsedCommits: ParsedCommits = {
       [`${projectKey}-1`]: [
         {
           ...baseParsedCommit,
+          message: `${projectKey}-1 ${comment}`,
           issue_key: `${projectKey}-1`,
-          original_message: commits[0].message,
         },
       ],
       [`${projectKey}-2`]: [
         {
           ...baseParsedCommit,
+          message: `${projectKey}-2 ${comment}`,
           issue_key: `${projectKey}-2`,
-          original_message: commits[1].message,
         },
       ],
     }
 
-    expect(parseCommits({ commits, projectKey })).toStrictEqual({
+    expect(
+      parseCommits({
+        commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+      })
+    ).toStrictEqual({
       parsedCommits,
     })
   })
@@ -99,21 +130,30 @@ describe("parseCommits", () => {
     const commits: Commits = [
       {
         ...baseCommit,
-        message: `${issue_key} ${message} #fix`,
+        message: `${issue_key} ${comment} ${fixKeyword}`,
       },
     ]
     const parsedCommits: ParsedCommits = {
       [issue_key]: [
         {
           ...baseParsedCommit,
-          original_message: commits[0].message,
-          keywords: "#fix",
+          message: commits[0].message,
+          comment: comment,
+          keywords: fixKeyword,
           is_fix: true,
         },
       ],
     }
 
-    expect(parseCommits({ commits, projectKey })).toStrictEqual({
+    expect(
+      parseCommits({
+        commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+      })
+    ).toStrictEqual({
       parsedCommits,
     })
   })
@@ -122,21 +162,63 @@ describe("parseCommits", () => {
     const commits: Commits = [
       {
         ...baseCommit,
-        message: `${issue_key} ${message} #close`,
+        message: `${issue_key} ${comment} ${closeKeyword}`,
       },
     ]
     const parsedCommits: ParsedCommits = {
       [issue_key]: [
         {
           ...baseParsedCommit,
-          original_message: commits[0].message,
-          keywords: "#close",
+          message: commits[0].message,
+          comment: comment,
+          keywords: closeKeyword,
           is_close: true,
         },
       ],
     }
 
-    expect(parseCommits({ commits, projectKey })).toStrictEqual({
+    expect(
+      parseCommits({
+        commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+      })
+    ).toStrictEqual({
+      parsedCommits,
+    })
+  })
+
+  test("parseCommits return a parsed commit with fix_keyword and close_keyword", () => {
+    const commits: Commits = [
+      {
+        ...baseCommit,
+        message: `${issue_key} ${comment} ${fixKeyword} ${closeKeyword}`,
+      },
+    ]
+    const parsedCommits: ParsedCommits = {
+      [issue_key]: [
+        {
+          ...baseParsedCommit,
+          message: commits[0].message,
+          comment: `${comment} ${fixKeyword}`,
+          keywords: closeKeyword,
+          is_fix: false,
+          is_close: true,
+        },
+      ],
+    }
+
+    expect(
+      parseCommits({
+        commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+      })
+    ).toStrictEqual({
       parsedCommits,
     })
   })
@@ -152,20 +234,36 @@ describe("parseCommits", () => {
       [issue_key]: [
         {
           ...baseParsedCommit,
-          original_message: commits[0].message,
-          message: "",
+          message: commits[0].message,
+          comment: "",
         },
       ],
     }
 
-    expect(parseCommits({ commits, projectKey })).toStrictEqual({
+    expect(
+      parseCommits({
+        commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+      })
+    ).toStrictEqual({
       parsedCommits,
     })
   })
 
   test("parseCommits return null when no commits", () => {
     const commits: Commits = []
-    expect(parseCommits({ commits, projectKey })).toStrictEqual({
+    expect(
+      parseCommits({
+        commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+      })
+    ).toStrictEqual({
       parsedCommits: null,
     })
   })
@@ -174,10 +272,18 @@ describe("parseCommits", () => {
     const commits: Commits = [
       {
         ...baseCommit,
-        message: "init commit",
+        message: "BAMBOO DISCO",
       },
     ]
-    expect(parseCommits({ commits, projectKey })).toStrictEqual({
+    expect(
+      parseCommits({
+        commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+      })
+    ).toStrictEqual({
       parsedCommits: null,
     })
   })

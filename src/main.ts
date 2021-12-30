@@ -7,7 +7,18 @@ import { postComments } from "./postComments"
 const runAction = async (): Promise<string> => {
   // init
   core.startGroup(`初期化中`)
-  const { projectKey, apiHost, apiKey, githubEventPath } = getConfigs()
+  const {
+    projectKey,
+    apiHost,
+    apiKey,
+    githubEventPath,
+    fixKeywords,
+    closeKeywords,
+    // pushCommentTemplate,
+    commitMessageRegTemplate,
+    // fixStatusId,
+    // closeStatusId,
+  } = getConfigs()
   core.endGroup()
 
   // fetch event
@@ -18,7 +29,13 @@ const runAction = async (): Promise<string> => {
   }
 
   // parse commits
-  const { parsedCommits } = parseCommits({ commits: event.commits, projectKey })
+  const { parsedCommits } = parseCommits({
+    commits: event.commits,
+    projectKey,
+    fixKeywords,
+    closeKeywords,
+    commitMessageRegTemplate,
+  })
   if (!parsedCommits) {
     return "課題キーのついたコミットが1件も見つかりませんでした。"
   }

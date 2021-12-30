@@ -12,7 +12,7 @@ const apiKey = "GO1GO1maniac"
 
 const projectKey = "BUNBUN_NINE9"
 const issue_key = `${projectKey}-1`
-const message = "message"
+const comment = "＼(ﾟヮﾟ)＞＼(ﾟヮﾟ)／＼(ﾟヮﾟ)／＜(ﾟヮ^)"
 
 const baseCommit = {
   id: "id3456789012345",
@@ -32,11 +32,8 @@ const baseCommit = {
   added: ["added"],
   removed: ["removed"],
   modified: ["modified"],
-
-  message,
-  original_message: `${issue_key} ${message}`,
-  id_short: "id34567890",
-  tree_id_short: "tree_id890",
+  message: `${issue_key} ${comment}`,
+  comment,
   issue_key,
   keywords: "",
   is_fix: false,
@@ -69,8 +66,8 @@ describe("postComments", () => {
         `${baseCommit.author.name}さんがプッシュしました` +
         "\n" +
         "\n" +
-        `+ ${baseCommit.message} ` +
-        `([${baseCommit.id_short}](${baseCommit.url}))`,
+        `+ ${baseCommit.comment} ` +
+        `([${baseCommit.id}](${baseCommit.url}))`,
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
@@ -95,7 +92,7 @@ describe("postComments", () => {
       [issue_key]: [
         {
           ...baseCommit,
-          original_message: `${issue_key} ${message} #fixed`,
+          message: `${issue_key} ${comment} #fixed`,
           keywords: "#fixed",
           is_fix: true,
         },
@@ -106,8 +103,8 @@ describe("postComments", () => {
         `${baseCommit.author.name}さんがプッシュしました` +
         "\n" +
         "\n" +
-        `+ ${baseCommit.message} ` +
-        `([${baseCommit.id_short}](${baseCommit.url}))`,
+        `+ ${baseCommit.comment} ` +
+        `([${baseCommit.id}](${baseCommit.url}))`,
       statusId: "3",
     }
     const params = new url.URLSearchParams(body).toString()
@@ -133,7 +130,7 @@ describe("postComments", () => {
       [issue_key]: [
         {
           ...baseCommit,
-          original_message: `${issue_key} ${message} #closed`,
+          message: `${issue_key} ${comment} #closed`,
           keywords: "#closed",
           is_close: true,
         },
@@ -144,8 +141,8 @@ describe("postComments", () => {
         `${baseCommit.author.name}さんがプッシュしました` +
         "\n" +
         "\n" +
-        `+ ${baseCommit.message} ` +
-        `([${baseCommit.id_short}](${baseCommit.url}))`,
+        `+ ${baseCommit.comment} ` +
+        `([${baseCommit.id}](${baseCommit.url}))`,
       statusId: "4",
     }
     const params = new url.URLSearchParams(body).toString()
@@ -171,19 +168,19 @@ describe("postComments", () => {
         {
           ...baseCommit,
           issue_key: `${projectKey}-1`,
-          original_message: `${projectKey}-1 ${message}`,
+          message: `${projectKey}-1 ${comment}`,
         },
       ],
       [`${projectKey}-2`]: [
         {
           ...baseCommit,
           issue_key: `${projectKey}-2`,
-          original_message: `${projectKey}-2 ${message}`,
+          message: `${projectKey}-2 ${comment}`,
         },
         {
           ...baseCommit,
           issue_key: `${projectKey}-2`,
-          original_message: `${projectKey}-2 ${message}`,
+          message: `${projectKey}-2 ${comment}`,
         },
       ],
     }

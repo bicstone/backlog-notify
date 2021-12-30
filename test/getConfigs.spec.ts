@@ -95,9 +95,9 @@ describe("getConfigs", () => {
         "\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))" +
         "<% }); %>",
       commitMessageRegTemplate:
-        "^(<%= project_key %>\\-\\d+)\\s?" +
+        "^(<%= projectKey %>\\-\\d+)\\s?" +
         "(.*?)?" +
-        `\\s?(<% fixKeywords.join("|") %>|<% closeKeywords.join("|") %>)?$`,
+        '\\s?(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?$',
       fixStatusId: "3",
       closeStatusId: "4",
     })

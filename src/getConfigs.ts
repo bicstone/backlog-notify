@@ -43,9 +43,9 @@ export const getConfigs = (): Configs => {
         "<% }); %>",
     commitMessageRegTemplate:
       core.getInput("commit_message_reg_template") ||
-      "^(<%= project_key %>\\-\\d+)\\s?" +
+      "^(<%= projectKey %>\\-\\d+)\\s?" +
         "(.*?)?" +
-        `\\s?(<% fixKeywords.join("|") %>|<% closeKeywords.join("|") %>)?$`,
+        '\\s?(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?$',
     fixStatusId: core.getInput("fix_status_id") || "3",
     closeStatusId: core.getInput("close_status_id") || "4",
   }

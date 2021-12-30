@@ -40,7 +40,7 @@ inputs:
   commit_message_reg_template:
     description: The template for regular expressions to parse commit  messages
     required: false
-    default: ^(<%= project_key %>\\-\\d+)\\s?(.*?)?\\s?(<% fixKeywords.join("|") %>|<% closeKeywords.join("|") %>)?$
+    default: ^(<%= project_key %>\\-\\d+)\\s?(.*?)?\\s?(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?$
   fix_status_id:
     description: Status ID to mark as fixed
     required: false

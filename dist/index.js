@@ -6696,9 +6696,14 @@ const getConfigs = () => {
             })
             : ["#close", "#closes", "#closed"],
         pushCommentTemplate: core.getInput("push_comment_template") ||
-            "<%= commits[0].author.name %>さんがプッシュしました\n<% commits.forEach(commit=>{ %>\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))<% }); %>",
+            "<%= commits[0].author.name %>さんがプッシュしました\n" +
+                "<% commits.forEach(commit => { %>" +
+                "\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))" +
+                "<% }); %>",
         commitMessageRegTemplate: core.getInput("commit_message_reg_template") ||
-            '^ (<%= project_key %>\\-\\d +) \\s ? (.*?) ?\\s ? (<% fixKeywords.join("|") %>| <% closeKeywords.join("|") %>) ? $',
+            "^(<%= projectKey %>\\-\\d+)\\s?" +
+                "(.*?)?" +
+                '\\s?(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?$',
         fixStatusId: core.getInput("fix_status_id") || "3",
         closeStatusId: core.getInput("close_status_id") || "4",
     };
@@ -6762,7 +6767,12 @@ const runAction = async () => {
     var _a;
     // init
     core.startGroup(`初期化中`);
-    const { projectKey, apiHost, apiKey, githubEventPath } = (0, getConfigs_1.getConfigs)();
+    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, 
+    // pushCommentTemplate,
+    commitMessageRegTemplate,
+    // fixStatusId,
+    // closeStatusId,
+     } = (0, getConfigs_1.getConfigs)();
     core.endGroup();
     // fetch event
     core.startGroup(`コミット取得中`);
@@ -6771,7 +6781,13 @@ const runAction = async () => {
         return "コミットが1件も見つかりませんでした。";
     }
     // parse commits
-    const { parsedCommits } = (0, parseCommits_1.parseCommits)({ commits: event.commits, projectKey });
+    const { parsedCommits } = (0, parseCommits_1.parseCommits)({
+        commits: event.commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+    });
     if (!parsedCommits) {
         return "課題キーのついたコミットが1件も見つかりませんでした。";
     }
@@ -6827,22 +6843,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.parseCommits = void 0;
 const lodash_template_1 = __importDefault(__nccwpck_require__(417));
-// 2.0でinput受け取りにする
-const fixKeywords = ["#fix", "#fixes", "#fixed"]; // 処理済みにするキーワード
-const closeKeywords = ["#close", "#closes", "#closed"]; // 完了にするキーワード
-const commitKeywordRegexTemplate = (0, lodash_template_1.default)("^(<%=project_key%>\\-\\d+)\\s?" + // 課題キー
-    "(.*?)?" + // メッセージ
-    `\\s?(${fixKeywords.join("|")}|${closeKeywords.join("|")})?$`); // コミットメッセージを解析する正規表現テンプレート
 /**
  * Parse commits from the event commits
  * @param commits commits from the event commits
  * @param projectKey Backlog project key
+ * @param fixKeywords Keywords to change the status of the issue to fixed
+ * @param closeKeywords Keywords to change the status of the issue to closed
+ * @param commitMessageRegTemplate The template for regular expressions to parse commit messages
  * @returns ParsedCommits | null
  */
-const parseCommits = ({ commits, ...configs }) => {
+const parseCommits = ({ commits, projectKey, fixKeywords, closeKeywords, commitMessageRegTemplate, }) => {
     const parsedCommits = {};
+    const commitMessageReg = RegExp((0, lodash_template_1.default)(commitMessageRegTemplate)({
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+    }), "s");
     commits.forEach((commit) => {
-        const { parsedCommit } = parseCommit({ commit, ...configs });
+        const { parsedCommit } = parseCommit({
+            commit,
+            fixKeywords,
+            closeKeywords,
+            commitMessageReg,
+        });
         if (!(parsedCommit === null || parsedCommit === void 0 ? void 0 : parsedCommit.issue_key))
             return;
         if (parsedCommits[parsedCommit.issue_key]) {
@@ -6859,27 +6882,19 @@ const parseCommits = ({ commits, ...configs }) => {
     return { parsedCommits };
 };
 exports.parseCommits = parseCommits;
-/**
- * Parse commit from the event commit
- * @param commit commit from the event commit
- * @param projectKey Backlog project key
- * @returns ParsedCommit
- */
-const parseCommit = ({ commit, projectKey, }) => {
-    const match = commit.message.match(RegExp(commitKeywordRegexTemplate({ project_key: projectKey }), "s"));
+const parseCommit = ({ commit, fixKeywords, closeKeywords, commitMessageReg, }) => {
+    const match = commit.message.match(commitMessageReg);
+    console.log(commitMessageReg);
     if (!match) {
         return { parsedCommit: null };
     }
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const [, issue_key = null, message = "", keywords = ""] = match;
+    const [, issue_key = null, comment = "", keywords = ""] = match;
     return {
         parsedCommit: {
             ...commit,
-            message,
-            original_message: commit.message,
-            id_short: commit.id.slice(0, 10),
-            tree_id_short: commit.tree_id.slice(0, 10),
             issue_key,
+            comment,
             keywords,
             is_fix: fixKeywords.includes(keywords),
             is_close: closeKeywords.includes(keywords),
@@ -6909,7 +6924,7 @@ const closeId = "4"; // 完了の状態 ID
 const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"); // 「課題情報の更新」APIのURLテンプレート
 const commentTemplate = (0, lodash_template_1.default)("<%=commits[0].author.name%>さんがプッシュしました\n" +
     "<% commits.forEach(commit=>{%>" +
-    "\n+ <%=commit.message%> ([<%=commit.id_short%>](<%=commit.url%>))" +
+    "\n+ <%=commit.comment%> ([<%=commit.id%>](<%=commit.url%>))" +
     "<% }); %>"); // 通知文章のテンプレート
 /**
  * Post the comment to Backlog API
