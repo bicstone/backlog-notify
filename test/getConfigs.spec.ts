@@ -14,9 +14,8 @@ const optionalEnv = {
   // whitespace added before and after the value
   FIX_STATUS_ID: "  fixStatusId  ",
   CLOSE_STATUS_ID: "closeStatusId",
-  // whitespace added before and after each value.
-  // FIXME
-  FIX_KEYWORDS: "fixKeyword1\nfixKeyword2",
+  // whitespace added before and after the value
+  FIX_KEYWORDS: "  fixKeyword1  \n  fixKeyword2  ",
   CLOSE_KEYWORDS: "closeKeyword1\ncloseKeyword2",
   PUSH_COMMENT_TEMPLATE: "pushCommentTemplate",
   COMMIT_MESSAGE_REG_TEMPLATE: "commitMessageRegTemplate",

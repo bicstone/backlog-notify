@@ -65,8 +65,8 @@ describe("main", () => {
     mocked(parseCommits.parseCommits).mockImplementation(() => ({
       parsedCommits: { key: [] },
     }))
-    mocked(core.info).mockImplementation((message) => message)
-    mocked(core.setFailed).mockImplementation((message) => message)
+    mocked(core.info).mockImplementation((m) => m)
+    mocked(core.setFailed).mockImplementation((m) => m)
   })
 
   test("main resolve with the message", async () => {
