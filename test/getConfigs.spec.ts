@@ -89,14 +89,18 @@ describe("getConfigs", () => {
       closeKeywords: ["#close", "#closes", "#closed"],
       // postComments.ts of version 1.1.1
       pushCommentTemplate:
-        "<%= commits[0].author.name %>さんがプッシュしました\n" +
-        "<% commits.forEach(commit => { %>" +
-        "\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))" +
+        "<%= commits[0].author.name %>さんがプッシュしました" +
+        "\n" +
+        "<% commits.forEach(commit=>{ %>" +
+        "\n" +
+        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
         "<% }); %>",
       commitMessageRegTemplate:
-        "^(<%= projectKey %>\\-\\d+)\\s?" +
-        "(.*?)?" +
-        "\\s?(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?$",
+        "^" +
+        "(<%= projectKey %>\\-\\d+)\\s?" +
+        "(.*?)?\\s?" +
+        "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+        "$",
       fixStatusId: "3",
       closeStatusId: "4",
     })

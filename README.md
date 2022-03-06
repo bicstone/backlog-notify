@@ -78,7 +78,7 @@ jobs:
           push_comment_template: |-
             <%= commits[0].author.name %>さんがプッシュしました
             <% commits.forEach(commit=>{ %>
-            + <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))<% }); %>
+            + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
           commit_message_reg_template: "\
             ^\
             (<%= projectKey %>\\-\\d+)\\s?\

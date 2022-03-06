@@ -13,7 +13,7 @@ const pushCommentTemplate =
   "\n" +
   "<% commits.forEach(commit=>{ %>" +
   "\n" +
-  "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))" +
+  "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
   "<% }); %>"
 const apiHost = "level5-judgelight-.backlog.com"
 const apiKey = "GO1GO1maniac"
@@ -76,7 +76,7 @@ describe("postComments", () => {
         "\n" +
         "\n" +
         `+ ${baseCommit.comment} ` +
-        `([${baseCommit.id.slice(0, 10).slice(0, 10)}](${baseCommit.url}))`,
+        `([${baseCommit.id.slice(0, 7).slice(0, 7)}](${baseCommit.url}))`,
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
@@ -120,7 +120,7 @@ describe("postComments", () => {
         "\n" +
         "\n" +
         `+ ${baseCommit.comment} ` +
-        `([${baseCommit.id.slice(0, 10)}](${baseCommit.url}))`,
+        `([${baseCommit.id.slice(0, 7)}](${baseCommit.url}))`,
       statusId: fixStatusId,
     }
     const params = new url.URLSearchParams(body).toString()
@@ -165,7 +165,7 @@ describe("postComments", () => {
         "\n" +
         "\n" +
         `+ ${baseCommit.comment} ` +
-        `([${baseCommit.id.slice(0, 10)}](${baseCommit.url}))`,
+        `([${baseCommit.id.slice(0, 7)}](${baseCommit.url}))`,
       statusId: closeStatusId,
     }
     const params = new url.URLSearchParams(body).toString()

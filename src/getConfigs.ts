@@ -42,7 +42,7 @@ export const getConfigs = (): Configs => {
         "\n" +
         "<% commits.forEach(commit=>{ %>" +
         "\n" +
-        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))" +
+        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
         "<% }); %>",
     commitMessageRegTemplate:
       core.getInput("commit_message_reg_template") ||
