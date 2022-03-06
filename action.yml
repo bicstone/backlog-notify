@@ -20,14 +20,14 @@ inputs:
   fix_keywords:
     description: Keywords to change the status of the issue to fixed
     required: false
-    default: |-
+    default: |
       #fix
       #fixes
       #fixed
   close_keywords:
     description: Keywords to change the status of the issue to closed
     required: false
-    default: |-
+    default: |
       #close
       #closes
       #closed
@@ -36,11 +36,18 @@ inputs:
     required: false
     default: |-
       <%= commits[0].author.name %>さんがプッシュしました
-      <% commits.forEach(commit=>{ %>\n+ <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))<% }); %>
+      <% commits.forEach(commit=>{ %>
+      + <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))<% }); %>
   commit_message_reg_template:
     description: The template for regular expressions to parse commit messages
     required: false
-    default: ^(<%= project_key %>\\-\\d+)\\s?(.*?)?\\s?(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?$
+    default: "\
+      ^\
+      (<%= projectKey %>\\-\\d+)\\s?\
+      (.*?)?\\s?\
+      (<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?\
+      $\
+      "
   fix_status_id:
     description: Status ID to mark as fixed
     required: false

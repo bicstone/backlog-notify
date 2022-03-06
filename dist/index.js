@@ -7950,14 +7950,18 @@ const getConfigs = () => {
             })
             : ["#close", "#closes", "#closed"],
         pushCommentTemplate: core.getInput("push_comment_template") ||
-            "<%= commits[0].author.name %>さんがプッシュしました\n" +
-                "<% commits.forEach(commit => { %>" +
-                "\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))" +
+            "<%= commits[0].author.name %>さんがプッシュしました" +
+                "\n" +
+                "<% commits.forEach(commit=>{ %>" +
+                "\n" +
+                "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))" +
                 "<% }); %>",
         commitMessageRegTemplate: core.getInput("commit_message_reg_template") ||
-            "^(<%= projectKey %>\\-\\d+)\\s?" +
-                "(.*?)?" +
-                '\\s?(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?$',
+            "^" +
+                "(<%= projectKey %>\\-\\d+)\\s?" +
+                "(.*?)?\\s?" +
+                "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+                "$",
         fixStatusId: core.getInput("fix_status_id") || "3",
         closeStatusId: core.getInput("close_status_id") || "4",
     };

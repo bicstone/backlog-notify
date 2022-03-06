@@ -67,18 +67,25 @@ jobs:
           api_key: ${{ secrets.BACKLOG_API_KEY }}
 
           # The following are optional settings
-          fix_keywords: |-
+          fix_keywords: |
             #fix
             #fixes
             #fixed
-          close_keywords: |-
+          close_keywords: |
             #close
             #closes
             #closed
           push_comment_template: |-
             <%= commits[0].author.name %>さんがプッシュしました
-            <% commits.forEach(commit=>{ %>\n+ <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))<% }); %>
-          commit_message_reg_template: ^(<%= project_key %>\\-\\d+)\\s?(.*?)?\\s?(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?$
+            <% commits.forEach(commit=>{ %>
+            + <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))<% }); %>
+          commit_message_reg_template: "\
+            ^\
+            (<%= projectKey %>\\-\\d+)\\s?\
+            (.*?)?\\s?\
+            (<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?\
+            $\
+            "
           fix_status_id: 3
           close_status_id: 4
 ```

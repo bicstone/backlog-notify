@@ -12,7 +12,7 @@ const commitMessageRegTemplate =
   "^" +
   "(<%= projectKey %>\\-\\d+)\\s?" +
   "(.*?)?\\s?" +
-  '(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?' +
+  "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
   "$"
 const issueKey = `${projectKey}-1`
 const comment = "Hare Hare Yukai!"
