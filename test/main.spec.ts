@@ -1,10 +1,11 @@
-import { mocked } from "ts-jest/utils"
 import * as core from "@actions/core"
+import { mocked } from "jest-mock"
+
 import push from "./github/events/push.json"
 import pushWithoutCommits from "./github/events/pushWithoutCommits.json"
 
-import type { PushEvent } from "@octokit/webhooks-types"
 import type { AxiosResponse } from "axios"
+import type { PushEvent } from "@octokit/webhooks-types"
 
 import { main } from "../src/main"
 import * as getConfigs from "../src/getConfigs"

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import url from "url"
 import axios, { AxiosResponse } from "axios"
-import { mocked } from "ts-jest/utils"
+import { mocked } from "jest-mock"
 import { ParsedCommits } from "../src/parseCommits"
 import { postComments, Response } from "../src/postComments"
 
