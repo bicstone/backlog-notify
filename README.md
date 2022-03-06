@@ -59,7 +59,7 @@ jobs:
 
     steps:
       - name: Backlog Notify
-        uses: bicstone/backlog-notify@master
+        uses: bicstone/backlog-notify@v2
         env:
           PROJECT_KEY: PROJECT_KEY
           API_HOST: example.backlog.jp
