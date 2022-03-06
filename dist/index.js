@@ -7927,6 +7927,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getConfigs = void 0;
 const core = __importStar(__nccwpck_require__(2186));
+const getMultilineInput_1 = __nccwpck_require__(7243);
 /**
  * Parses and validations the action configuration
  * @returns Parsed the action configuration
@@ -7939,12 +7940,12 @@ const getConfigs = () => {
         apiKey: getConfig("api_key", { required: true }),
         githubEventPath: getConfig("github_event_path", { required: true }),
         fixKeywords: core.getInput("fix_keywords")
-            ? core.getMultilineInput("fix_keywords", {
+            ? (0, getMultilineInput_1.getMultilineInput)("fix_keywords", {
                 trimWhitespace: true,
             })
             : ["#fix", "#fixes", "#fixed"],
         closeKeywords: core.getInput("close_keywords")
-            ? core.getMultilineInput("close_keywords", {
+            ? (0, getMultilineInput_1.getMultilineInput)("close_keywords", {
                 trimWhitespace: true,
             })
             : ["#close", "#closes", "#closed"],
@@ -7981,6 +7982,38 @@ const getConfig = (name, options = {}) => {
     }
     return val.trim();
 };
+
+
+/***/ }),
+
+/***/ 7243:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getMultilineInput = void 0;
+const core_1 = __nccwpck_require__(2186);
+/**
+ * Gets the values of an multiline input.  Each value is also trimmed.
+ * copy from https://github.com/actions/toolkit/blob/main/packages/core/src/core.ts
+ * MIT License
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string[]
+ *
+ */
+function getMultilineInput(name, options) {
+    const inputs = (0, core_1.getInput)(name, options)
+        .split("\n")
+        .filter((x) => x !== "");
+    if (options && options.trimWhitespace === false) {
+        return inputs;
+    }
+    return inputs.map((input) => input.trim());
+}
+exports.getMultilineInput = getMultilineInput;
 
 
 /***/ }),

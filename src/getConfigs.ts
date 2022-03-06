@@ -1,4 +1,5 @@
 import * as core from "@actions/core"
+import { getMultilineInput } from "./getMultilineInput"
 
 export type Configs = {
   projectKey: string
@@ -26,12 +27,12 @@ export const getConfigs = (): Configs => {
     apiKey: getConfig("api_key", { required: true }),
     githubEventPath: getConfig("github_event_path", { required: true }),
     fixKeywords: core.getInput("fix_keywords")
-      ? core.getMultilineInput("fix_keywords", {
+      ? getMultilineInput("fix_keywords", {
           trimWhitespace: true,
         })
       : ["#fix", "#fixes", "#fixed"],
     closeKeywords: core.getInput("close_keywords")
-      ? core.getMultilineInput("close_keywords", {
+      ? getMultilineInput("close_keywords", {
           trimWhitespace: true,
         })
       : ["#close", "#closes", "#closed"],
