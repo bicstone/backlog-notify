@@ -92,17 +92,17 @@ jobs:
 
 ## 設定一覧
 
-| 設定名                      | 説明                                 |
-| --------------------------- | ------------------------------------ |
-| project_key                 | Backlog プロジェクトキー (必須)      |
-| api_host                    | Backlog のホスト (必須)              |
-| api_key                     | Backlog API キー (必須)              |
-| fix_keywords                | 処理済みにするキーワード             |
-| close_keywords              | 完了にするキーワード                 |
-| push_comment_template       | プッシュ時のコメント雛形             |
-| commit_message_reg_template | コミットメッセージ解析の正規表現雛形 |
-| fix_status_id               | 処理済みの 状態 ID                   |
-| close_status_id             | 完了の 状態 ID                       |
+| 設定名                        | 説明                                 |
+| ----------------------------- | ------------------------------------ |
+| `project_key`                 | Backlog プロジェクトキー (必須)      |
+| `api_host`                    | Backlog のホスト (必須)              |
+| `api_key`                     | Backlog API キー (必須)              |
+| `fix_keywords`                | 処理済みにするキーワード             |
+| `close_keywords`              | 完了にするキーワード                 |
+| `push_comment_template`       | プッシュ時のコメント雛形             |
+| `commit_message_reg_template` | コミットメッセージ解析の正規表現雛形 |
+| `fix_status_id`               | 処理済みの 状態 ID                   |
+| `close_status_id`             | 完了の 状態 ID                       |
 
 ### push_comment_template
 
