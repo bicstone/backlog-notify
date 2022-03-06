@@ -40,7 +40,7 @@ export const getConfigs = (): Configs => {
       core.getInput("push_comment_template") ||
       "<%= commits[0].author.name %>さんがプッシュしました\n" +
         "<% commits.forEach(commit => { %>" +
-        "\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))" +
+        "\n+ <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))" +
         "<% }); %>",
     commitMessageRegTemplate:
       core.getInput("commit_message_reg_template") ||

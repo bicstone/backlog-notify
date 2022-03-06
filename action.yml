@@ -36,7 +36,7 @@ inputs:
     required: false
     default: |-
       <%= commits[0].author.name %>さんがプッシュしました
-      <% commits.forEach(commit=>{ %>\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))<% }); %>
+      <% commits.forEach(commit=>{ %>\n+ <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))<% }); %>
   commit_message_reg_template:
     description: The template for regular expressions to parse commit messages
     required: false

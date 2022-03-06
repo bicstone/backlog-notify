@@ -77,7 +77,7 @@ jobs:
             #closed
           push_comment_template: |-
             <%= commits[0].author.name %>さんがプッシュしました
-            <% commits.forEach(commit=>{ %>\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))<% }); %>
+            <% commits.forEach(commit=>{ %>\n+ <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))<% }); %>
           commit_message_reg_template: ^(<%= project_key %>\\-\\d+)\\s?(.*?)?\\s?(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?$
           fix_status_id: 3
           close_status_id: 4
