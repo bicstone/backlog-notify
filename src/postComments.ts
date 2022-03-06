@@ -82,8 +82,8 @@ const createPatchCommentRequest = ({
   })
 
   const comment = commentTemplate({ commits })
-  const isFix = commits.map((commit) => commit.is_fix).includes(true)
-  const isClose = commits.map((commit) => commit.is_close).includes(true)
+  const isFix = commits.map((commit) => commit.isFix).includes(true)
+  const isClose = commits.map((commit) => commit.isClose).includes(true)
   const status = (() => {
     if (isFix) return { statusId: fixId }
     if (isClose) return { statusId: closeId }

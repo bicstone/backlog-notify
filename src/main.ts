@@ -45,7 +45,7 @@ const runAction = async (): Promise<string> => {
   core.startGroup(`コメント送信中`)
   await postComments({ parsedCommits, apiHost, apiKey }).then((data) => {
     data.forEach(({ commits, issueKey, isFix, isClose }) => {
-      core.startGroup(`${commits[0].issue_key}:`)
+      core.startGroup(`${commits[0].issueKey}:`)
 
       commits.forEach(({ message }) => {
         core.info(message)

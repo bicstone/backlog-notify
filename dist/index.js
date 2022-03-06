@@ -8085,7 +8085,7 @@ const runAction = async () => {
     core.startGroup(`コメント送信中`);
     await (0, postComments_1.postComments)({ parsedCommits, apiHost, apiKey }).then((data) => {
         data.forEach(({ commits, issueKey, isFix, isClose }) => {
-            core.startGroup(`${commits[0].issue_key}:`);
+            core.startGroup(`${commits[0].issueKey}:`);
             commits.forEach(({ message }) => {
                 core.info(message);
             });
@@ -8155,13 +8155,13 @@ const parseCommits = ({ commits, projectKey, fixKeywords, closeKeywords, commitM
             closeKeywords,
             commitMessageReg,
         });
-        if (!parsedCommit?.issue_key)
+        if (!parsedCommit?.issueKey)
             return;
-        if (parsedCommits[parsedCommit.issue_key]) {
-            parsedCommits[parsedCommit.issue_key].push(parsedCommit);
+        if (parsedCommits[parsedCommit.issueKey]) {
+            parsedCommits[parsedCommit.issueKey].push(parsedCommit);
         }
         else {
-            parsedCommits[parsedCommit.issue_key] = [parsedCommit];
+            parsedCommits[parsedCommit.issueKey] = [parsedCommit];
         }
     });
     const commitCount = Object.keys(parsedCommits).length;
@@ -8176,16 +8176,15 @@ const parseCommit = ({ commit, fixKeywords, closeKeywords, commitMessageReg, }) 
     if (!match) {
         return { parsedCommit: null };
     }
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const [, issue_key = null, comment = "", keywords = ""] = match;
+    const [, issueKey = null, comment = "", keywords = ""] = match;
     return {
         parsedCommit: {
             ...commit,
-            issue_key,
+            issueKey,
             comment,
             keywords,
-            is_fix: fixKeywords.includes(keywords),
-            is_close: closeKeywords.includes(keywords),
+            isFix: fixKeywords.includes(keywords),
+            isClose: closeKeywords.includes(keywords),
         },
     };
 };
@@ -8245,8 +8244,8 @@ const createPatchCommentRequest = ({ commits, issueKey, apiHost, apiKey, }) => {
         issueKey,
     });
     const comment = commentTemplate({ commits });
-    const isFix = commits.map((commit) => commit.is_fix).includes(true);
-    const isClose = commits.map((commit) => commit.is_close).includes(true);
+    const isFix = commits.map((commit) => commit.isFix).includes(true);
+    const isClose = commits.map((commit) => commit.isClose).includes(true);
     const status = (() => {
         if (isFix)
             return { statusId: fixId };

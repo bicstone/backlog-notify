@@ -11,7 +11,7 @@ const apiHost = "level5-judgelight-.backlog.com"
 const apiKey = "GO1GO1maniac"
 
 const projectKey = "BUNBUN_NINE9"
-const issue_key = `${projectKey}-1`
+const issueKey = `${projectKey}-1`
 const comment = "＼(ﾟヮﾟ)＞＼(ﾟヮﾟ)／＼(ﾟヮﾟ)／＜(ﾟヮ^)"
 
 const baseCommit = {
@@ -32,16 +32,16 @@ const baseCommit = {
   added: ["added"],
   removed: ["removed"],
   modified: ["modified"],
-  message: `${issue_key} ${comment}`,
+  message: `${issueKey} ${comment}`,
   comment,
-  issue_key,
+  issueKey,
   keywords: "",
-  is_fix: false,
-  is_close: false,
+  isFix: false,
+  isClose: false,
 }
 
 const baseCommits: ParsedCommits = {
-  [issue_key]: [baseCommit],
+  [issueKey]: [baseCommit],
 }
 
 const axiosResponse: AxiosResponse = {
@@ -59,7 +59,7 @@ describe("postComments", () => {
   })
 
   test("parseCommits post a comment to Backlog API", () => {
-    const endpoint = `https://${apiHost}/api/v2/issues/${issue_key}?apiKey=${apiKey}`
+    const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
     const parsedCommits: ParsedCommits = baseCommits
     const body = {
       comment:
@@ -72,8 +72,8 @@ describe("postComments", () => {
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
       response: axiosResponse,
-      commits: parsedCommits[issue_key],
-      issueKey: issue_key,
+      commits: parsedCommits[issueKey],
+      issueKey: issueKey,
       isFix: false,
       isClose: false,
     }
@@ -87,14 +87,14 @@ describe("postComments", () => {
   })
 
   test("parseCommits post a comment and change status when change to fixed", () => {
-    const endpoint = `https://${apiHost}/api/v2/issues/${issue_key}?apiKey=${apiKey}`
+    const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
     const parsedCommits: ParsedCommits = {
-      [issue_key]: [
+      [issueKey]: [
         {
           ...baseCommit,
-          message: `${issue_key} ${comment} #fixed`,
+          message: `${issueKey} ${comment} #fixed`,
           keywords: "#fixed",
-          is_fix: true,
+          isFix: true,
         },
       ],
     }
@@ -110,8 +110,8 @@ describe("postComments", () => {
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
       response: axiosResponse,
-      commits: parsedCommits[issue_key],
-      issueKey: issue_key,
+      commits: parsedCommits[issueKey],
+      issueKey: issueKey,
       isFix: true,
       isClose: false,
     }
@@ -125,14 +125,14 @@ describe("postComments", () => {
   })
 
   test("parseCommits post a comment and change status when change to close", () => {
-    const endpoint = `https://${apiHost}/api/v2/issues/${issue_key}?apiKey=${apiKey}`
+    const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
     const parsedCommits: ParsedCommits = {
-      [issue_key]: [
+      [issueKey]: [
         {
           ...baseCommit,
-          message: `${issue_key} ${comment} #closed`,
+          message: `${issueKey} ${comment} #closed`,
           keywords: "#closed",
-          is_close: true,
+          isClose: true,
         },
       ],
     }
@@ -148,8 +148,8 @@ describe("postComments", () => {
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
       response: axiosResponse,
-      commits: parsedCommits[issue_key],
-      issueKey: issue_key,
+      commits: parsedCommits[issueKey],
+      issueKey: issueKey,
       isFix: false,
       isClose: true,
     }
@@ -162,24 +162,24 @@ describe("postComments", () => {
     expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
   })
 
-  test("parseCommits post 2 comments to Backlog API when 2 issue_keys", () => {
+  test("parseCommits post 2 comments to Backlog API when 2 issueKeys", () => {
     const parsedCommits: ParsedCommits = {
       [`${projectKey}-1`]: [
         {
           ...baseCommit,
-          issue_key: `${projectKey}-1`,
+          issueKey: `${projectKey}-1`,
           message: `${projectKey}-1 ${comment}`,
         },
       ],
       [`${projectKey}-2`]: [
         {
           ...baseCommit,
-          issue_key: `${projectKey}-2`,
+          issueKey: `${projectKey}-2`,
           message: `${projectKey}-2 ${comment}`,
         },
         {
           ...baseCommit,
-          issue_key: `${projectKey}-2`,
+          issueKey: `${projectKey}-2`,
           message: `${projectKey}-2 ${comment}`,
         },
       ],

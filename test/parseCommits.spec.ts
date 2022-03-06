@@ -15,14 +15,14 @@ const commitMessageRegTemplate =
   "(.*?)?\\s?" +
   '(<% print(fixKeywords.join("|")) %>|<% print(closeKeywords.join("|")) %>)?' +
   "$"
-const issue_key = `${projectKey}-1`
+const issueKey = `${projectKey}-1`
 const comment = "Hare Hare Yukai!"
 
 const baseCommit: Commit = {
   id: "id3456789012345",
   tree_id: "tree_id89012345",
   distinct: true,
-  message: `${issue_key} ${comment}`,
+  message: `${issueKey} ${comment}`,
   timestamp: "timestamp",
   url: "url",
   author: {
@@ -42,16 +42,16 @@ const baseCommit: Commit = {
 const baseParsedCommit: ParsedCommit = {
   ...baseCommit,
   comment: comment,
-  issue_key,
+  issueKey,
   keywords: "",
-  is_fix: false,
-  is_close: false,
+  isFix: false,
+  isClose: false,
 }
 
 describe("parseCommits", () => {
   test("parseCommits return a parsed commit", () => {
     const commits: Commits = [baseCommit]
-    const parsedCommits: ParsedCommits = { [issue_key]: [baseParsedCommit] }
+    const parsedCommits: ParsedCommits = { [issueKey]: [baseParsedCommit] }
 
     expect(
       parseCommits({
@@ -66,10 +66,10 @@ describe("parseCommits", () => {
     })
   })
 
-  test("parseCommits return parsed commits if same issue_key", () => {
+  test("parseCommits return parsed commits if same issueKey", () => {
     const commits: Commits = [baseCommit, baseCommit]
     const parsedCommits: ParsedCommits = {
-      [issue_key]: [baseParsedCommit, baseParsedCommit],
+      [issueKey]: [baseParsedCommit, baseParsedCommit],
     }
 
     expect(
@@ -85,7 +85,7 @@ describe("parseCommits", () => {
     })
   })
 
-  test("parseCommits return parsed commits if different issue_key", () => {
+  test("parseCommits return parsed commits if different issueKey", () => {
     const commits: Commits = [
       {
         ...baseCommit,
@@ -101,14 +101,14 @@ describe("parseCommits", () => {
         {
           ...baseParsedCommit,
           message: `${projectKey}-1 ${comment}`,
-          issue_key: `${projectKey}-1`,
+          issueKey: `${projectKey}-1`,
         },
       ],
       [`${projectKey}-2`]: [
         {
           ...baseParsedCommit,
           message: `${projectKey}-2 ${comment}`,
-          issue_key: `${projectKey}-2`,
+          issueKey: `${projectKey}-2`,
         },
       ],
     }
@@ -130,17 +130,17 @@ describe("parseCommits", () => {
     const commits: Commits = [
       {
         ...baseCommit,
-        message: `${issue_key} ${comment} ${fixKeyword}`,
+        message: `${issueKey} ${comment} ${fixKeyword}`,
       },
     ]
     const parsedCommits: ParsedCommits = {
-      [issue_key]: [
+      [issueKey]: [
         {
           ...baseParsedCommit,
           message: commits[0].message,
           comment: comment,
           keywords: fixKeyword,
-          is_fix: true,
+          isFix: true,
         },
       ],
     }
@@ -162,17 +162,17 @@ describe("parseCommits", () => {
     const commits: Commits = [
       {
         ...baseCommit,
-        message: `${issue_key} ${comment} ${closeKeyword}`,
+        message: `${issueKey} ${comment} ${closeKeyword}`,
       },
     ]
     const parsedCommits: ParsedCommits = {
-      [issue_key]: [
+      [issueKey]: [
         {
           ...baseParsedCommit,
           message: commits[0].message,
           comment: comment,
           keywords: closeKeyword,
-          is_close: true,
+          isClose: true,
         },
       ],
     }
@@ -194,18 +194,18 @@ describe("parseCommits", () => {
     const commits: Commits = [
       {
         ...baseCommit,
-        message: `${issue_key} ${comment} ${fixKeyword} ${closeKeyword}`,
+        message: `${issueKey} ${comment} ${fixKeyword} ${closeKeyword}`,
       },
     ]
     const parsedCommits: ParsedCommits = {
-      [issue_key]: [
+      [issueKey]: [
         {
           ...baseParsedCommit,
           message: commits[0].message,
           comment: `${comment} ${fixKeyword}`,
           keywords: closeKeyword,
-          is_fix: false,
-          is_close: true,
+          isFix: false,
+          isClose: true,
         },
       ],
     }
@@ -223,15 +223,15 @@ describe("parseCommits", () => {
     })
   })
 
-  test("parseCommits return a parsed commit when message is only issue_key", () => {
+  test("parseCommits return a parsed commit when message is only issueKey", () => {
     const commits: Commits = [
       {
         ...baseCommit,
-        message: `${issue_key}`,
+        message: `${issueKey}`,
       },
     ]
     const parsedCommits: ParsedCommits = {
-      [issue_key]: [
+      [issueKey]: [
         {
           ...baseParsedCommit,
           message: commits[0].message,
@@ -268,7 +268,7 @@ describe("parseCommits", () => {
     })
   })
 
-  test("parseCommits return null when issue_key is not specified", () => {
+  test("parseCommits return null when issueKey is not specified", () => {
     const commits: Commits = [
       {
         ...baseCommit,

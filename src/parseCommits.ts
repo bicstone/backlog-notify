@@ -4,11 +4,11 @@ import template from "lodash.template"
 export type ParsedCommits = Record<string, ParsedCommit[]>
 
 export type ParsedCommit = {
-  issue_key: string | null
+  issueKey: string | null
   comment: string
   keywords: string
-  is_fix: boolean
-  is_close: boolean
+  isFix: boolean
+  isClose: boolean
 } & Commit
 
 type ParseCommitsProps = {
@@ -52,12 +52,12 @@ export const parseCommits = ({
       closeKeywords,
       commitMessageReg,
     })
-    if (!parsedCommit?.issue_key) return
+    if (!parsedCommit?.issueKey) return
 
-    if (parsedCommits[parsedCommit.issue_key]) {
-      parsedCommits[parsedCommit.issue_key].push(parsedCommit)
+    if (parsedCommits[parsedCommit.issueKey]) {
+      parsedCommits[parsedCommit.issueKey].push(parsedCommit)
     } else {
-      parsedCommits[parsedCommit.issue_key] = [parsedCommit]
+      parsedCommits[parsedCommit.issueKey] = [parsedCommit]
     }
   })
 
@@ -88,17 +88,16 @@ const parseCommit = ({
     return { parsedCommit: null }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const [, issue_key = null, comment = "", keywords = ""] = match
+  const [, issueKey = null, comment = "", keywords = ""] = match
 
   return {
     parsedCommit: {
       ...commit,
-      issue_key,
+      issueKey,
       comment,
       keywords,
-      is_fix: fixKeywords.includes(keywords),
-      is_close: closeKeywords.includes(keywords),
+      isFix: fixKeywords.includes(keywords),
+      isClose: closeKeywords.includes(keywords),
     },
   }
 }

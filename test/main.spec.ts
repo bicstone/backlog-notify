@@ -143,7 +143,7 @@ describe("main", () => {
     )
   })
 
-  test("main not continue and resolve processing when commits without issue_key", async () => {
+  test("main not continue and resolve processing when commits without issueKey", async () => {
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
       event: push as PushEvent,
     }))

@@ -68,13 +68,13 @@ jobs:
 
           # The following are optional settings
           fix_keywords: |-
-            '#fix'
-            '#fixes'
-            '#fixed'
+            #fix
+            #fixes
+            #fixed
           close_keywords: |-
-            '#close'
-            '#closes'
-            '#closed'
+            #close
+            #closes
+            #closed
           push_comment_template: |-
             <%= commits[0].author.name %>さんがプッシュしました
             <% commits.forEach(commit=>{ %>\n+ <%= commit.message %> ([<%= commit.id_short %>](<%= commit.url %>))<% }); %>
