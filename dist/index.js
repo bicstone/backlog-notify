@@ -7903,7 +7903,11 @@ exports.fetchEvent = fetchEvent;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -8017,7 +8021,6 @@ const getConfigs_1 = __nccwpck_require__(2732);
 const parseCommits_1 = __nccwpck_require__(9752);
 const postComments_1 = __nccwpck_require__(6082);
 const runAction = async () => {
-    var _a;
     // init
     core.startGroup(`初期化中`);
     const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, 
@@ -8030,7 +8033,7 @@ const runAction = async () => {
     // fetch event
     core.startGroup(`コミット取得中`);
     const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
-    if (!((_a = event === null || event === void 0 ? void 0 : event.commits) === null || _a === void 0 ? void 0 : _a.length)) {
+    if (!event?.commits?.length) {
         return "コミットが1件も見つかりませんでした。";
     }
     // parse commits
@@ -8119,7 +8122,7 @@ const parseCommits = ({ commits, projectKey, fixKeywords, closeKeywords, commitM
             closeKeywords,
             commitMessageReg,
         });
-        if (!(parsedCommit === null || parsedCommit === void 0 ? void 0 : parsedCommit.issue_key))
+        if (!parsedCommit?.issue_key)
             return;
         if (parsedCommits[parsedCommit.issue_key]) {
             parsedCommits[parsedCommit.issue_key].push(parsedCommit);
