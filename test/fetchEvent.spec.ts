@@ -1,5 +1,5 @@
 import fs from "fs"
-import { mocked } from "ts-jest/utils"
+import { mocked } from "jest-mock"
 import { fetchEvent } from "../src/fetchEvent"
 import pushEvent from "./github/events/push.json"
 

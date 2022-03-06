@@ -1,4 +1,4 @@
-import { mocked } from "ts-jest/utils"
+import { mocked } from "jest-mock"
 import { PushEvent } from "@octokit/webhooks-types"
 import push from "./github/events/push.json"
 import pushWithoutCommits from "./github/events/pushWithoutCommits.json"
