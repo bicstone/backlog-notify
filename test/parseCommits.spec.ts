@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { parseCommits, ParsedCommit, ParsedCommits } from "../src/parseCommits"
 import { Commit } from "@octokit/webhooks-types"
 
@@ -20,6 +19,7 @@ const comment = "Hare Hare Yukai!"
 
 const baseCommit: Commit = {
   id: "id3456789012345",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   tree_id: "tree_id89012345",
   distinct: true,
   message: `${issueKey} ${comment}`,

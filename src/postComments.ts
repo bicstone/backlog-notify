@@ -3,18 +3,11 @@ import axios, { AxiosResponse } from "axios"
 import template from "lodash.template"
 import { ParsedCommits, ParsedCommit } from "../src/parseCommits"
 
-// 2.0でinput受け取りにする
-const fixId = "3" // 処理済みの状態 ID
-const closeId = "4" // 完了の状態 ID
+// Update Issue API
+// https://developer.nulab.com/docs/backlog/api/2/update-issue/#
 const updateIssueApiUrlTemplate = template(
   "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"
-) // 「課題情報の更新」APIのURLテンプレート
-const commentTemplate = template(
-  "<%=commits[0].author.name%>さんがプッシュしました\n" +
-    "<% commits.forEach(commit=>{%>" +
-    "\n+ <%=commit.comment%> ([<%=commit.id%>](<%=commit.url%>))" +
-    "<% }); %>"
-) // 通知文章のテンプレート
+)
 
 export type Response = {
   response: AxiosResponse<Record<string, unknown>>
@@ -26,6 +19,9 @@ export type Response = {
 
 type PostCommentsProps = {
   parsedCommits: ParsedCommits
+  fixStatusId: string
+  closeStatusId: string
+  pushCommentTemplate: string
   apiHost: string
   apiKey: string
 }
@@ -33,6 +29,9 @@ type PostCommentsProps = {
 /**
  * Post the comment to Backlog API
  * @param parsedCommits parsed Commits (create by parseCommits.ts)
+ * @param fixStatusId Status ID to mark as fixed
+ * @param closeStatusIdStatus ID to mark as closed
+ * @param pushCommentTemplate The template for backlog issue comment on push events
  * @param apiHost Backlog API Host
  * @param apiKey Backlog API Key
  * @returns Patch comment request promises
@@ -56,22 +55,19 @@ export const postComments = ({
 type CreatePatchCommentRequestProps = {
   commits: ParsedCommit[]
   issueKey: string
+  fixStatusId: string
+  closeStatusId: string
+  pushCommentTemplate: string
   apiHost: string
   apiKey: string
 }
 
-/**
- * Create patch comment request promise
- * @param commits parsed commits
- * @param issueKey Backlog issue key
- * @param apiHost Backlog API Host
- * @param apiKey Backlog API Key
- * @returns commits param (for use in console messages)
- * @see https://developer.nulab.com/docs/backlog/api/2/update-issue/
- */
 const createPatchCommentRequest = ({
   commits,
   issueKey,
+  fixStatusId,
+  closeStatusId,
+  pushCommentTemplate,
   apiHost,
   apiKey,
 }: CreatePatchCommentRequestProps): Promise<Response> => {
@@ -81,12 +77,12 @@ const createPatchCommentRequest = ({
     issueKey,
   })
 
-  const comment = commentTemplate({ commits })
+  const comment = template(pushCommentTemplate)({ commits })
   const isFix = commits.map((commit) => commit.isFix).includes(true)
   const isClose = commits.map((commit) => commit.isClose).includes(true)
   const status = (() => {
-    if (isFix) return { statusId: fixId }
-    if (isClose) return { statusId: closeId }
+    if (isFix) return { statusId: fixStatusId }
+    if (isClose) return { statusId: closeStatusId }
     else return undefined
   })()
   const body = { comment, ...status }

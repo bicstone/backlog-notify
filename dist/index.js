@@ -8056,12 +8056,7 @@ const postComments_1 = __nccwpck_require__(6082);
 const runAction = async () => {
     // init
     core.startGroup(`初期化中`);
-    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, 
-    // pushCommentTemplate,
-    commitMessageRegTemplate,
-    // fixStatusId,
-    // closeStatusId,
-     } = (0, getConfigs_1.getConfigs)();
+    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, commitMessageRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
     core.endGroup();
     // fetch event
     core.startGroup(`コミット取得中`);
@@ -8083,7 +8078,14 @@ const runAction = async () => {
     core.endGroup();
     // post comments
     core.startGroup(`コメント送信中`);
-    await (0, postComments_1.postComments)({ parsedCommits, apiHost, apiKey }).then((data) => {
+    await (0, postComments_1.postComments)({
+        parsedCommits,
+        pushCommentTemplate,
+        fixStatusId,
+        closeStatusId,
+        apiHost,
+        apiKey,
+    }).then((data) => {
         data.forEach(({ commits, issueKey, isFix, isClose }) => {
             core.startGroup(`${commits[0].issueKey}:`);
             commits.forEach(({ message }) => {
@@ -8205,17 +8207,15 @@ exports.postComments = void 0;
 const url_1 = __nccwpck_require__(7310);
 const axios_1 = __importDefault(__nccwpck_require__(6545));
 const lodash_template_1 = __importDefault(__nccwpck_require__(417));
-// 2.0でinput受け取りにする
-const fixId = "3"; // 処理済みの状態 ID
-const closeId = "4"; // 完了の状態 ID
-const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"); // 「課題情報の更新」APIのURLテンプレート
-const commentTemplate = (0, lodash_template_1.default)("<%=commits[0].author.name%>さんがプッシュしました\n" +
-    "<% commits.forEach(commit=>{%>" +
-    "\n+ <%=commit.comment%> ([<%=commit.id%>](<%=commit.url%>))" +
-    "<% }); %>"); // 通知文章のテンプレート
+// Update Issue API
+// https://developer.nulab.com/docs/backlog/api/2/update-issue/#
+const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>");
 /**
  * Post the comment to Backlog API
  * @param parsedCommits parsed Commits (create by parseCommits.ts)
+ * @param fixStatusId Status ID to mark as fixed
+ * @param closeStatusIdStatus ID to mark as closed
+ * @param pushCommentTemplate The template for backlog issue comment on push events
  * @param apiHost Backlog API Host
  * @param apiKey Backlog API Key
  * @returns Patch comment request promises
@@ -8228,29 +8228,20 @@ const postComments = ({ parsedCommits, ...configs }) => {
     return Promise.all(promiseArray);
 };
 exports.postComments = postComments;
-/**
- * Create patch comment request promise
- * @param commits parsed commits
- * @param issueKey Backlog issue key
- * @param apiHost Backlog API Host
- * @param apiKey Backlog API Key
- * @returns commits param (for use in console messages)
- * @see https://developer.nulab.com/docs/backlog/api/2/update-issue/
- */
-const createPatchCommentRequest = ({ commits, issueKey, apiHost, apiKey, }) => {
+const createPatchCommentRequest = ({ commits, issueKey, fixStatusId, closeStatusId, pushCommentTemplate, apiHost, apiKey, }) => {
     const endpoint = updateIssueApiUrlTemplate({
         apiHost: apiHost,
         apiKey: apiKey,
         issueKey,
     });
-    const comment = commentTemplate({ commits });
+    const comment = (0, lodash_template_1.default)(pushCommentTemplate)({ commits });
     const isFix = commits.map((commit) => commit.isFix).includes(true);
     const isClose = commits.map((commit) => commit.isClose).includes(true);
     const status = (() => {
         if (isFix)
-            return { statusId: fixId };
+            return { statusId: fixStatusId };
         if (isClose)
-            return { statusId: closeId };
+            return { statusId: closeStatusId };
         else
             return undefined;
     })();

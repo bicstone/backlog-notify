@@ -14,10 +14,10 @@ const runAction = async (): Promise<string> => {
     githubEventPath,
     fixKeywords,
     closeKeywords,
-    // pushCommentTemplate,
+    pushCommentTemplate,
     commitMessageRegTemplate,
-    // fixStatusId,
-    // closeStatusId,
+    fixStatusId,
+    closeStatusId,
   } = getConfigs()
   core.endGroup()
 
@@ -43,7 +43,14 @@ const runAction = async (): Promise<string> => {
 
   // post comments
   core.startGroup(`コメント送信中`)
-  await postComments({ parsedCommits, apiHost, apiKey }).then((data) => {
+  await postComments({
+    parsedCommits,
+    pushCommentTemplate,
+    fixStatusId,
+    closeStatusId,
+    apiHost,
+    apiKey,
+  }).then((data) => {
     data.forEach(({ commits, issueKey, isFix, isClose }) => {
       core.startGroup(`${commits[0].issueKey}:`)
 

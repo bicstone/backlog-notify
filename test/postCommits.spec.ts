@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import url from "url"
 import axios, { AxiosResponse } from "axios"
 import { mocked } from "jest-mock"
@@ -7,6 +6,15 @@ import { postComments, Response } from "../src/postComments"
 
 jest.mock("axios")
 
+const fixStatusId = "fixStatusId"
+const closeStatusId = "closeStatusId"
+const pushCommentTemplate =
+  "<%= commits[0].author.name %>さんがプッシュしました" +
+  "\n" +
+  "<% commits.forEach(commit=>{ %>" +
+  "\n" +
+  "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 10)) %>](<%= commit.url %>))" +
+  "<% }); %>"
 const apiHost = "level5-judgelight-.backlog.com"
 const apiKey = "GO1GO1maniac"
 
@@ -15,7 +23,8 @@ const issueKey = `${projectKey}-1`
 const comment = "＼(ﾟヮﾟ)＞＼(ﾟヮﾟ)／＼(ﾟヮﾟ)／＜(ﾟヮ^)"
 
 const baseCommit = {
-  id: "id3456789012345",
+  id: "e83c5163316f89bfbde7d9ab23ca2e25604af290",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   tree_id: "tree_id89012345",
   distinct: true,
   timestamp: "timestamp",
@@ -67,7 +76,7 @@ describe("postComments", () => {
         "\n" +
         "\n" +
         `+ ${baseCommit.comment} ` +
-        `([${baseCommit.id}](${baseCommit.url}))`,
+        `([${baseCommit.id.slice(0, 10).slice(0, 10)}](${baseCommit.url}))`,
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
@@ -79,7 +88,14 @@ describe("postComments", () => {
     }
 
     expect(
-      postComments({ parsedCommits, apiHost, apiKey })
+      postComments({
+        parsedCommits,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
     ).resolves.toStrictEqual([response])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(1)
@@ -104,8 +120,8 @@ describe("postComments", () => {
         "\n" +
         "\n" +
         `+ ${baseCommit.comment} ` +
-        `([${baseCommit.id}](${baseCommit.url}))`,
-      statusId: "3",
+        `([${baseCommit.id.slice(0, 10)}](${baseCommit.url}))`,
+      statusId: fixStatusId,
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
@@ -117,7 +133,14 @@ describe("postComments", () => {
     }
 
     expect(
-      postComments({ parsedCommits, apiHost, apiKey })
+      postComments({
+        parsedCommits,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
     ).resolves.toStrictEqual([response])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(1)
@@ -142,8 +165,8 @@ describe("postComments", () => {
         "\n" +
         "\n" +
         `+ ${baseCommit.comment} ` +
-        `([${baseCommit.id}](${baseCommit.url}))`,
-      statusId: "4",
+        `([${baseCommit.id.slice(0, 10)}](${baseCommit.url}))`,
+      statusId: closeStatusId,
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
@@ -155,7 +178,14 @@ describe("postComments", () => {
     }
 
     expect(
-      postComments({ parsedCommits, apiHost, apiKey })
+      postComments({
+        parsedCommits,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
     ).resolves.toStrictEqual([response])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(1)
@@ -200,7 +230,14 @@ describe("postComments", () => {
     }
 
     expect(
-      postComments({ parsedCommits, apiHost, apiKey })
+      postComments({
+        parsedCommits,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
     ).resolves.toStrictEqual([response1, response2])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(2)
