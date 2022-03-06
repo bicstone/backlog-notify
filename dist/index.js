@@ -8173,7 +8173,6 @@ const parseCommits = ({ commits, projectKey, fixKeywords, closeKeywords, commitM
 exports.parseCommits = parseCommits;
 const parseCommit = ({ commit, fixKeywords, closeKeywords, commitMessageReg, }) => {
     const match = commit.message.match(commitMessageReg);
-    console.log(commitMessageReg);
     if (!match) {
         return { parsedCommit: null };
     }
