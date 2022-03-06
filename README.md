@@ -109,48 +109,56 @@ jobs:
 プッシュ時のコメントの雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
 
-使用可能な変数は、下記の通りです。
+<details>
 
-| 変数名    | 型        |
-| --------- | --------- |
-| id        | string    |
-| tree_id   | string    |
-| distinct  | boolean   |
-| message   | string    |
-| timestamp | string    |
-| url       | string    |
-| author    | Committer |
-| committer | Committer |
-| added     | string[]  |
-| modified  | string[]  |
-| removed   | string[]  |
-| issueKey  | string    |
-| comment   | string    |
-| keywords  | string    |
-| isFix     | boolean   |
-| isClose   | boolean   |
+<summary>使用可能な変数</summary>
+
+| 変数名      | 型        |
+| ----------- | --------- |
+| `id`        | string    |
+| `tree_id`   | string    |
+| `distinct`  | boolean   |
+| `message`   | string    |
+| `timestamp` | string    |
+| `url`       | string    |
+| `author`    | Committer |
+| `committer` | Committer |
+| `added`     | string[]  |
+| `modified`  | string[]  |
+| `removed`   | string[]  |
+| `issueKey`  | string    |
+| `comment`   | string    |
+| `keywords`  | string    |
+| `isFix`     | boolean   |
+| `isClose`   | boolean   |
 
 Committer
 
-| 変数名   | 型                      |
-| -------- | ----------------------- |
-| name     | string                  |
-| email    | string &#124; null      |
-| date     | string &#124; undefined |
-| username | string &#124; undefined |
+| 変数名     | 型                      |
+| ---------- | ----------------------- |
+| `name`     | string                  |
+| `email`    | string &#124; null      |
+| `date`     | string &#124; undefined |
+| `username` | string &#124; undefined |
+
+</details>
 
 ### commit_message_reg_template
 
 コミットメッセージ解析の正規表現雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
 
-使用可能な変数は、下記の通りです。
+<details>
 
-| 変数名        | 型       |
-| ------------- | -------- |
-| projectKey    | string   |
-| fixKeywords   | string[] |
-| closeKeywords | string[] |
+<summary>使用可能な変数</summary>
+
+| 変数名          | 型       |
+| --------------- | -------- |
+| `projectKey`    | string   |
+| `fixKeywords`   | string[] |
+| `closeKeywords` | string[] |
+
+</details>
 
 ## 使用方法
 
