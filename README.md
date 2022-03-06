@@ -104,7 +104,7 @@ jobs:
 | `fix_status_id`               | 処理済みの 状態 ID                   |
 | `close_status_id`             | 完了の 状態 ID                       |
 
-### push_comment_template
+### `push_comment_template`
 
 プッシュ時のコメントの雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
@@ -143,7 +143,7 @@ Committer
 
 </details>
 
-### commit_message_reg_template
+### `commit_message_reg_template`
 
 コミットメッセージ解析の正規表現雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
