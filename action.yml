@@ -20,14 +20,14 @@ inputs:
   fix_keywords:
     description: Keywords to change the status of the issue to fixed
     required: false
-    default: |
+    default: |-
       #fix
       #fixes
       #fixed
   close_keywords:
     description: Keywords to change the status of the issue to closed
     required: false
-    default: |
+    default: |-
       #close
       #closes
       #closed

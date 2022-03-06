@@ -67,11 +67,11 @@ jobs:
           api_key: ${{ secrets.BACKLOG_API_KEY }}
 
           # The following are optional settings
-          fix_keywords: |
+          fix_keywords: |-
             #fix
             #fixes
             #fixed
-          close_keywords: |
+          close_keywords: |-
             #close
             #closes
             #closed
