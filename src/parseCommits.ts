@@ -83,7 +83,6 @@ const parseCommit = ({
   commitMessageReg,
 }: ParseCommitProps): { parsedCommit: ParsedCommit | null } => {
   const match = commit.message.match(commitMessageReg)
-  console.log(commitMessageReg)
 
   if (!match) {
     return { parsedCommit: null }
