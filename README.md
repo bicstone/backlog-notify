@@ -104,6 +104,54 @@ jobs:
 | fix_status_id               | 処理済みの 状態 ID                   |
 | close_status_id             | 完了の 状態 ID                       |
 
+### push_comment_template
+
+プッシュ時のコメントの雛形を変更できます。  
+構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
+
+使用可能な変数は、下記の通りです。
+
+| 変数名    | 型        |
+| --------- | --------- |
+| id        | string    |
+| tree_id   | string    |
+| distinct  | boolean   |
+| message   | string    |
+| timestamp | string    |
+| url       | string    |
+| author    | Committer |
+| committer | Committer |
+| added     | string[]  |
+| modified  | string[]  |
+| removed   | string[]  |
+| issueKey  | string    |
+| comment   | string    |
+| keywords  | string    |
+| isFix     | boolean   |
+| isClose   | boolean   |
+
+Committer
+
+| 変数名   | 型                      |
+| -------- | ----------------------- |
+| name     | string                  |
+| email    | string &#124; null      |
+| date     | string &#124; undefined |
+| username | string &#124; undefined |
+
+### commit_message_reg_template
+
+コミットメッセージ解析の正規表現雛形を変更できます。  
+構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
+
+使用可能な変数は、下記の通りです。
+
+| 変数名        | 型       |
+| ------------- | -------- |
+| projectKey    | string   |
+| fixKeywords   | string[] |
+| closeKeywords | string[] |
+
 ## 使用方法
 
 [Backlog の Git](https://support-ja.backlog.com/hc/ja/articles/360035640734) と同様です。課題キーは先頭にある 1 つ目のキーのみ認識します。  
