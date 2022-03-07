@@ -16,7 +16,6 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
-    "camelcase": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {
@@ -26,10 +25,6 @@
       {
         "selector": "typeLike",
         "format": ["PascalCase"]
-      },
-      {
-        "selector": "property",
-        "format": ["camelCase", "snake_case"]
       }
     ]
   }

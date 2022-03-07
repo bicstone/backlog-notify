@@ -3,18 +3,11 @@ import axios, { AxiosResponse } from "axios"
 import template from "lodash.template"
 import { ParsedCommits, ParsedCommit } from "../src/parseCommits"
 
-// 2.0でinput受け取りにする
-const fixId = "3" // 処理済みの状態 ID
-const closeId = "4" // 完了の状態 ID
+// Update Issue API
+// https://developer.nulab.com/docs/backlog/api/2/update-issue/#
 const updateIssueApiUrlTemplate = template(
   "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"
-) // 「課題情報の更新」APIのURLテンプレート
-const commentTemplate = template(
-  "<%=commits[0].author.name%>さんがプッシュしました\n" +
-    "<% commits.forEach(commit=>{%>" +
-    "\n+ <%=commit.message%> ([<%=commit.id_short%>](<%=commit.url%>))" +
-    "<% }); %>"
-) // 通知文章のテンプレート
+)
 
 export type Response = {
   response: AxiosResponse<Record<string, unknown>>
@@ -24,55 +17,72 @@ export type Response = {
   isClose: boolean
 }
 
+type PostCommentsProps = {
+  parsedCommits: ParsedCommits
+  fixStatusId: string
+  closeStatusId: string
+  pushCommentTemplate: string
+  apiHost: string
+  apiKey: string
+}
+
 /**
  * Post the comment to Backlog API
  * @param parsedCommits parsed Commits (create by parseCommits.ts)
+ * @param fixStatusId Status ID to mark as fixed
+ * @param closeStatusIdStatus ID to mark as closed
+ * @param pushCommentTemplate The template for backlog issue comment on push events
  * @param apiHost Backlog API Host
  * @param apiKey Backlog API Key
  * @returns Patch comment request promises
  */
 
-export const postComments = (
-  parsedCommits: ParsedCommits,
-  apiHost: string,
-  apiKey: string
-): Promise<Response[]> => {
+export const postComments = ({
+  parsedCommits,
+  ...configs
+}: PostCommentsProps): Promise<Response[]> => {
   const promiseArray: Promise<Response>[] = []
 
-  for (const [key, value] of Object.entries(parsedCommits)) {
-    promiseArray.push(createPatchCommentRequest(value, key, apiHost, apiKey))
+  for (const [issueKey, commits] of Object.entries(parsedCommits)) {
+    promiseArray.push(
+      createPatchCommentRequest({ commits, issueKey, ...configs })
+    )
   }
 
   return Promise.all(promiseArray)
 }
 
-/**
- * Create patch comment request promise
- * @param commits parsed commits
- * @param issueKey Backlog issue key
- * @param apiHost Backlog API Host
- * @param apiKey Backlog API Key
- * @returns commits param (for use in console messages)
- * @see https://developer.nulab.com/docs/backlog/api/2/update-issue/
- */
-const createPatchCommentRequest = (
-  commits: ParsedCommit[],
-  issueKey: string,
-  apiHost: string,
+type CreatePatchCommentRequestProps = {
+  commits: ParsedCommit[]
+  issueKey: string
+  fixStatusId: string
+  closeStatusId: string
+  pushCommentTemplate: string
+  apiHost: string
   apiKey: string
-): Promise<Response> => {
+}
+
+const createPatchCommentRequest = ({
+  commits,
+  issueKey,
+  fixStatusId,
+  closeStatusId,
+  pushCommentTemplate,
+  apiHost,
+  apiKey,
+}: CreatePatchCommentRequestProps): Promise<Response> => {
   const endpoint = updateIssueApiUrlTemplate({
     apiHost: apiHost,
     apiKey: apiKey,
     issueKey,
   })
 
-  const comment = commentTemplate({ commits })
-  const isFix = commits.map((commit) => commit.is_fix).includes(true)
-  const isClose = commits.map((commit) => commit.is_close).includes(true)
+  const comment = template(pushCommentTemplate)({ commits })
+  const isFix = commits.map((commit) => commit.isFix).includes(true)
+  const isClose = commits.map((commit) => commit.isClose).includes(true)
   const status = (() => {
-    if (isFix) return { statusId: fixId }
-    if (isClose) return { statusId: closeId }
+    if (isFix) return { statusId: fixStatusId }
+    if (isClose) return { statusId: closeStatusId }
     else return undefined
   })()
   const body = { comment, ...status }

@@ -4,33 +4,55 @@ import { getConfigs } from "./getConfigs"
 import { parseCommits } from "./parseCommits"
 import { postComments } from "./postComments"
 
-export const main = async (): Promise<string> => {
+const runAction = async (): Promise<string> => {
   // init
   core.startGroup(`初期化中`)
-  const { projectKey, apiHost, apiKey, githubEventPath } = getConfigs()
+  const {
+    projectKey,
+    apiHost,
+    apiKey,
+    githubEventPath,
+    fixKeywords,
+    closeKeywords,
+    pushCommentTemplate,
+    commitMessageRegTemplate,
+    fixStatusId,
+    closeStatusId,
+  } = getConfigs()
   core.endGroup()
 
   // fetch event
   core.startGroup(`コミット取得中`)
-  const event = fetchEvent(githubEventPath)
+  const { event } = fetchEvent({ path: githubEventPath })
   if (!event?.commits?.length) {
-    return Promise.resolve("コミットが1件も見つかりませんでした。")
+    return "コミットが1件も見つかりませんでした。"
   }
 
   // parse commits
-  const parsedCommits = parseCommits(event.commits, projectKey)
+  const { parsedCommits } = parseCommits({
+    commits: event.commits,
+    projectKey,
+    fixKeywords,
+    closeKeywords,
+    commitMessageRegTemplate,
+  })
   if (!parsedCommits) {
-    return Promise.resolve(
-      "課題キーのついたコミットが1件も見つかりませんでした。"
-    )
+    return "課題キーのついたコミットが1件も見つかりませんでした。"
   }
   core.endGroup()
 
   // post comments
   core.startGroup(`コメント送信中`)
-  await postComments(parsedCommits, apiHost, apiKey).then((data) => {
+  await postComments({
+    parsedCommits,
+    pushCommentTemplate,
+    fixStatusId,
+    closeStatusId,
+    apiHost,
+    apiKey,
+  }).then((data) => {
     data.forEach(({ commits, issueKey, isFix, isClose }) => {
-      core.startGroup(`${commits[0].issue_key}:`)
+      core.startGroup(`${commits[0].issueKey}:`)
 
       commits.forEach(({ message }) => {
         core.info(message)
@@ -47,16 +69,21 @@ export const main = async (): Promise<string> => {
       core.endGroup()
     })
   })
-  return Promise.resolve("正常に送信しました。")
+  return "正常に送信しました。"
+}
+
+export const main = async (): Promise<void> => {
+  try {
+    const message = await runAction()
+    core.info(message)
+  } catch (error) {
+    if (error instanceof Error) {
+      core.setFailed(error)
+    } else {
+      core.setFailed(String(error))
+    }
+  }
+  core.endGroup()
 }
 
 main()
-  .then((message) => {
-    core.info(message)
-    core.endGroup()
-  })
-  .catch((error: Error) => {
-    core.debug(error.stack || "No error stack trace")
-    core.setFailed(error.message)
-    core.endGroup()
-  })

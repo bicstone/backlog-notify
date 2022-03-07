@@ -7887,9 +7887,9 @@ const fs_1 = __nccwpck_require__(7147);
  * @param path Path to event.json
  * @returns Parsed event from event.json
  */
-const fetchEvent = (path) => {
+const fetchEvent = ({ path, }) => {
     const event = (0, fs_1.readFileSync)(path, "utf8");
-    return JSON.parse(event);
+    return { event: JSON.parse(event) };
 };
 exports.fetchEvent = fetchEvent;
 
@@ -7897,12 +7897,37 @@ exports.fetchEvent = fetchEvent;
 /***/ }),
 
 /***/ 2732:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getConfigs = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const getMultilineInput_1 = __nccwpck_require__(7243);
 /**
  * Parses and validations the action configuration
  * @returns Parsed the action configuration
@@ -7914,6 +7939,31 @@ const getConfigs = () => {
         apiHost: getConfig("api_host", { required: true }),
         apiKey: getConfig("api_key", { required: true }),
         githubEventPath: getConfig("github_event_path", { required: true }),
+        fixKeywords: core.getInput("fix_keywords")
+            ? (0, getMultilineInput_1.getMultilineInput)("fix_keywords", {
+                trimWhitespace: true,
+            })
+            : ["#fix", "#fixes", "#fixed"],
+        closeKeywords: core.getInput("close_keywords")
+            ? (0, getMultilineInput_1.getMultilineInput)("close_keywords", {
+                trimWhitespace: true,
+            })
+            : ["#close", "#closes", "#closed"],
+        pushCommentTemplate: core.getInput("push_comment_template") ||
+            "<%= commits[0].author.name %>さんがプッシュしました" +
+                "\n" +
+                "<% commits.forEach(commit=>{ %>" +
+                "\n" +
+                "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
+                "<% }); %>",
+        commitMessageRegTemplate: core.getInput("commit_message_reg_template") ||
+            "^" +
+                "(<%= projectKey %>\\-\\d+)\\s?" +
+                "(.*?)?\\s?" +
+                "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+                "$",
+        fixStatusId: core.getInput("fix_status_id") || "3",
+        closeStatusId: core.getInput("close_status_id") || "4",
     };
 };
 exports.getConfigs = getConfigs;
@@ -7936,6 +7986,38 @@ const getConfig = (name, options = {}) => {
     }
     return val.trim();
 };
+
+
+/***/ }),
+
+/***/ 7243:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getMultilineInput = void 0;
+const core_1 = __nccwpck_require__(2186);
+/**
+ * Gets the values of an multiline input.  Each value is also trimmed.
+ * copy from https://github.com/actions/toolkit/blob/main/packages/core/src/core.ts
+ * MIT License
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string[]
+ *
+ */
+function getMultilineInput(name, options) {
+    const inputs = (0, core_1.getInput)(name, options)
+        .split("\n")
+        .filter((x) => x !== "");
+    if (options && options.trimWhitespace === false) {
+        return inputs;
+    }
+    return inputs.map((input) => input.trim());
+}
+exports.getMultilineInput = getMultilineInput;
 
 
 /***/ }),
@@ -7975,28 +8057,41 @@ const fetchEvent_1 = __nccwpck_require__(803);
 const getConfigs_1 = __nccwpck_require__(2732);
 const parseCommits_1 = __nccwpck_require__(9752);
 const postComments_1 = __nccwpck_require__(6082);
-const main = async () => {
+const runAction = async () => {
     // init
     core.startGroup(`初期化中`);
-    const { projectKey, apiHost, apiKey, githubEventPath } = (0, getConfigs_1.getConfigs)();
+    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, commitMessageRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
     core.endGroup();
     // fetch event
     core.startGroup(`コミット取得中`);
-    const event = (0, fetchEvent_1.fetchEvent)(githubEventPath);
+    const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
     if (!event?.commits?.length) {
-        return Promise.resolve("コミットが1件も見つかりませんでした。");
+        return "コミットが1件も見つかりませんでした。";
     }
     // parse commits
-    const parsedCommits = (0, parseCommits_1.parseCommits)(event.commits, projectKey);
+    const { parsedCommits } = (0, parseCommits_1.parseCommits)({
+        commits: event.commits,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        commitMessageRegTemplate,
+    });
     if (!parsedCommits) {
-        return Promise.resolve("課題キーのついたコミットが1件も見つかりませんでした。");
+        return "課題キーのついたコミットが1件も見つかりませんでした。";
     }
     core.endGroup();
     // post comments
     core.startGroup(`コメント送信中`);
-    await (0, postComments_1.postComments)(parsedCommits, apiHost, apiKey).then((data) => {
+    await (0, postComments_1.postComments)({
+        parsedCommits,
+        pushCommentTemplate,
+        fixStatusId,
+        closeStatusId,
+        apiHost,
+        apiKey,
+    }).then((data) => {
         data.forEach(({ commits, issueKey, isFix, isClose }) => {
-            core.startGroup(`${commits[0].issue_key}:`);
+            core.startGroup(`${commits[0].issueKey}:`);
             commits.forEach(({ message }) => {
                 core.info(message);
             });
@@ -8009,19 +8104,25 @@ const main = async () => {
             core.endGroup();
         });
     });
-    return Promise.resolve("正常に送信しました。");
+    return "正常に送信しました。";
+};
+const main = async () => {
+    try {
+        const message = await runAction();
+        core.info(message);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            core.setFailed(error);
+        }
+        else {
+            core.setFailed(String(error));
+        }
+    }
+    core.endGroup();
 };
 exports.main = main;
-(0, exports.main)()
-    .then((message) => {
-    core.info(message);
-    core.endGroup();
-})
-    .catch((error) => {
-    core.debug(error.stack || "No error stack trace");
-    core.setFailed(error.message);
-    core.endGroup();
-});
+(0, exports.main)();
 
 
 /***/ }),
@@ -8037,61 +8138,60 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.parseCommits = void 0;
 const lodash_template_1 = __importDefault(__nccwpck_require__(417));
-// 2.0でinput受け取りにする
-const fixKeywords = ["#fix", "#fixes", "#fixed"]; // 処理済みにするキーワード
-const closeKeywords = ["#close", "#closes", "#closed"]; // 完了にするキーワード
-const commitKeywordRegexTemplate = (0, lodash_template_1.default)("^(<%=project_key%>\\-\\d+)\\s?" + // 課題キー
-    "(.*?)?" + // メッセージ
-    `\\s?(${fixKeywords.join("|")}|${closeKeywords.join("|")})?$`); // コミットメッセージを解析する正規表現テンプレート
 /**
  * Parse commits from the event commits
  * @param commits commits from the event commits
  * @param projectKey Backlog project key
+ * @param fixKeywords Keywords to change the status of the issue to fixed
+ * @param closeKeywords Keywords to change the status of the issue to closed
+ * @param commitMessageRegTemplate The template for regular expressions to parse commit messages
  * @returns ParsedCommits | null
  */
-const parseCommits = (commits, projectKey) => {
+const parseCommits = ({ commits, projectKey, fixKeywords, closeKeywords, commitMessageRegTemplate, }) => {
     const parsedCommits = {};
+    const commitMessageReg = RegExp((0, lodash_template_1.default)(commitMessageRegTemplate)({
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+    }), "s");
     commits.forEach((commit) => {
-        const parsedCommit = parseCommit(commit, projectKey);
-        if (!parsedCommit?.issue_key)
+        const { parsedCommit } = parseCommit({
+            commit,
+            fixKeywords,
+            closeKeywords,
+            commitMessageReg,
+        });
+        if (!parsedCommit?.issueKey)
             return;
-        if (parsedCommits[parsedCommit.issue_key]) {
-            parsedCommits[parsedCommit.issue_key].push(parsedCommit);
+        if (parsedCommits[parsedCommit.issueKey]) {
+            parsedCommits[parsedCommit.issueKey].push(parsedCommit);
         }
         else {
-            parsedCommits[parsedCommit.issue_key] = [parsedCommit];
+            parsedCommits[parsedCommit.issueKey] = [parsedCommit];
         }
     });
     const commitCount = Object.keys(parsedCommits).length;
     if (commitCount === 0) {
-        return null;
+        return { parsedCommits: null };
     }
-    return parsedCommits;
+    return { parsedCommits };
 };
 exports.parseCommits = parseCommits;
-/**
- * Parse commit from the event commit
- * @param commit commit from the event commit
- * @param projectKey Backlog project key
- * @returns ParsedCommit
- */
-const parseCommit = (commit, projectKey) => {
-    const match = commit.message.match(RegExp(commitKeywordRegexTemplate({ project_key: projectKey }), "s"));
+const parseCommit = ({ commit, fixKeywords, closeKeywords, commitMessageReg, }) => {
+    const match = commit.message.match(commitMessageReg);
     if (!match) {
-        return null;
+        return { parsedCommit: null };
     }
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const [, issue_key = null, message = "", keywords = ""] = match;
+    const [, issueKey = null, comment = "", keywords = ""] = match;
     return {
-        ...commit,
-        message,
-        original_message: commit.message,
-        id_short: commit.id.slice(0, 10),
-        tree_id_short: commit.tree_id.slice(0, 10),
-        issue_key,
-        keywords,
-        is_fix: fixKeywords.includes(keywords),
-        is_close: closeKeywords.includes(keywords),
+        parsedCommit: {
+            ...commit,
+            issueKey,
+            comment,
+            keywords,
+            isFix: fixKeywords.includes(keywords),
+            isClose: closeKeywords.includes(keywords),
+        },
     };
 };
 
@@ -8111,52 +8211,41 @@ exports.postComments = void 0;
 const url_1 = __nccwpck_require__(7310);
 const axios_1 = __importDefault(__nccwpck_require__(6545));
 const lodash_template_1 = __importDefault(__nccwpck_require__(417));
-// 2.0でinput受け取りにする
-const fixId = "3"; // 処理済みの状態 ID
-const closeId = "4"; // 完了の状態 ID
-const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"); // 「課題情報の更新」APIのURLテンプレート
-const commentTemplate = (0, lodash_template_1.default)("<%=commits[0].author.name%>さんがプッシュしました\n" +
-    "<% commits.forEach(commit=>{%>" +
-    "\n+ <%=commit.message%> ([<%=commit.id_short%>](<%=commit.url%>))" +
-    "<% }); %>"); // 通知文章のテンプレート
+// Update Issue API
+// https://developer.nulab.com/docs/backlog/api/2/update-issue/#
+const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>");
 /**
  * Post the comment to Backlog API
  * @param parsedCommits parsed Commits (create by parseCommits.ts)
+ * @param fixStatusId Status ID to mark as fixed
+ * @param closeStatusIdStatus ID to mark as closed
+ * @param pushCommentTemplate The template for backlog issue comment on push events
  * @param apiHost Backlog API Host
  * @param apiKey Backlog API Key
  * @returns Patch comment request promises
  */
-const postComments = (parsedCommits, apiHost, apiKey) => {
+const postComments = ({ parsedCommits, ...configs }) => {
     const promiseArray = [];
-    for (const [key, value] of Object.entries(parsedCommits)) {
-        promiseArray.push(createPatchCommentRequest(value, key, apiHost, apiKey));
+    for (const [issueKey, commits] of Object.entries(parsedCommits)) {
+        promiseArray.push(createPatchCommentRequest({ commits, issueKey, ...configs }));
     }
     return Promise.all(promiseArray);
 };
 exports.postComments = postComments;
-/**
- * Create patch comment request promise
- * @param commits parsed commits
- * @param issueKey Backlog issue key
- * @param apiHost Backlog API Host
- * @param apiKey Backlog API Key
- * @returns commits param (for use in console messages)
- * @see https://developer.nulab.com/docs/backlog/api/2/update-issue/
- */
-const createPatchCommentRequest = (commits, issueKey, apiHost, apiKey) => {
+const createPatchCommentRequest = ({ commits, issueKey, fixStatusId, closeStatusId, pushCommentTemplate, apiHost, apiKey, }) => {
     const endpoint = updateIssueApiUrlTemplate({
         apiHost: apiHost,
         apiKey: apiKey,
         issueKey,
     });
-    const comment = commentTemplate({ commits });
-    const isFix = commits.map((commit) => commit.is_fix).includes(true);
-    const isClose = commits.map((commit) => commit.is_close).includes(true);
+    const comment = (0, lodash_template_1.default)(pushCommentTemplate)({ commits });
+    const isFix = commits.map((commit) => commit.isFix).includes(true);
+    const isClose = commits.map((commit) => commit.isClose).includes(true);
     const status = (() => {
         if (isFix)
-            return { statusId: fixId };
+            return { statusId: fixStatusId };
         if (isClose)
-            return { statusId: closeId };
+            return { statusId: closeStatusId };
         else
             return undefined;
     })();

@@ -1,9 +1,58 @@
-name: "Backlog Notify"
-description: "Notify commit messages to Backlog issue"
-author: "Oishi Takanori"
+name: Backlog Notify
+description: Notify commit messages to Backlog issue
+author: Oishi Takanori
 branding:
-  icon: "bell"
-  color: "green"
+  icon: bell
+  color: green
 runs:
-  using: "node16"
-  main: "dist/index.js"
+  using: node16
+  main: dist/index.js
+inputs:
+  project_key:
+    description: Backlog Project key
+    required: true
+  api_host:
+    description: Backlog Host name
+    required: true
+  api_key:
+    description: Backlog Api key
+    required: true
+  fix_keywords:
+    description: Keywords to change the status of the issue to fixed
+    required: false
+    default: |-
+      #fix
+      #fixes
+      #fixed
+  close_keywords:
+    description: Keywords to change the status of the issue to closed
+    required: false
+    default: |-
+      #close
+      #closes
+      #closed
+  push_comment_template:
+    description: The template for backlog issue comment on push events
+    required: false
+    default: |-
+      <%= commits[0].author.name %>さんがプッシュしました
+      <% commits.forEach(commit=>{ %>
+      + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
+  commit_message_reg_template:
+    description: The template for regular expressions to parse commit messages
+    required: false
+    default: "\
+      ^\
+      (<%= projectKey %>\\-\\d+)\\s?\
+      (.*?)?\\s?\
+      (<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?\
+      $\
+      "
+  fix_status_id:
+    description: Status ID to mark as fixed
+    required: false
+    default: 3
+  close_status_id:
+    description: Status ID to mark as closed
+    required: false
+    default: 4

@@ -60,21 +60,105 @@ jobs:
     steps:
       - name: Backlog Notify
         uses: bicstone/backlog-notify@v2
-        env:
-          PROJECT_KEY: PROJECT_KEY
-          API_HOST: example.backlog.jp
-          API_KEY: ${{ secrets.BACKLOG_API_KEY }}
+        with:
+          # The following are required settings
+          project_key: PROJECT_KEY
+          api_host: example.backlog.jp
+          api_key: ${{ secrets.BACKLOG_API_KEY }}
+
+          # The following are optional settings
+          fix_keywords: |-
+            #fix
+            #fixes
+            #fixed
+          close_keywords: |-
+            #close
+            #closes
+            #closed
+          push_comment_template: |-
+            <%= commits[0].author.name %>さんがプッシュしました
+            <% commits.forEach(commit=>{ %>
+            + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
+          commit_message_reg_template: "\
+            ^\
+            (<%= projectKey %>\\-\\d+)\\s?\
+            (.*?)?\\s?\
+            (<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?\
+            $\
+            "
+          fix_status_id: 3
+          close_status_id: 4
 ```
 
 ## 設定一覧
 
-他の Github Actions と異なり、env を用いて指定します。
+| 設定名                        | 説明                                 |
+| ----------------------------- | ------------------------------------ |
+| `project_key`                 | Backlog プロジェクトキー (必須)      |
+| `api_host`                    | Backlog のホスト (必須)              |
+| `api_key`                     | Backlog API キー (必須)              |
+| `fix_keywords`                | 処理済みにするキーワード             |
+| `close_keywords`              | 完了にするキーワード                 |
+| `push_comment_template`       | プッシュ時のコメント雛形             |
+| `commit_message_reg_template` | コミットメッセージ解析の正規表現雛形 |
+| `fix_status_id`               | 処理済みの 状態 ID                   |
+| `close_status_id`             | 完了の 状態 ID                       |
 
-| 変数名      | 説明             | 必須 |
-| ----------- | ---------------- | ---- |
-| PROJECT_KEY | プロジェクトキー | ○    |
-| API_HOST    | API の URL       | ○    |
-| API_KEY     | API キー         | ○    |
+### `push_comment_template`
+
+プッシュ時のコメントの雛形を変更できます。  
+構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
+
+<details>
+
+<summary>使用可能な変数</summary>
+
+| 変数名      | 型        |
+| ----------- | --------- |
+| `id`        | string    |
+| `tree_id`   | string    |
+| `distinct`  | boolean   |
+| `message`   | string    |
+| `timestamp` | string    |
+| `url`       | string    |
+| `author`    | Committer |
+| `committer` | Committer |
+| `added`     | string[]  |
+| `modified`  | string[]  |
+| `removed`   | string[]  |
+| `issueKey`  | string    |
+| `comment`   | string    |
+| `keywords`  | string    |
+| `isFix`     | boolean   |
+| `isClose`   | boolean   |
+
+Committer
+
+| 変数名     | 型                      |
+| ---------- | ----------------------- |
+| `name`     | string                  |
+| `email`    | string &#124; null      |
+| `date`     | string &#124; undefined |
+| `username` | string &#124; undefined |
+
+</details>
+
+### `commit_message_reg_template`
+
+コミットメッセージ解析の正規表現雛形を変更できます。  
+構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
+
+<details>
+
+<summary>使用可能な変数</summary>
+
+| 変数名          | 型       |
+| --------------- | -------- |
+| `projectKey`    | string   |
+| `fixKeywords`   | string[] |
+| `closeKeywords` | string[] |
+
+</details>
 
 ## 使用方法
 

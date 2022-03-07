@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import url from "url"
 import axios, { AxiosResponse } from "axios"
 import { mocked } from "jest-mock"
@@ -7,15 +6,25 @@ import { postComments, Response } from "../src/postComments"
 
 jest.mock("axios")
 
+const fixStatusId = "fixStatusId"
+const closeStatusId = "closeStatusId"
+const pushCommentTemplate =
+  "<%= commits[0].author.name %>さんがプッシュしました" +
+  "\n" +
+  "<% commits.forEach(commit=>{ %>" +
+  "\n" +
+  "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
+  "<% }); %>"
 const apiHost = "level5-judgelight-.backlog.com"
 const apiKey = "GO1GO1maniac"
 
 const projectKey = "BUNBUN_NINE9"
-const issue_key = `${projectKey}-1`
-const message = "message"
+const issueKey = `${projectKey}-1`
+const comment = "＼(ﾟヮﾟ)＞＼(ﾟヮﾟ)／＼(ﾟヮﾟ)／＜(ﾟヮ^)"
 
 const baseCommit = {
-  id: "id3456789012345",
+  id: "e83c5163316f89bfbde7d9ab23ca2e25604af290",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   tree_id: "tree_id89012345",
   distinct: true,
   timestamp: "timestamp",
@@ -32,19 +41,16 @@ const baseCommit = {
   added: ["added"],
   removed: ["removed"],
   modified: ["modified"],
-
-  message,
-  original_message: `${issue_key} ${message}`,
-  id_short: "id34567890",
-  tree_id_short: "tree_id890",
-  issue_key,
+  message: `${issueKey} ${comment}`,
+  comment,
+  issueKey,
   keywords: "",
-  is_fix: false,
-  is_close: false,
+  isFix: false,
+  isClose: false,
 }
 
 const baseCommits: ParsedCommits = {
-  [issue_key]: [baseCommit],
+  [issueKey]: [baseCommit],
 }
 
 const axiosResponse: AxiosResponse = {
@@ -62,42 +68,49 @@ describe("postComments", () => {
   })
 
   test("parseCommits post a comment to Backlog API", () => {
-    const endpoint = `https://${apiHost}/api/v2/issues/${issue_key}?apiKey=${apiKey}`
-    const commits: ParsedCommits = baseCommits
+    const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
+    const parsedCommits: ParsedCommits = baseCommits
     const body = {
       comment:
         `${baseCommit.author.name}さんがプッシュしました` +
         "\n" +
         "\n" +
-        `+ ${baseCommit.message} ` +
-        `([${baseCommit.id_short}](${baseCommit.url}))`,
+        `+ ${baseCommit.comment} ` +
+        `([${baseCommit.id.slice(0, 7).slice(0, 7)}](${baseCommit.url}))`,
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
       response: axiosResponse,
-      commits: commits[issue_key],
-      issueKey: issue_key,
+      commits: parsedCommits[issueKey],
+      issueKey: issueKey,
       isFix: false,
       isClose: false,
     }
 
-    expect(postComments(commits, apiHost, apiKey)).resolves.toStrictEqual([
-      response,
-    ])
+    expect(
+      postComments({
+        parsedCommits,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
+    ).resolves.toStrictEqual([response])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(1)
     expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
   })
 
   test("parseCommits post a comment and change status when change to fixed", () => {
-    const endpoint = `https://${apiHost}/api/v2/issues/${issue_key}?apiKey=${apiKey}`
-    const commits: ParsedCommits = {
-      [issue_key]: [
+    const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
+    const parsedCommits: ParsedCommits = {
+      [issueKey]: [
         {
           ...baseCommit,
-          original_message: `${issue_key} ${message} #fixed`,
+          message: `${issueKey} ${comment} #fixed`,
           keywords: "#fixed",
-          is_fix: true,
+          isFix: true,
         },
       ],
     }
@@ -106,36 +119,43 @@ describe("postComments", () => {
         `${baseCommit.author.name}さんがプッシュしました` +
         "\n" +
         "\n" +
-        `+ ${baseCommit.message} ` +
-        `([${baseCommit.id_short}](${baseCommit.url}))`,
-      statusId: "3",
+        `+ ${baseCommit.comment} ` +
+        `([${baseCommit.id.slice(0, 7)}](${baseCommit.url}))`,
+      statusId: fixStatusId,
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
       response: axiosResponse,
-      commits: commits[issue_key],
-      issueKey: issue_key,
+      commits: parsedCommits[issueKey],
+      issueKey: issueKey,
       isFix: true,
       isClose: false,
     }
 
-    expect(postComments(commits, apiHost, apiKey)).resolves.toStrictEqual([
-      response,
-    ])
+    expect(
+      postComments({
+        parsedCommits,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
+    ).resolves.toStrictEqual([response])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(1)
     expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
   })
 
   test("parseCommits post a comment and change status when change to close", () => {
-    const endpoint = `https://${apiHost}/api/v2/issues/${issue_key}?apiKey=${apiKey}`
-    const commits: ParsedCommits = {
-      [issue_key]: [
+    const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
+    const parsedCommits: ParsedCommits = {
+      [issueKey]: [
         {
           ...baseCommit,
-          original_message: `${issue_key} ${message} #closed`,
+          message: `${issueKey} ${comment} #closed`,
           keywords: "#closed",
-          is_close: true,
+          isClose: true,
         },
       ],
     }
@@ -144,68 +164,81 @@ describe("postComments", () => {
         `${baseCommit.author.name}さんがプッシュしました` +
         "\n" +
         "\n" +
-        `+ ${baseCommit.message} ` +
-        `([${baseCommit.id_short}](${baseCommit.url}))`,
-      statusId: "4",
+        `+ ${baseCommit.comment} ` +
+        `([${baseCommit.id.slice(0, 7)}](${baseCommit.url}))`,
+      statusId: closeStatusId,
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
       response: axiosResponse,
-      commits: commits[issue_key],
-      issueKey: issue_key,
+      commits: parsedCommits[issueKey],
+      issueKey: issueKey,
       isFix: false,
       isClose: true,
     }
 
-    expect(postComments(commits, apiHost, apiKey)).resolves.toStrictEqual([
-      response,
-    ])
+    expect(
+      postComments({
+        parsedCommits,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
+    ).resolves.toStrictEqual([response])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(1)
     expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
   })
 
-  test("parseCommits post 2 comments to Backlog API when 2 issue_keys", () => {
-    const commits: ParsedCommits = {
+  test("parseCommits post 2 comments to Backlog API when 2 issueKeys", () => {
+    const parsedCommits: ParsedCommits = {
       [`${projectKey}-1`]: [
         {
           ...baseCommit,
-          issue_key: `${projectKey}-1`,
-          original_message: `${projectKey}-1 ${message}`,
+          issueKey: `${projectKey}-1`,
+          message: `${projectKey}-1 ${comment}`,
         },
       ],
       [`${projectKey}-2`]: [
         {
           ...baseCommit,
-          issue_key: `${projectKey}-2`,
-          original_message: `${projectKey}-2 ${message}`,
+          issueKey: `${projectKey}-2`,
+          message: `${projectKey}-2 ${comment}`,
         },
         {
           ...baseCommit,
-          issue_key: `${projectKey}-2`,
-          original_message: `${projectKey}-2 ${message}`,
+          issueKey: `${projectKey}-2`,
+          message: `${projectKey}-2 ${comment}`,
         },
       ],
     }
     const response1: Response = {
       response: axiosResponse,
-      commits: commits[`${projectKey}-1`],
+      commits: parsedCommits[`${projectKey}-1`],
       issueKey: `${projectKey}-1`,
       isFix: false,
       isClose: false,
     }
     const response2: Response = {
       response: axiosResponse,
-      commits: commits[`${projectKey}-2`],
+      commits: parsedCommits[`${projectKey}-2`],
       issueKey: `${projectKey}-2`,
       isFix: false,
       isClose: false,
     }
 
-    expect(postComments(commits, apiHost, apiKey)).resolves.toStrictEqual([
-      response1,
-      response2,
-    ])
+    expect(
+      postComments({
+        parsedCommits,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
+    ).resolves.toStrictEqual([response1, response2])
     expect(axios.patch).toHaveBeenCalled()
     expect(axios.patch).toHaveBeenCalledTimes(2)
   })
