@@ -35,7 +35,7 @@ inputs:
     description: The template for backlog issue comment on push events
     required: false
     default: |-
-      <%= commits[0].author.name %>さんがプッシュしました
+      <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
       <% commits.forEach(commit=>{ %>
       + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
   commit_message_reg_template:

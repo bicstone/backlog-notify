@@ -157,6 +157,21 @@ describe("main", () => {
     )
   })
 
+  test("main not continue and resolve processing when the event.ref is invalid", async () => {
+    const pushInvalidRef = {
+      ...push,
+      ref: "invalid-ref",
+    } as PushEvent
+    mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
+      event: pushInvalidRef,
+    }))
+    await expect(main()).resolves.not.toThrow()
+    expect(core.info).toHaveBeenCalledTimes(1)
+    expect(core.info).toHaveBeenCalledWith(
+      "Git referenceの解析に失敗しました。"
+    )
+  })
+
   test("main calls setFailed when an error", async () => {
     const error = Error("error!")
     mocked(fetchEvent.fetchEvent).mockImplementation(() => {

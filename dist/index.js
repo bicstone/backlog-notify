@@ -7950,7 +7950,7 @@ const getConfigs = () => {
             })
             : ["#close", "#closes", "#closed"],
         pushCommentTemplate: core.getInput("push_comment_template") ||
-            "<%= commits[0].author.name %>さんがプッシュしました" +
+            "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
                 "\n" +
                 "<% commits.forEach(commit=>{ %>" +
                 "\n" +
@@ -8056,6 +8056,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const fetchEvent_1 = __nccwpck_require__(803);
 const getConfigs_1 = __nccwpck_require__(2732);
 const parseCommits_1 = __nccwpck_require__(9752);
+const parseRef_1 = __nccwpck_require__(4975);
 const postComments_1 = __nccwpck_require__(6082);
 const runAction = async () => {
     // init
@@ -8080,10 +8081,18 @@ const runAction = async () => {
         return "課題キーのついたコミットが1件も見つかりませんでした。";
     }
     core.endGroup();
+    // parse ref, repository
+    core.startGroup(`Push先の確認中`);
+    const parsedRef = (0, parseRef_1.parseRef)(event.ref, event.repository.html_url);
+    if (!parsedRef) {
+        return "Git referenceの解析に失敗しました。";
+    }
+    core.endGroup();
     // post comments
     core.startGroup(`コメント送信中`);
     await (0, postComments_1.postComments)({
         parsedCommits,
+        parsedRef,
         pushCommentTemplate,
         fixStatusId,
         closeStatusId,
@@ -8198,6 +8207,38 @@ const parseCommit = ({ commit, fixKeywords, closeKeywords, commitMessageReg, }) 
 
 /***/ }),
 
+/***/ 4975:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.parseRef = void 0;
+const lodash_template_1 = __importDefault(__nccwpck_require__(417));
+const refReg = /refs\/[a-z]*\/(.*)/;
+const refUrlTemplate = (0, lodash_template_1.default)("<%= repositoryHtmlUrl %>/tree/<%= name %>");
+/**
+ * Parse tree name and url from the event ref and repository html url
+ * @param ref The full git ref that was pushed. Example: `refs/heads/main` or `refs/tags/v3.14.1`.
+ * @param repositoryHtmlUrl HTML URL of the repository.
+ * @returns
+ */
+const parseRef = (ref, repositoryHtmlUrl) => {
+    // e.g. Get name `feature/foo ` for ref `refs/heads/feature/foo`
+    const name = ref.match(refReg)?.[1];
+    if (!name)
+        return;
+    const url = refUrlTemplate({ repositoryHtmlUrl, name });
+    return { name, url };
+};
+exports.parseRef = parseRef;
+
+
+/***/ }),
+
 /***/ 6082:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -8217,6 +8258,7 @@ const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=api
 /**
  * Post the comment to Backlog API
  * @param parsedCommits parsed Commits (create by parseCommits.ts)
+ * @param parsedRef parsed ref (create by parseRef.ts)
  * @param fixStatusId Status ID to mark as fixed
  * @param closeStatusIdStatus ID to mark as closed
  * @param pushCommentTemplate The template for backlog issue comment on push events
@@ -8224,21 +8266,26 @@ const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=api
  * @param apiKey Backlog API Key
  * @returns Patch comment request promises
  */
-const postComments = ({ parsedCommits, ...configs }) => {
+const postComments = ({ parsedCommits, parsedRef, ...configs }) => {
     const promiseArray = [];
     for (const [issueKey, commits] of Object.entries(parsedCommits)) {
-        promiseArray.push(createPatchCommentRequest({ commits, issueKey, ...configs }));
+        promiseArray.push(createPatchCommentRequest({
+            commits,
+            issueKey,
+            ref: parsedRef,
+            ...configs,
+        }));
     }
     return Promise.all(promiseArray);
 };
 exports.postComments = postComments;
-const createPatchCommentRequest = ({ commits, issueKey, fixStatusId, closeStatusId, pushCommentTemplate, apiHost, apiKey, }) => {
+const createPatchCommentRequest = ({ commits, ref, issueKey, fixStatusId, closeStatusId, pushCommentTemplate, apiHost, apiKey, }) => {
     const endpoint = updateIssueApiUrlTemplate({
         apiHost: apiHost,
         apiKey: apiKey,
         issueKey,
     });
-    const comment = (0, lodash_template_1.default)(pushCommentTemplate)({ commits });
+    const comment = (0, lodash_template_1.default)(pushCommentTemplate)({ commits, ref });
     const isFix = commits.map((commit) => commit.isFix).includes(true);
     const isClose = commits.map((commit) => commit.isClose).includes(true);
     const status = (() => {

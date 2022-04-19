@@ -38,7 +38,7 @@ export const getConfigs = (): Configs => {
       : ["#close", "#closes", "#closed"],
     pushCommentTemplate:
       core.getInput("push_comment_template") ||
-      "<%= commits[0].author.name %>さんがプッシュしました" +
+      "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
         "\n" +
         "<% commits.forEach(commit=>{ %>" +
         "\n" +

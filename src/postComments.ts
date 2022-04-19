@@ -2,6 +2,7 @@ import { URLSearchParams } from "url"
 import axios, { AxiosResponse } from "axios"
 import template from "lodash.template"
 import { ParsedCommits, ParsedCommit } from "../src/parseCommits"
+import { ParsedRef } from "./parseRef"
 
 // Update Issue API
 // https://developer.nulab.com/docs/backlog/api/2/update-issue/#
@@ -19,6 +20,7 @@ export type Response = {
 
 type PostCommentsProps = {
   parsedCommits: ParsedCommits
+  parsedRef: ParsedRef
   fixStatusId: string
   closeStatusId: string
   pushCommentTemplate: string
@@ -29,6 +31,7 @@ type PostCommentsProps = {
 /**
  * Post the comment to Backlog API
  * @param parsedCommits parsed Commits (create by parseCommits.ts)
+ * @param parsedRef parsed ref (create by parseRef.ts)
  * @param fixStatusId Status ID to mark as fixed
  * @param closeStatusIdStatus ID to mark as closed
  * @param pushCommentTemplate The template for backlog issue comment on push events
@@ -39,13 +42,19 @@ type PostCommentsProps = {
 
 export const postComments = ({
   parsedCommits,
+  parsedRef,
   ...configs
 }: PostCommentsProps): Promise<Response[]> => {
   const promiseArray: Promise<Response>[] = []
 
   for (const [issueKey, commits] of Object.entries(parsedCommits)) {
     promiseArray.push(
-      createPatchCommentRequest({ commits, issueKey, ...configs })
+      createPatchCommentRequest({
+        commits,
+        issueKey,
+        ref: parsedRef,
+        ...configs,
+      })
     )
   }
 
@@ -54,6 +63,7 @@ export const postComments = ({
 
 type CreatePatchCommentRequestProps = {
   commits: ParsedCommit[]
+  ref: ParsedRef
   issueKey: string
   fixStatusId: string
   closeStatusId: string
@@ -64,6 +74,7 @@ type CreatePatchCommentRequestProps = {
 
 const createPatchCommentRequest = ({
   commits,
+  ref,
   issueKey,
   fixStatusId,
   closeStatusId,
@@ -77,7 +88,7 @@ const createPatchCommentRequest = ({
     issueKey,
   })
 
-  const comment = template(pushCommentTemplate)({ commits })
+  const comment = template(pushCommentTemplate)({ commits, ref })
   const isFix = commits.map((commit) => commit.isFix).includes(true)
   const isClose = commits.map((commit) => commit.isClose).includes(true)
   const status = (() => {

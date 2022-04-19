@@ -2,6 +2,7 @@ import * as core from "@actions/core"
 import { fetchEvent } from "./fetchEvent"
 import { getConfigs } from "./getConfigs"
 import { parseCommits } from "./parseCommits"
+import { parseRef } from "./parseRef"
 import { postComments } from "./postComments"
 
 const runAction = async (): Promise<string> => {
@@ -41,10 +42,19 @@ const runAction = async (): Promise<string> => {
   }
   core.endGroup()
 
+  // parse ref, repository
+  core.startGroup(`Push先の確認中`)
+  const parsedRef = parseRef(event.ref, event.repository.html_url)
+  if (!parsedRef) {
+    return "Git referenceの解析に失敗しました。"
+  }
+  core.endGroup()
+
   // post comments
   core.startGroup(`コメント送信中`)
   await postComments({
     parsedCommits,
+    parsedRef,
     pushCommentTemplate,
     fixStatusId,
     closeStatusId,

@@ -76,7 +76,7 @@ jobs:
             #closes
             #closed
           push_comment_template: |-
-            <%= commits[0].author.name %>さんがプッシュしました
+            <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
             <% commits.forEach(commit=>{ %>
             + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
           commit_message_reg_template: "\
@@ -113,6 +113,13 @@ jobs:
 
 <summary>使用可能な変数</summary>
 
+| 変数名    | 型             |
+| --------- | -------------- |
+| `commits` | ParsedCommit[] |
+| `ref`     | ParsedRef      |
+
+ParsedCommit
+
 | 変数名      | 型        |
 | ----------- | --------- |
 | `id`        | string    |
@@ -131,6 +138,13 @@ jobs:
 | `keywords`  | string    |
 | `isFix`     | boolean   |
 | `isClose`   | boolean   |
+
+ParsedRef
+
+| 変数名 | 型     |
+| ------ | ------ |
+| `name` | string |
+| `url`  | string |
 
 Committer
 
