@@ -213,6 +213,7 @@ Thanks goes to these contributors.
     <td align="center"><a href="https://github.com/stmon19"><img src="https://avatars.githubusercontent.com/u/1284496?v=4?s=100" width="100px;" alt=""/><br /><sub><b>takeshi.kondo</b></sub></a><br /><a href="https://github.com/bicstone/backlog-notify/issues?q=author%3Astmon19" title="Bug reports">🐛</a> <a href="https://github.com/bicstone/backlog-notify/commits?author=stmon19" title="Code">💻</a></td>
     <td align="center"><a href="http://suzuken.hatenablog.jp/"><img src="https://avatars.githubusercontent.com/u/491428?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kenta SUZUKI</b></sub></a><br /><a href="https://github.com/bicstone/backlog-notify/commits?author=suzuken" title="Documentation">📖</a></td>
     <td align="center"><a href="https://twitter.com/_mantaroh_"><img src="https://avatars.githubusercontent.com/u/3241026?v=4?s=100" width="100px;" alt=""/><br /><sub><b>mantaroh</b></sub></a><br /><a href="#ideas-mantaroh" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/hynjnk"><img src="https://avatars.githubusercontent.com/u/38238305?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hyunjoon KIM</b></sub></a><br /><a href="#ideas-hynjnk" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/bicstone/backlog-notify/commits?author=hynjnk" title="Code">💻</a></td>
   </tr>
 </table>
 
