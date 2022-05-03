@@ -59,7 +59,7 @@ jobs:
 
     steps:
       - name: Backlog Notify
-        uses: bicstone/backlog-notify@v2
+        uses: bicstone/backlog-notify@v3
         with:
           # The following are required settings
           project_key: PROJECT_KEY
