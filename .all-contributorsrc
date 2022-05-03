@@ -51,6 +51,16 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "hynjnk",
+      "name": "Hyunjoon KIM",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38238305?v=4",
+      "profile": "https://github.com/hynjnk",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
