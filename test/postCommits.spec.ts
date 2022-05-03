@@ -3,13 +3,14 @@ import axios, { AxiosResponse } from "axios"
 import { mocked } from "jest-mock"
 import { ParsedCommits } from "../src/parseCommits"
 import { postComments, Response } from "../src/postComments"
+import { ParsedRef } from "../src/parseRef"
 
 jest.mock("axios")
 
 const fixStatusId = "fixStatusId"
 const closeStatusId = "closeStatusId"
 const pushCommentTemplate =
-  "<%= commits[0].author.name %>さんがプッシュしました" +
+  "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
   "\n" +
   "<% commits.forEach(commit=>{ %>" +
   "\n" +
@@ -53,6 +54,10 @@ const baseCommits: ParsedCommits = {
   [issueKey]: [baseCommit],
 }
 
+const baseParsedRef: ParsedRef = {
+  name: "branch-name",
+  url: "https://example.com/foo/bar/tree/branch-name",
+}
 const axiosResponse: AxiosResponse = {
   data: {},
   status: 200,
@@ -70,9 +75,10 @@ describe("postComments", () => {
   test("parseCommits post a comment to Backlog API", () => {
     const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
     const parsedCommits: ParsedCommits = baseCommits
+    const parsedRef: ParsedRef = baseParsedRef
     const body = {
       comment:
-        `${baseCommit.author.name}さんがプッシュしました` +
+        `${baseCommit.author.name}さんが[${baseParsedRef.name}](${baseParsedRef.url})にプッシュしました` +
         "\n" +
         "\n" +
         `+ ${baseCommit.comment} ` +
@@ -90,6 +96,7 @@ describe("postComments", () => {
     expect(
       postComments({
         parsedCommits,
+        parsedRef,
         fixStatusId,
         closeStatusId,
         pushCommentTemplate,
@@ -114,9 +121,10 @@ describe("postComments", () => {
         },
       ],
     }
+    const parsedRef: ParsedRef = baseParsedRef
     const body = {
       comment:
-        `${baseCommit.author.name}さんがプッシュしました` +
+        `${baseCommit.author.name}さんが[${baseParsedRef.name}](${baseParsedRef.url})にプッシュしました` +
         "\n" +
         "\n" +
         `+ ${baseCommit.comment} ` +
@@ -135,6 +143,7 @@ describe("postComments", () => {
     expect(
       postComments({
         parsedCommits,
+        parsedRef,
         fixStatusId,
         closeStatusId,
         pushCommentTemplate,
@@ -159,9 +168,10 @@ describe("postComments", () => {
         },
       ],
     }
+    const parsedRef: ParsedRef = baseParsedRef
     const body = {
       comment:
-        `${baseCommit.author.name}さんがプッシュしました` +
+        `${baseCommit.author.name}さんが[${baseParsedRef.name}](${baseParsedRef.url})にプッシュしました` +
         "\n" +
         "\n" +
         `+ ${baseCommit.comment} ` +
@@ -180,6 +190,7 @@ describe("postComments", () => {
     expect(
       postComments({
         parsedCommits,
+        parsedRef,
         fixStatusId,
         closeStatusId,
         pushCommentTemplate,
@@ -214,6 +225,7 @@ describe("postComments", () => {
         },
       ],
     }
+    const parsedRef: ParsedRef = baseParsedRef
     const response1: Response = {
       response: axiosResponse,
       commits: parsedCommits[`${projectKey}-1`],
@@ -232,6 +244,7 @@ describe("postComments", () => {
     expect(
       postComments({
         parsedCommits,
+        parsedRef,
         fixStatusId,
         closeStatusId,
         pushCommentTemplate,

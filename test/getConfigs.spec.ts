@@ -75,7 +75,7 @@ describe("getConfigs", () => {
     }
   )
 
-  test("getConfigs return configs for current version when we set configs as of version 1.1.1", () => {
+  test("getConfigs return configs for current version when we set configs as of version 2.x.x", () => {
     Object.keys(requiredEnv).forEach((key) => {
       process.env[`INPUT_${key}`] = ``
     })
@@ -84,12 +84,12 @@ describe("getConfigs", () => {
     })
     expect(getConfigs()).toStrictEqual({
       ...configs,
-      // parseCommits.ts of version 1.1.1
+      // parseCommits.ts of version 2.x.x
       fixKeywords: ["#fix", "#fixes", "#fixed"],
       closeKeywords: ["#close", "#closes", "#closed"],
-      // postComments.ts of version 1.1.1
+      // postComments.ts of version 2.x.x
       pushCommentTemplate:
-        "<%= commits[0].author.name %>さんがプッシュしました" +
+        "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
         "\n" +
         "<% commits.forEach(commit=>{ %>" +
         "\n" +
