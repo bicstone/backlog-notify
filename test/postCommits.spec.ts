@@ -1,11 +1,11 @@
 import url from "url"
 import axios, { AxiosResponse } from "axios"
-import { mocked } from "jest-mock"
 import { ParsedCommits } from "../src/parseCommits"
 import { postComments, Response } from "../src/postComments"
 import { ParsedRef } from "../src/parseRef"
 
 jest.mock("axios")
+const mockedAxios = axios as jest.Mocked<typeof axios>
 
 const fixStatusId = "fixStatusId"
 const closeStatusId = "closeStatusId"
@@ -69,7 +69,7 @@ const axiosResponse: AxiosResponse = {
 
 describe("postComments", () => {
   beforeEach(() => {
-    mocked(axios.patch).mockImplementation(() => Promise.resolve(axiosResponse))
+    mockedAxios.patch.mockImplementation(() => Promise.resolve(axiosResponse))
   })
 
   test("parseCommits post a comment to Backlog API", () => {
@@ -104,9 +104,9 @@ describe("postComments", () => {
         apiKey,
       })
     ).resolves.toStrictEqual([response])
-    expect(axios.patch).toHaveBeenCalled()
-    expect(axios.patch).toHaveBeenCalledTimes(1)
-    expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
+    expect(mockedAxios.patch).toHaveBeenCalled()
+    expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
+    expect(mockedAxios.patch).toHaveBeenCalledWith(endpoint, params)
   })
 
   test("parseCommits post a comment and change status when change to fixed", () => {
@@ -151,9 +151,9 @@ describe("postComments", () => {
         apiKey,
       })
     ).resolves.toStrictEqual([response])
-    expect(axios.patch).toHaveBeenCalled()
-    expect(axios.patch).toHaveBeenCalledTimes(1)
-    expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
+    expect(mockedAxios.patch).toHaveBeenCalled()
+    expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
+    expect(mockedAxios.patch).toHaveBeenCalledWith(endpoint, params)
   })
 
   test("parseCommits post a comment and change status when change to close", () => {
@@ -198,9 +198,9 @@ describe("postComments", () => {
         apiKey,
       })
     ).resolves.toStrictEqual([response])
-    expect(axios.patch).toHaveBeenCalled()
-    expect(axios.patch).toHaveBeenCalledTimes(1)
-    expect(axios.patch).toHaveBeenCalledWith(endpoint, params)
+    expect(mockedAxios.patch).toHaveBeenCalled()
+    expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
+    expect(mockedAxios.patch).toHaveBeenCalledWith(endpoint, params)
   })
 
   test("parseCommits post 2 comments to Backlog API when 2 issueKeys", () => {
@@ -252,7 +252,7 @@ describe("postComments", () => {
         apiKey,
       })
     ).resolves.toStrictEqual([response1, response2])
-    expect(axios.patch).toHaveBeenCalled()
-    expect(axios.patch).toHaveBeenCalledTimes(2)
+    expect(mockedAxios.patch).toHaveBeenCalled()
+    expect(mockedAxios.patch).toHaveBeenCalledTimes(2)
   })
 })

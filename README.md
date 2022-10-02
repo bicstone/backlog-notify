@@ -61,12 +61,12 @@ jobs:
       - name: Backlog Notify
         uses: bicstone/backlog-notify@v3
         with:
-          # The following are required settings
+          # 必須設定 (The following are required settings)
           project_key: PROJECT_KEY
           api_host: example.backlog.jp
           api_key: ${{ secrets.BACKLOG_API_KEY }}
 
-          # The following are optional settings
+          # 任意設定 (The following are optional settings)
           fix_keywords: |-
             #fix
             #fixes
