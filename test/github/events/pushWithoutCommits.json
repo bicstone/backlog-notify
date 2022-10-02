@@ -97,6 +97,7 @@
     "stargazers": 0,
     "master_branch": "master",
     "is_template": false,
+    "web_commit_signoff_required": false,
     "topics": [],
     "visibility": "public"
   },
