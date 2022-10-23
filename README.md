@@ -51,13 +51,6 @@ name: Backlog Notify
 
 on:
   - push
-  - pull_request:
-      types:
-        - opened
-        - reopened
-        - closed
-        - converted_to_draft
-        - ready_for_review
 
 jobs:
   notify:
@@ -85,14 +78,6 @@ jobs:
             <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
             <% commits.forEach(commit=>{ %>
             + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
-          open_pr_comment_template: |-
-            <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプルリクエストを作成しました
-            <% commits.forEach(commit=>{ %>
-            + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
-          close_pr_comment_template: |-
-            <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)プルリクエストをクローズしました
-            <% commits.forEach(commit=>{ %>
-            + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
           commit_message_reg_template: "\
             ^\
             (<%= projectKey %>\\-\\d+)\\s?\
@@ -106,19 +91,17 @@ jobs:
 
 ## 設定一覧
 
-| 設定名                        | 説明                                   |
-| ----------------------------- | -------------------------------------- |
-| `project_key`                 | Backlog プロジェクトキー (必須)        |
-| `api_host`                    | Backlog のホスト (必須)                |
-| `api_key`                     | Backlog API キー (必須)                |
-| `fix_keywords`                | 処理済みにするキーワード               |
-| `close_keywords`              | 完了にするキーワード                   |
-| `push_comment_template`       | プッシュ時のコメント雛形               |
-| `open_pr_comment_template`    | プルリクエストオープン時のコメント雛形 |
-| `close_pr_comment_template`   | プルリクエストクローズ時のコメント雛形 |
-| `commit_message_reg_template` | コミットメッセージ解析の正規表現雛形   |
-| `fix_status_id`               | 処理済みの 状態 ID                     |
-| `close_status_id`             | 完了の 状態 ID                         |
+| 設定名                        | 説明                                 |
+| ----------------------------- | ------------------------------------ |
+| `project_key`                 | Backlog プロジェクトキー (必須)      |
+| `api_host`                    | Backlog のホスト (必須)              |
+| `api_key`                     | Backlog API キー (必須)              |
+| `fix_keywords`                | 処理済みにするキーワード             |
+| `close_keywords`              | 完了にするキーワード                 |
+| `push_comment_template`       | プッシュ時のコメント雛形             |
+| `commit_message_reg_template` | コミットメッセージ解析の正規表現雛形 |
+| `fix_status_id`               | 処理済みの 状態 ID                   |
+| `close_status_id`             | 完了の 状態 ID                       |
 
 ### `push_comment_template`
 
