@@ -1,8 +1,6 @@
 import * as core from "@actions/core"
 import { mocked } from "jest-mock"
-
-import push from "./github/events/push.json"
-import pushWithoutCommits from "./github/events/pushWithoutCommits.json"
+import webhooks from "@octokit/webhooks-examples"
 
 import type { AxiosResponse } from "axios"
 import type { PushEvent } from "@octokit/webhooks-types"
@@ -12,6 +10,11 @@ import * as getConfigs from "../src/getConfigs"
 import * as fetchEvent from "../src/fetchEvent"
 import * as parseCommits from "../src/parseCommits"
 import * as postComments from "../src/postComments"
+
+const pushEvents = (webhooks.find((v) => v.name === "push")?.examples ??
+  []) as PushEvent[]
+
+const pushEventsWithCommit = pushEvents.filter((v) => v?.commits?.length > 0)
 
 jest.mock("@actions/core")
 jest.mock("../src/getConfigs")
@@ -43,7 +46,7 @@ const basePostCommentsResponse: postComments.Response = {
   isClose: false,
 }
 
-describe("main", () => {
+describe.each(pushEventsWithCommit)("main", (pushEvent) => {
   beforeEach(() => {
     mocked(getConfigs.getConfigs).mockImplementation(() => {
       return {
@@ -60,7 +63,7 @@ describe("main", () => {
       }
     })
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
-      event: push as PushEvent,
+      event: pushEvent,
     }))
     mocked(parseCommits.parseCommits).mockImplementation(() => ({
       parsedCommits: { key: [] },
@@ -112,7 +115,7 @@ describe("main", () => {
 
   test("main not continue and resolve processing when 0 commits", async () => {
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
-      event: pushWithoutCommits as PushEvent,
+      event: { ...pushEvent, commits: [] },
     }))
     await expect(main()).resolves.not.toThrow()
     expect(core.info).toHaveBeenCalledTimes(1)
@@ -134,7 +137,7 @@ describe("main", () => {
 
   test("main not continue and resolve processing when the event is invalid", async () => {
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
-      event: { commits: null } as unknown as PushEvent,
+      event: { ...pushEvent, commits: undefined } as unknown as PushEvent,
     }))
     await expect(main()).resolves.not.toThrow()
     expect(core.info).toHaveBeenCalledTimes(1)
@@ -145,7 +148,7 @@ describe("main", () => {
 
   test("main not continue and resolve processing when commits without issueKey", async () => {
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
-      event: push as PushEvent,
+      event: pushEvent,
     }))
     mocked(parseCommits.parseCommits).mockImplementation(() => ({
       parsedCommits: null,
@@ -158,10 +161,7 @@ describe("main", () => {
   })
 
   test("main not continue and resolve processing when the event.ref is invalid", async () => {
-    const pushInvalidRef = {
-      ...push,
-      ref: "invalid-ref",
-    } as PushEvent
+    const pushInvalidRef = { ...pushEvent, ref: "invalid-ref" }
     mocked(fetchEvent.fetchEvent).mockImplementation(() => ({
       event: pushInvalidRef,
     }))

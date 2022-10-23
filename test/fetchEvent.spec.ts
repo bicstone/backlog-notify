@@ -2,8 +2,7 @@ import fs from "fs"
 import { fetchEvent } from "../src/fetchEvent"
 import webhooks from "@octokit/webhooks-examples"
 
-const pushEvents =
-  webhooks.find((webhook) => webhook.name === "push")?.examples ?? []
+const pushEvents = webhooks.find((v) => v.name === "push")?.examples ?? []
 
 jest.mock("fs")
 const mockedFs = fs as jest.Mocked<typeof fs>
