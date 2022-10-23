@@ -1,8 +1,8 @@
 import url from "url"
 import axios, { AxiosResponse } from "axios"
-import { ParsedCommits } from "../src/parseCommits"
-import { postComments, Response } from "../src/postComments"
-import { ParsedRef } from "../src/parseRef"
+import { ParsedCommits } from "./parseCommits"
+import { postComments, Response } from "./postComments"
+import { ParsedRef } from "./parseRef"
 
 jest.mock("axios")
 const mockedAxios = axios as jest.Mocked<typeof axios>

@@ -1,5 +1,5 @@
 import { readFileSync } from "fs"
-import { PushEvent } from "@octokit/webhooks-types"
+import { Schema } from "@octokit/webhooks-types"
 
 /**
  * Fetch and Parses event from event.json file
@@ -7,11 +7,7 @@ import { PushEvent } from "@octokit/webhooks-types"
  * @returns Parsed event from event.json
  */
 
-export const fetchEvent = ({
-  path,
-}: {
-  path: string
-}): { event: PushEvent } => {
+export const fetchEvent = ({ path }: { path: string }): { event: Schema } => {
   const event = readFileSync(path, "utf8")
-  return { event: JSON.parse(event) as PushEvent }
+  return { event: JSON.parse(event) as Schema }
 }
