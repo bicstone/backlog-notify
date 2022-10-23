@@ -8208,7 +8208,85 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 803:
+/***/ 399:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.main = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const fetchEvent_1 = __nccwpck_require__(3410);
+const getConfigs_1 = __nccwpck_require__(6587);
+const push_1 = __nccwpck_require__(8616);
+const runAction = async () => {
+    core.startGroup(`Getting configs`);
+    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, commitMessageRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
+    core.endGroup();
+    core.startGroup(`Fetching events`);
+    const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
+    core.endGroup();
+    if (event && "commits" in event && event.commits.length > 0) {
+        return (0, push_1.push)({
+            event,
+            projectKey,
+            apiHost,
+            apiKey,
+            fixKeywords,
+            closeKeywords,
+            pushCommentTemplate,
+            commitMessageRegTemplate,
+            fixStatusId,
+            closeStatusId,
+        });
+    }
+    return "Skipped as there were no commits.";
+};
+const main = async () => {
+    try {
+        const message = await runAction();
+        core.info(message);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            core.setFailed(error);
+        }
+        else {
+            core.setFailed(String(error));
+        }
+    }
+    core.endGroup();
+};
+exports.main = main;
+(0, exports.main)();
+
+
+/***/ }),
+
+/***/ 3410:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -8221,7 +8299,7 @@ const fs_1 = __nccwpck_require__(7147);
  * @param path Path to event.json
  * @returns Parsed event from event.json
  */
-const fetchEvent = ({ path, }) => {
+const fetchEvent = ({ path }) => {
     const event = (0, fs_1.readFileSync)(path, "utf8");
     return { event: JSON.parse(event) };
 };
@@ -8230,7 +8308,7 @@ exports.fetchEvent = fetchEvent;
 
 /***/ }),
 
-/***/ 2732:
+/***/ 6587:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -8323,7 +8401,7 @@ const getConfig = (name, options = {}) => {
 
 /***/ }),
 
-/***/ 399:
+/***/ 8616:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -8352,25 +8430,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.main = void 0;
+exports.push = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const fetchEvent_1 = __nccwpck_require__(803);
-const getConfigs_1 = __nccwpck_require__(2732);
-const parseCommits_1 = __nccwpck_require__(9752);
-const parseRef_1 = __nccwpck_require__(4975);
-const postComments_1 = __nccwpck_require__(6082);
-const runAction = async () => {
-    // init
-    core.startGroup(`初期化中`);
-    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, commitMessageRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
-    core.endGroup();
-    // fetch event
+const parseCommits_1 = __nccwpck_require__(4956);
+const parseRef_1 = __nccwpck_require__(7085);
+const postComments_1 = __nccwpck_require__(2745);
+const push = async ({ event, projectKey, fixKeywords, closeKeywords, commitMessageRegTemplate, pushCommentTemplate, fixStatusId, closeStatusId, apiHost, apiKey, }) => {
     core.startGroup(`コミット取得中`);
-    const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
-    if (!event?.commits?.length) {
-        return "コミットが1件も見つかりませんでした。";
-    }
-    // parse commits
     const { parsedCommits } = (0, parseCommits_1.parseCommits)({
         commits: event.commits,
         projectKey,
@@ -8382,14 +8448,12 @@ const runAction = async () => {
         return "課題キーのついたコミットが1件も見つかりませんでした。";
     }
     core.endGroup();
-    // parse ref, repository
     core.startGroup(`Push先の確認中`);
     const parsedRef = (0, parseRef_1.parseRef)(event.ref, event.repository.html_url);
     if (!parsedRef) {
         return "Git referenceの解析に失敗しました。";
     }
     core.endGroup();
-    // post comments
     core.startGroup(`コメント送信中`);
     await (0, postComments_1.postComments)({
         parsedCommits,
@@ -8414,30 +8478,15 @@ const runAction = async () => {
             core.endGroup();
         });
     });
+    core.endGroup();
     return "正常に送信しました。";
 };
-const main = async () => {
-    try {
-        const message = await runAction();
-        core.info(message);
-    }
-    catch (error) {
-        if (error instanceof Error) {
-            core.setFailed(error);
-        }
-        else {
-            core.setFailed(String(error));
-        }
-    }
-    core.endGroup();
-};
-exports.main = main;
-(0, exports.main)();
+exports.push = push;
 
 
 /***/ }),
 
-/***/ 9752:
+/***/ 4956:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -8508,7 +8557,7 @@ const parseCommit = ({ commit, fixKeywords, closeKeywords, commitMessageReg, }) 
 
 /***/ }),
 
-/***/ 4975:
+/***/ 7085:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -8540,7 +8589,7 @@ exports.parseRef = parseRef;
 
 /***/ }),
 
-/***/ 6082:
+/***/ 2745:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
