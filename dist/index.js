@@ -8250,7 +8250,7 @@ const runAction = async () => {
     const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
     core.endGroup();
     if (event && "commits" in event && event.commits.length > 0) {
-        return (0, push_1.push)({
+        return await (0, push_1.push)({
             event,
             projectKey,
             apiHost,
