@@ -1,5 +1,5 @@
 import fs from "fs"
-import { fetchEvent } from "../src/fetchEvent"
+import { fetchEvent } from "./fetchEvent"
 import webhooks from "@octokit/webhooks-examples"
 
 const pushEvents = webhooks.find((v) => v.name === "push")?.examples ?? []

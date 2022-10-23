@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { getConfigs, Configs } from "../src/getConfigs"
+import { getConfigs, Configs } from "./getConfigs"
 
 const requiredEnv = {
   // whitespace added before and after the value
