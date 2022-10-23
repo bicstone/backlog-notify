@@ -8509,7 +8509,7 @@ const refUrlTemplate = (0, lodash_template_1.default)("<%= repositoryHtmlUrl %>/
  */
 const parseRef = (ref, repositoryHtmlUrl) => {
     // e.g. Get name `feature/foo ` for ref `refs/heads/feature/foo`
-    const name = ref.match(refReg)?.[1];
+    const name = refReg.exec(ref)?.[1];
     if (!name)
         return;
     const url = refUrlTemplate({ repositoryHtmlUrl, name });
