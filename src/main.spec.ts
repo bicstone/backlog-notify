@@ -1,4 +1,4 @@
-import * as core from "@actions/core"
+import { info, setFailed } from "@actions/core"
 import { mocked } from "jest-mock"
 import webhooks from "@octokit/webhooks-examples"
 
@@ -38,15 +38,15 @@ describe.each(pushEventsWithCommit)("main", (pushEvent) => {
     mocked(fetchEvent).mockImplementation(() => ({
       event: pushEvent,
     }))
-    mocked(core.info).mockImplementation((m) => m)
-    mocked(core.setFailed).mockImplementation((m) => m)
+    mocked(info).mockImplementation((m) => m)
+    mocked(setFailed).mockImplementation((m) => m)
   })
 
   test("main resolve with the message", async () => {
     mocked(push).mockImplementation(() => Promise.resolve("push!"))
     await expect(main()).resolves.not.toThrow()
-    expect(core.info).toHaveBeenCalledTimes(1)
-    expect(core.info).toHaveBeenCalledWith("push!")
+    expect(info).toHaveBeenCalledTimes(1)
+    expect(info).toHaveBeenCalledWith("push!")
   })
 
   test("main not continue and resolve processing when 0 commits", async () => {
@@ -54,8 +54,8 @@ describe.each(pushEventsWithCommit)("main", (pushEvent) => {
       event: { ...pushEvent, commits: [] },
     }))
     await expect(main()).resolves.not.toThrow()
-    expect(core.info).toHaveBeenCalledTimes(1)
-    expect(core.info).toHaveBeenCalledWith("Skipped as there were no commits.")
+    expect(info).toHaveBeenCalledTimes(1)
+    expect(info).toHaveBeenCalledWith("Skipped as there were no commits.")
   })
 
   test("main not continue and resolve processing when the event cannot be loaded", async () => {
@@ -63,8 +63,8 @@ describe.each(pushEventsWithCommit)("main", (pushEvent) => {
       event: null as unknown as PushEvent,
     }))
     await expect(main()).resolves.not.toThrow()
-    expect(core.info).toHaveBeenCalledTimes(1)
-    expect(core.info).toHaveBeenCalledWith("Skipped as there were no commits.")
+    expect(info).toHaveBeenCalledTimes(1)
+    expect(info).toHaveBeenCalledWith("Skipped as there were no commits.")
   })
 
   test("main calls setFailed when an error", async () => {
@@ -73,8 +73,8 @@ describe.each(pushEventsWithCommit)("main", (pushEvent) => {
       throw error
     })
     await expect(main()).resolves.not.toThrow()
-    expect(core.setFailed).toHaveBeenCalledTimes(1)
-    expect(core.setFailed).toHaveBeenCalledWith(error)
+    expect(setFailed).toHaveBeenCalledTimes(1)
+    expect(setFailed).toHaveBeenCalledWith(error)
   })
 
   test("main calls setFailed when an unexpected error", async () => {
@@ -83,7 +83,7 @@ describe.each(pushEventsWithCommit)("main", (pushEvent) => {
       throw error
     })
     await expect(main()).resolves.not.toThrow()
-    expect(core.setFailed).toHaveBeenCalledTimes(1)
-    expect(core.setFailed).toHaveBeenCalledWith(error)
+    expect(setFailed).toHaveBeenCalledTimes(1)
+    expect(setFailed).toHaveBeenCalledWith(error)
   })
 })

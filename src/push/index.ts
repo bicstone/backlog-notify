@@ -1,4 +1,4 @@
-import * as core from "@actions/core"
+import { startGroup, endGroup, info } from "@actions/core"
 import { PushEvent } from "@octokit/webhooks-types"
 
 import { parseCommits } from "./parseCommits"
@@ -30,7 +30,7 @@ export const push = async ({
   | "apiHost"
   | "apiKey"
 > & { event: PushEvent }): Promise<string> => {
-  core.startGroup(`コミット取得中`)
+  startGroup(`コミット取得中`)
   const { parsedCommits } = parseCommits({
     commits: event.commits,
     projectKey,
@@ -41,16 +41,16 @@ export const push = async ({
   if (!parsedCommits) {
     return "課題キーのついたコミットが1件も見つかりませんでした。"
   }
-  core.endGroup()
+  endGroup()
 
-  core.startGroup(`Push先の確認中`)
+  startGroup(`Push先の確認中`)
   const parsedRef = parseRef(event.ref, event.repository.html_url)
   if (!parsedRef) {
     return "Git referenceの解析に失敗しました。"
   }
-  core.endGroup()
+  endGroup()
 
-  core.startGroup(`コメント送信中`)
+  startGroup(`コメント送信中`)
   await postComments({
     parsedCommits,
     parsedRef,
@@ -61,24 +61,24 @@ export const push = async ({
     apiKey,
   }).then((data) => {
     data.forEach(({ commits, issueKey, isFix, isClose }) => {
-      core.startGroup(`${commits[0].issueKey}:`)
+      startGroup(`${commits[0].issueKey}:`)
 
       commits.forEach(({ message }) => {
-        core.info(message)
+        info(message)
       })
 
       if (isFix) {
-        core.info(`${issueKey}を処理済みにしました。`)
+        info(`${issueKey}を処理済みにしました。`)
       }
 
       if (isClose) {
-        core.info(`${issueKey}を完了にしました。`)
+        info(`${issueKey}を完了にしました。`)
       }
 
-      core.endGroup()
+      endGroup()
     })
   })
-  core.endGroup()
+  endGroup()
 
   return "正常に送信しました。"
 }

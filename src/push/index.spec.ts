@@ -1,4 +1,4 @@
-import * as core from "@actions/core"
+import { info, setFailed } from "@actions/core"
 import { mocked } from "jest-mock"
 import webhooks from "@octokit/webhooks-examples"
 
@@ -63,8 +63,8 @@ describe.each(pushEvents)("index", (event) => {
       name: "",
       url: "",
     }))
-    mocked(core.info).mockImplementation((m) => m)
-    mocked(core.setFailed).mockImplementation((m) => m)
+    mocked(info).mockImplementation((m) => m)
+    mocked(setFailed).mockImplementation((m) => m)
   })
 
   test("resolve with the message", async () => {
@@ -75,8 +75,8 @@ describe.each(pushEvents)("index", (event) => {
     await expect(push({ ...configs, event })).resolves.toStrictEqual(
       "正常に送信しました。"
     )
-    expect(core.info).toHaveBeenCalledTimes(1)
-    expect(core.info).toHaveBeenCalledWith(message)
+    expect(info).toHaveBeenCalledTimes(1)
+    expect(info).toHaveBeenCalledWith(message)
   })
 
   test("resolve with the message when commits with fix_keyword", async () => {
@@ -90,9 +90,9 @@ describe.each(pushEvents)("index", (event) => {
     await expect(push({ ...configs, event })).resolves.toStrictEqual(
       "正常に送信しました。"
     )
-    expect(core.info).toHaveBeenCalledTimes(2)
-    expect(core.info).toHaveBeenCalledWith(message)
-    expect(core.info).toHaveBeenCalledWith(`${issueKey}を処理済みにしました。`)
+    expect(info).toHaveBeenCalledTimes(2)
+    expect(info).toHaveBeenCalledWith(message)
+    expect(info).toHaveBeenCalledWith(`${issueKey}を処理済みにしました。`)
   })
 
   test("resolve with the message when commits with close_keyword", async () => {
@@ -106,9 +106,9 @@ describe.each(pushEvents)("index", (event) => {
     await expect(push({ ...configs, event })).resolves.toStrictEqual(
       "正常に送信しました。"
     )
-    expect(core.info).toHaveBeenCalledTimes(2)
-    expect(core.info).toHaveBeenCalledWith(message)
-    expect(core.info).toHaveBeenCalledWith(`${issueKey}を完了にしました。`)
+    expect(info).toHaveBeenCalledTimes(2)
+    expect(info).toHaveBeenCalledWith(message)
+    expect(info).toHaveBeenCalledWith(`${issueKey}を完了にしました。`)
   })
 
   test("not continue and resolve processing when commits without issueKey", async () => {

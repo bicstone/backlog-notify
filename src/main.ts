@@ -1,10 +1,10 @@
-import * as core from "@actions/core"
+import { startGroup, endGroup, info, setFailed } from "@actions/core"
 import { fetchEvent } from "./main/fetchEvent"
 import { getConfigs } from "./main/getConfigs"
 import { push } from "./push"
 
 const runAction = async (): Promise<string> => {
-  core.startGroup(`Getting configs`)
+  startGroup(`Getting configs`)
   const {
     projectKey,
     apiHost,
@@ -17,11 +17,11 @@ const runAction = async (): Promise<string> => {
     fixStatusId,
     closeStatusId,
   } = getConfigs()
-  core.endGroup()
+  endGroup()
 
-  core.startGroup(`Fetching events`)
+  startGroup(`Fetching events`)
   const { event } = fetchEvent({ path: githubEventPath })
-  core.endGroup()
+  endGroup()
 
   if (event && "commits" in event && event.commits.length > 0) {
     return await push({
@@ -44,15 +44,15 @@ const runAction = async (): Promise<string> => {
 export const main = async (): Promise<void> => {
   try {
     const message = await runAction()
-    core.info(message)
+    info(message)
   } catch (error) {
     if (error instanceof Error) {
-      core.setFailed(error)
+      setFailed(error)
     } else {
-      core.setFailed(String(error))
+      setFailed(String(error))
     }
   }
-  core.endGroup()
+  endGroup()
 }
 
 main()
