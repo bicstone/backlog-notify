@@ -1,6 +1,9 @@
 import fs from "fs"
 import { fetchEvent } from "../src/fetchEvent"
-import pushEvent from "./github/events/push.json"
+import webhooks from "@octokit/webhooks-examples"
+
+const pushEvents =
+  webhooks.find((webhook) => webhook.name === "push")?.examples ?? []
 
 jest.mock("fs")
 const mockedFs = fs as jest.Mocked<typeof fs>
@@ -9,7 +12,7 @@ const path = "event.json"
 const encoding = "utf8"
 
 describe("fetchEvent", () => {
-  test("fetchEvent return parsed event", () => {
+  test.each(pushEvents)("fetchEvent return parsed event", (pushEvent) => {
     mockedFs.readFileSync.mockImplementation(() => JSON.stringify(pushEvent))
 
     expect(fetchEvent({ path })).toStrictEqual({ event: pushEvent })

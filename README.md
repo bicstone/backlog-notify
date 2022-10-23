@@ -1,20 +1,19 @@
 # Backlog Notify
 
-[![CI](https://github.com/bicstone/backlog-notify/actions/workflows/ci.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/ci.yml)
-[![coverage](https://github.com/bicstone/backlog-notify/actions/workflows/coverage.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/coverage.yml)
-[![njsscan sarif](https://github.com/bicstone/backlog-notify/actions/workflows/njsscan-analysis.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/njsscan-analysis.yml)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify?ref=badge_shield)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bicstone_backlog-notify&metric=alert_status)](https://sonarcloud.io/dashboard?id=bicstone_backlog-notify)
-[![DeepSource](https://deepsource.io/gh/bicstone/backlog-notify.svg/?label=active+issues&token=iPw2LS4cY5EQQH_JiN72YOr2)](https://deepsource.io/gh/bicstone/backlog-notify/?ref=repository-badge)
-[![codecov](https://codecov.io/gh/bicstone/backlog-notify/branch/master/graph/badge.svg?token=QRLLFDZD15)](https://codecov.io/gh/bicstone/backlog-notify)
+[![GitHub Actions による CI check の結果](https://github.com/bicstone/backlog-notify/actions/workflows/ci.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/ci.yml)
+[![njsscan sarif による静的解析の結果](https://github.com/bicstone/backlog-notify/actions/workflows/njsscan-analysis.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/njsscan-analysis.yml)
+[![FOSSA によるライセンス分析の結果](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify?ref=badge_shield)
+[![Sonar Cloud による静的解析の結果](https://sonarcloud.io/api/project_badges/measure?project=bicstone_backlog-notify&metric=alert_status)](https://sonarcloud.io/dashboard?id=bicstone_backlog-notify)
+[![Deep Source による静的解析の結果](https://deepsource.io/gh/bicstone/backlog-notify.svg/?label=active+issues&token=iPw2LS4cY5EQQH_JiN72YOr2)](https://deepsource.io/gh/bicstone/backlog-notify/?ref=repository-badge)
+[![codecov によるテストカバレッジの結果](https://codecov.io/gh/bicstone/backlog-notify/branch/master/graph/badge.svg?token=QRLLFDZD15)](https://codecov.io/gh/bicstone/backlog-notify)
 
 Notify commit messages to [Backlog.com](https://backlog.com/) issue.
 
-プッシュされたコミットメッセージを Backlog 課題のコメントに追加する GitHub Action です。キーワードによる課題の状態変更も可能です。
+GitHub 上のプッシュとプルリクエストを Backlog 課題に連携する GitHub Action です。キーワードによる課題の状態変更も可能です。
 
 個人が開発した Action です。ヌーラボさまへのお問い合わせはご遠慮ください。
 
-![Backlog Notifyの動作をイメージした図](./docs/readme_images/backlog-notify.png)
+![Backlog Notifyの動作をイメージした図。GitHub にプッシュすると Backlog にコミット情報のコメントがされる](./docs/readme_images/backlog-notify.png)
 
 ## 設定方法
 
@@ -50,7 +49,15 @@ GitHub Actions workflow を作成します (例: `.github/workflows/backlog-noti
 ```yaml
 name: Backlog Notify
 
-on: push
+on:
+  - push
+  - pull_request:
+      types:
+        - opened
+        - reopened
+        - closed
+        - converted_to_draft
+        - ready_for_review
 
 jobs:
   notify:
@@ -78,6 +85,14 @@ jobs:
             <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
             <% commits.forEach(commit=>{ %>
             + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
+          open_pr_comment_template: |-
+            <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプルリクエストを作成しました
+            <% commits.forEach(commit=>{ %>
+            + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
+          close_pr_comment_template: |-
+            <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)プルリクエストをクローズしました
+            <% commits.forEach(commit=>{ %>
+            + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
           commit_message_reg_template: "\
             ^\
             (<%= projectKey %>\\-\\d+)\\s?\
@@ -91,17 +106,19 @@ jobs:
 
 ## 設定一覧
 
-| 設定名                        | 説明                                 |
-| ----------------------------- | ------------------------------------ |
-| `project_key`                 | Backlog プロジェクトキー (必須)      |
-| `api_host`                    | Backlog のホスト (必須)              |
-| `api_key`                     | Backlog API キー (必須)              |
-| `fix_keywords`                | 処理済みにするキーワード             |
-| `close_keywords`              | 完了にするキーワード                 |
-| `push_comment_template`       | プッシュ時のコメント雛形             |
-| `commit_message_reg_template` | コミットメッセージ解析の正規表現雛形 |
-| `fix_status_id`               | 処理済みの 状態 ID                   |
-| `close_status_id`             | 完了の 状態 ID                       |
+| 設定名                        | 説明                                   |
+| ----------------------------- | -------------------------------------- |
+| `project_key`                 | Backlog プロジェクトキー (必須)        |
+| `api_host`                    | Backlog のホスト (必須)                |
+| `api_key`                     | Backlog API キー (必須)                |
+| `fix_keywords`                | 処理済みにするキーワード               |
+| `close_keywords`              | 完了にするキーワード                   |
+| `push_comment_template`       | プッシュ時のコメント雛形               |
+| `open_pr_comment_template`    | プルリクエストオープン時のコメント雛形 |
+| `close_pr_comment_template`   | プルリクエストクローズ時のコメント雛形 |
+| `commit_message_reg_template` | コミットメッセージ解析の正規表現雛形   |
+| `fix_status_id`               | 処理済みの 状態 ID                     |
+| `close_status_id`             | 完了の 状態 ID                         |
 
 ### `push_comment_template`
 
