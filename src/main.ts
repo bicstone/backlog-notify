@@ -24,7 +24,7 @@ const runAction = async (): Promise<string> => {
   core.endGroup()
 
   if (event && "commits" in event && event.commits.length > 0) {
-    return push({
+    return await push({
       event,
       projectKey,
       apiHost,
