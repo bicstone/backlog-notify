@@ -8209,46 +8209,23 @@ exports["default"] = _default;
 /***/ }),
 
 /***/ 399:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.main = void 0;
-const core = __importStar(__nccwpck_require__(2186));
+const core_1 = __nccwpck_require__(2186);
 const fetchEvent_1 = __nccwpck_require__(3410);
 const getConfigs_1 = __nccwpck_require__(6587);
 const push_1 = __nccwpck_require__(8616);
 const runAction = async () => {
-    core.startGroup(`Getting configs`);
+    (0, core_1.startGroup)(`Getting configs`);
     const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, commitMessageRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
-    core.endGroup();
-    core.startGroup(`Fetching events`);
+    (0, core_1.endGroup)();
+    (0, core_1.startGroup)(`Fetching events`);
     const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
-    core.endGroup();
+    (0, core_1.endGroup)();
     if (event && "commits" in event && event.commits.length > 0) {
         return await (0, push_1.push)({
             event,
@@ -8268,17 +8245,17 @@ const runAction = async () => {
 const main = async () => {
     try {
         const message = await runAction();
-        core.info(message);
+        (0, core_1.info)(message);
     }
     catch (error) {
         if (error instanceof Error) {
-            core.setFailed(error);
+            (0, core_1.setFailed)(error);
         }
         else {
-            core.setFailed(String(error));
+            (0, core_1.setFailed)(String(error));
         }
     }
-    core.endGroup();
+    (0, core_1.endGroup)();
 };
 exports.main = main;
 (0, exports.main)();
@@ -8309,36 +8286,13 @@ exports.fetchEvent = fetchEvent;
 /***/ }),
 
 /***/ 6587:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getConfigs = void 0;
-const core = __importStar(__nccwpck_require__(2186));
+const core_1 = __nccwpck_require__(2186);
 /**
  * Parses and validations the action configuration
  * @returns Parsed the action configuration
@@ -8350,31 +8304,31 @@ const getConfigs = () => {
         apiHost: getConfig("api_host", { required: true }),
         apiKey: getConfig("api_key", { required: true }),
         githubEventPath: getConfig("github_event_path", { required: true }),
-        fixKeywords: core.getInput("fix_keywords")
-            ? core.getMultilineInput("fix_keywords", {
+        fixKeywords: (0, core_1.getInput)("fix_keywords")
+            ? (0, core_1.getMultilineInput)("fix_keywords", {
                 trimWhitespace: true,
             })
             : ["#fix", "#fixes", "#fixed"],
-        closeKeywords: core.getInput("close_keywords")
-            ? core.getMultilineInput("close_keywords", {
+        closeKeywords: (0, core_1.getInput)("close_keywords")
+            ? (0, core_1.getMultilineInput)("close_keywords", {
                 trimWhitespace: true,
             })
             : ["#close", "#closes", "#closed"],
-        pushCommentTemplate: core.getInput("push_comment_template") ||
+        pushCommentTemplate: (0, core_1.getInput)("push_comment_template") ||
             "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
                 "\n" +
                 "<% commits.forEach(commit=>{ %>" +
                 "\n" +
                 "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
                 "<% }); %>",
-        commitMessageRegTemplate: core.getInput("commit_message_reg_template") ||
+        commitMessageRegTemplate: (0, core_1.getInput)("commit_message_reg_template") ||
             "^" +
                 "(<%= projectKey %>\\-\\d+)\\s?" +
                 "(.*?)?\\s?" +
                 "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
                 "$",
-        fixStatusId: core.getInput("fix_status_id") || "3",
-        closeStatusId: core.getInput("close_status_id") || "4",
+        fixStatusId: (0, core_1.getInput)("fix_status_id") || "3",
+        closeStatusId: (0, core_1.getInput)("close_status_id") || "4",
     };
 };
 exports.getConfigs = getConfigs;
@@ -8402,41 +8356,18 @@ const getConfig = (name, options = {}) => {
 /***/ }),
 
 /***/ 8616:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.push = void 0;
-const core = __importStar(__nccwpck_require__(2186));
+const core_1 = __nccwpck_require__(2186);
 const parseCommits_1 = __nccwpck_require__(4956);
 const parseRef_1 = __nccwpck_require__(7085);
 const postComments_1 = __nccwpck_require__(2745);
 const push = async ({ event, projectKey, fixKeywords, closeKeywords, commitMessageRegTemplate, pushCommentTemplate, fixStatusId, closeStatusId, apiHost, apiKey, }) => {
-    core.startGroup(`コミット取得中`);
+    (0, core_1.startGroup)(`コミット取得中`);
     const { parsedCommits } = (0, parseCommits_1.parseCommits)({
         commits: event.commits,
         projectKey,
@@ -8447,14 +8378,14 @@ const push = async ({ event, projectKey, fixKeywords, closeKeywords, commitMessa
     if (!parsedCommits) {
         return "課題キーのついたコミットが1件も見つかりませんでした。";
     }
-    core.endGroup();
-    core.startGroup(`Push先の確認中`);
+    (0, core_1.endGroup)();
+    (0, core_1.startGroup)(`Push先の確認中`);
     const parsedRef = (0, parseRef_1.parseRef)(event.ref, event.repository.html_url);
     if (!parsedRef) {
         return "Git referenceの解析に失敗しました。";
     }
-    core.endGroup();
-    core.startGroup(`コメント送信中`);
+    (0, core_1.endGroup)();
+    (0, core_1.startGroup)(`コメント送信中`);
     await (0, postComments_1.postComments)({
         parsedCommits,
         parsedRef,
@@ -8465,20 +8396,20 @@ const push = async ({ event, projectKey, fixKeywords, closeKeywords, commitMessa
         apiKey,
     }).then((data) => {
         data.forEach(({ commits, issueKey, isFix, isClose }) => {
-            core.startGroup(`${commits[0].issueKey}:`);
+            (0, core_1.startGroup)(`${commits[0].issueKey}:`);
             commits.forEach(({ message }) => {
-                core.info(message);
+                (0, core_1.info)(message);
             });
             if (isFix) {
-                core.info(`${issueKey}を処理済みにしました。`);
+                (0, core_1.info)(`${issueKey}を処理済みにしました。`);
             }
             if (isClose) {
-                core.info(`${issueKey}を完了にしました。`);
+                (0, core_1.info)(`${issueKey}を完了にしました。`);
             }
-            core.endGroup();
+            (0, core_1.endGroup)();
         });
     });
-    core.endGroup();
+    (0, core_1.endGroup)();
     return "正常に送信しました。";
 };
 exports.push = push;
