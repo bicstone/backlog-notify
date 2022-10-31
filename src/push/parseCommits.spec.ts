@@ -1,4 +1,4 @@
-import { parseCommits, ParsedCommit, ParsedCommits } from "../src/parseCommits"
+import { parseCommits, ParsedCommit, ParsedCommits } from "./parseCommits"
 import { Commit } from "@octokit/webhooks-types"
 
 type Commits = Commit[]

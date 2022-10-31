@@ -1,4 +1,4 @@
-import * as core from "@actions/core"
+import { getInput, getMultilineInput } from "@actions/core"
 
 export type Configs = {
   projectKey: string
@@ -25,18 +25,18 @@ export const getConfigs = (): Configs => {
     apiHost: getConfig("api_host", { required: true }),
     apiKey: getConfig("api_key", { required: true }),
     githubEventPath: getConfig("github_event_path", { required: true }),
-    fixKeywords: core.getInput("fix_keywords")
-      ? core.getMultilineInput("fix_keywords", {
+    fixKeywords: getInput("fix_keywords")
+      ? getMultilineInput("fix_keywords", {
           trimWhitespace: true,
         })
       : ["#fix", "#fixes", "#fixed"],
-    closeKeywords: core.getInput("close_keywords")
-      ? core.getMultilineInput("close_keywords", {
+    closeKeywords: getInput("close_keywords")
+      ? getMultilineInput("close_keywords", {
           trimWhitespace: true,
         })
       : ["#close", "#closes", "#closed"],
     pushCommentTemplate:
-      core.getInput("push_comment_template") ||
+      getInput("push_comment_template") ||
       "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
         "\n" +
         "<% commits.forEach(commit=>{ %>" +
@@ -44,14 +44,14 @@ export const getConfigs = (): Configs => {
         "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
         "<% }); %>",
     commitMessageRegTemplate:
-      core.getInput("commit_message_reg_template") ||
+      getInput("commit_message_reg_template") ||
       "^" +
         "(<%= projectKey %>\\-\\d+)\\s?" +
         "(.*?)?\\s?" +
         "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
         "$",
-    fixStatusId: core.getInput("fix_status_id") || "3",
-    closeStatusId: core.getInput("close_status_id") || "4",
+    fixStatusId: getInput("fix_status_id") || "3",
+    closeStatusId: getInput("close_status_id") || "4",
   }
 }
 

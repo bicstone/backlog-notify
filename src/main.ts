@@ -1,13 +1,10 @@
-import * as core from "@actions/core"
-import { fetchEvent } from "./fetchEvent"
-import { getConfigs } from "./getConfigs"
-import { parseCommits } from "./parseCommits"
-import { parseRef } from "./parseRef"
-import { postComments } from "./postComments"
+import { startGroup, endGroup, info, setFailed } from "@actions/core"
+import { fetchEvent } from "./main/fetchEvent"
+import { getConfigs } from "./main/getConfigs"
+import { push } from "./push"
 
 const runAction = async (): Promise<string> => {
-  // init
-  core.startGroup(`初期化中`)
+  startGroup(`Getting configs`)
   const {
     projectKey,
     apiHost,
@@ -20,80 +17,42 @@ const runAction = async (): Promise<string> => {
     fixStatusId,
     closeStatusId,
   } = getConfigs()
-  core.endGroup()
+  endGroup()
 
-  // fetch event
-  core.startGroup(`コミット取得中`)
+  startGroup(`Fetching events`)
   const { event } = fetchEvent({ path: githubEventPath })
-  if (!event?.commits?.length) {
-    return "コミットが1件も見つかりませんでした。"
-  }
+  endGroup()
 
-  // parse commits
-  const { parsedCommits } = parseCommits({
-    commits: event.commits,
-    projectKey,
-    fixKeywords,
-    closeKeywords,
-    commitMessageRegTemplate,
-  })
-  if (!parsedCommits) {
-    return "課題キーのついたコミットが1件も見つかりませんでした。"
-  }
-  core.endGroup()
-
-  // parse ref, repository
-  core.startGroup(`Push先の確認中`)
-  const parsedRef = parseRef(event.ref, event.repository.html_url)
-  if (!parsedRef) {
-    return "Git referenceの解析に失敗しました。"
-  }
-  core.endGroup()
-
-  // post comments
-  core.startGroup(`コメント送信中`)
-  await postComments({
-    parsedCommits,
-    parsedRef,
-    pushCommentTemplate,
-    fixStatusId,
-    closeStatusId,
-    apiHost,
-    apiKey,
-  }).then((data) => {
-    data.forEach(({ commits, issueKey, isFix, isClose }) => {
-      core.startGroup(`${commits[0].issueKey}:`)
-
-      commits.forEach(({ message }) => {
-        core.info(message)
-      })
-
-      if (isFix) {
-        core.info(`${issueKey}を処理済みにしました。`)
-      }
-
-      if (isClose) {
-        core.info(`${issueKey}を完了にしました。`)
-      }
-
-      core.endGroup()
+  if (event && "commits" in event && event.commits.length > 0) {
+    return await push({
+      event,
+      projectKey,
+      apiHost,
+      apiKey,
+      fixKeywords,
+      closeKeywords,
+      pushCommentTemplate,
+      commitMessageRegTemplate,
+      fixStatusId,
+      closeStatusId,
     })
-  })
-  return "正常に送信しました。"
+  }
+
+  return "Skipped as there were no commits."
 }
 
 export const main = async (): Promise<void> => {
   try {
     const message = await runAction()
-    core.info(message)
+    info(message)
   } catch (error) {
     if (error instanceof Error) {
-      core.setFailed(error)
+      setFailed(error)
     } else {
-      core.setFailed(String(error))
+      setFailed(String(error))
     }
   }
-  core.endGroup()
+  endGroup()
 }
 
 main()

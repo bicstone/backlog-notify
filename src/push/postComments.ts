@@ -1,7 +1,7 @@
 import { URLSearchParams } from "url"
 import axios, { AxiosResponse } from "axios"
 import template from "lodash.template"
-import { ParsedCommits, ParsedCommit } from "../src/parseCommits"
+import { ParsedCommits, ParsedCommit } from "./parseCommits"
 import { ParsedRef } from "./parseRef"
 
 // Update Issue API

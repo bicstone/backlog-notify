@@ -19,7 +19,7 @@ export const parseRef = (
   repositoryHtmlUrl: string
 ): ParsedRef | undefined => {
   // e.g. Get name `feature/foo ` for ref `refs/heads/feature/foo`
-  const name = ref.match(refReg)?.[1]
+  const name = refReg.exec(ref)?.[1]
   if (!name) return
 
   const url = refUrlTemplate({ repositoryHtmlUrl, name })
