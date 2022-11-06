@@ -38,8 +38,42 @@ inputs:
       <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
       <% commits.forEach(commit=>{ %>
       + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
+  pr_open_comment_template:
+    description: The template for backlog issue comment on open a pull request
+    required: false
+    default: |-
+      <%= sender.name %>さんがプルリクエストを作成しました
+      + [<%= title %>](<%= pr.html_url %>)
+  pr_ready_for_review_comment_template:
+    description: The template for backlog issue comment on ready to review a pull request
+    required: false
+    default: |-
+      <%= sender.name %>さんがプルリクエストを作成しました
+      + [<%= title %>](<%= pr.html_url %>)
+  pr_close_comment_template:
+    description: The template for backlog issue comment on close a pull request
+    required: false
+    default: |-
+      <%= sender.name %>さんがプルリクエストをクローズしました
+      + [<%= title %>](<%= pr.html_url %>)
+  pr_merged_comment_template:
+    description: The template for backlog issue comment on merged a pull request
+    required: false
+    default: |-
+      <%= sender.name %>さんがプルリクエストをマージしました
+      + [<%= title %>](<%= pr.html_url %>)
   commit_message_reg_template:
     description: The template for regular expressions to parse commit messages
+    required: false
+    default: "\
+      ^\
+      (<%= projectKey %>\\-\\d+)\\s?\
+      (.*?)?\\s?\
+      (<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?\
+      $\
+      "
+  pr_title_reg_template:
+    description: The template for regular expressions to parse pull request title
     required: false
     default: "\
       ^\

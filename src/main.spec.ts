@@ -30,7 +30,12 @@ describe.each(pushEventsWithCommit)("main", (pushEvent) => {
         fixKeywords: ["fixKeyword"],
         closeKeywords: ["closeKeyword"],
         pushCommentTemplate: "pushCommentTemplate",
+        prOpenCommentTemplate: "prOpenCommentTemplate",
+        prReadyForReviewCommentTemplate: "prReadyForReviewCommentTemplate",
+        prCloseCommentTemplate: "prCloseCommentTemplate",
+        prMergedCommentTemplate: "prMergedCommentTemplate",
         commitMessageRegTemplate: "commitMessageRegTemplate",
+        prTitleRegTemplate: "prTitleRegTemplate",
         fixStatusId: "fixStatusId",
         closeStatusId: "closeStatusId",
       }

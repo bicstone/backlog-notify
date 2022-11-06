@@ -8,7 +8,12 @@ export type Configs = {
   fixKeywords: string[]
   closeKeywords: string[]
   pushCommentTemplate: string
+  prOpenCommentTemplate: string
+  prReadyForReviewCommentTemplate: string
+  prCloseCommentTemplate: string
+  prMergedCommentTemplate: string
   commitMessageRegTemplate: string
+  prTitleRegTemplate: string
   fixStatusId: string
   closeStatusId: string
 }
@@ -43,8 +48,47 @@ export const getConfigs = (): Configs => {
         "\n" +
         "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
         "<% }); %>",
+    prOpenCommentTemplate:
+      getInput("pr_open_comment_template") ||
+      "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+        "\n" +
+        "<% commits.forEach(commit=>{ %>" +
+        "\n" +
+        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
+        "<% }); %>",
+    prReadyForReviewCommentTemplate:
+      getInput("pr_ready_for_review_comment_template") ||
+      "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+        "\n" +
+        "<% commits.forEach(commit=>{ %>" +
+        "\n" +
+        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
+        "<% }); %>",
+    prCloseCommentTemplate:
+      getInput("pr_close_comment_template") ||
+      "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+        "\n" +
+        "<% commits.forEach(commit=>{ %>" +
+        "\n" +
+        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
+        "<% }); %>",
+    prMergedCommentTemplate:
+      getInput("pr_merged_comment_template") ||
+      "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+        "\n" +
+        "<% commits.forEach(commit=>{ %>" +
+        "\n" +
+        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
+        "<% }); %>",
     commitMessageRegTemplate:
       getInput("commit_message_reg_template") ||
+      "^" +
+        "(<%= projectKey %>\\-\\d+)\\s?" +
+        "(.*?)?\\s?" +
+        "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+        "$",
+    prTitleRegTemplate:
+      getInput("pr_title_reg_template") ||
       "^" +
         "(<%= projectKey %>\\-\\d+)\\s?" +
         "(.*?)?\\s?" +

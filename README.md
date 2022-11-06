@@ -11,7 +11,7 @@ Notify commit messages to [Backlog.com](https://backlog.com/) issue.
 
 GitHub 上のプッシュとプルリクエストを Backlog 課題に連携する GitHub Action です。キーワードによる課題の状態変更も可能です。
 
-個人が開発した Action です。ヌーラボさまへのお問い合わせはご遠慮ください。
+個人が開発した Action です。ヌーラボ様へのお問い合わせはご遠慮ください。
 
 ![Backlog Notifyの動作をイメージした図。GitHub にプッシュすると Backlog にコミット情報のコメントがされる](./docs/readme_images/backlog-notify.png)
 
@@ -78,7 +78,26 @@ jobs:
             <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
             <% commits.forEach(commit=>{ %>
             + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
+          pr_open_comment_template: |-
+            <%= sender.name %>さんがプルリクエストを作成しました
+            + [<%= title %>](<%= pr.html_url %>)
+          pr_ready_for_review_comment_template: |-
+            <%= sender.name %>さんがプルリクエストを作成しました
+            + [<%= title %>](<%= pr.html_url %>)
+          pr_close_comment_template: |-
+            <%= sender.name %>さんがプルリクエストをクローズしました
+            + [<%= title %>](<%= pr.html_url %>)
+          pr_merged_comment_template: |-
+            <%= sender.name %>さんがプルリクエストをマージしました
+            + [<%= title %>](<%= pr.html_url %>)
           commit_message_reg_template: "\
+            ^\
+            (<%= projectKey %>\\-\\d+)\\s?\
+            (.*?)?\\s?\
+            (<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?\
+            $\
+            "
+          pr_title_reg_template: "\
             ^\
             (<%= projectKey %>\\-\\d+)\\s?\
             (.*?)?\\s?\
@@ -91,17 +110,22 @@ jobs:
 
 ## 設定一覧
 
-| 設定名                        | 説明                                 |
-| ----------------------------- | ------------------------------------ |
-| `project_key`                 | Backlog プロジェクトキー (必須)      |
-| `api_host`                    | Backlog のホスト (必須)              |
-| `api_key`                     | Backlog API キー (必須)              |
-| `fix_keywords`                | 処理済みにするキーワード             |
-| `close_keywords`              | 完了にするキーワード                 |
-| `push_comment_template`       | プッシュ時のコメント雛形             |
-| `commit_message_reg_template` | コミットメッセージ解析の正規表現雛形 |
-| `fix_status_id`               | 処理済みの 状態 ID                   |
-| `close_status_id`             | 完了の 状態 ID                       |
+| 設定名                                 | 説明                                     |
+| -------------------------------------- | ---------------------------------------- |
+| `project_key`                          | Backlog プロジェクトキー (必須)          |
+| `api_host`                             | Backlog のホスト (必須)                  |
+| `api_key`                              | Backlog API キー (必須)                  |
+| `fix_keywords`                         | 処理済みにするキーワード                 |
+| `close_keywords`                       | 完了にするキーワード                     |
+| `push_comment_template`                | プッシュ時のコメント雛形                 |
+| `pr_open_comment_template`             | プルリクエストオープン時のコメント雛形   |
+| `pr_ready_for_review_comment_template` | プルリクエスト下書き解除時のコメント雛形 |
+| `pr_close_comment_template`            | プルリクエストクローズ時のコメント雛形   |
+| `pr_merged_comment_template`           | プルリクエストマージ時のコメント雛形     |
+| `commit_message_reg_template`          | コミットメッセージ解析の正規表現雛形     |
+| `pr_title_reg_template`                | プルリクエストタイトル解析の正規表現雛形 |
+| `fix_status_id`                        | 処理済みの 状態 ID                       |
+| `close_status_id`                      | 完了の 状態 ID                           |
 
 ### `push_comment_template`
 
@@ -156,9 +180,56 @@ Committer
 
 </details>
 
+### `pr_*_comment_template`
+
+プルリクエストイベントのコメントの雛形を変更できます。  
+構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
+
+<details>
+
+<summary>使用可能な変数</summary>
+
+| 変数名     | 型          |
+| ---------- | ----------- |
+| `pr`       | PullRequest |
+| `action`   | TODO        |
+| `sender`   | User        |
+| `issueKey` | string      |
+| `title`    | string      |
+| `keywords` | string      |
+| `isFix`    | boolean     |
+| `isClose`  | boolean     |
+
+PullRequest
+
+[Get a pull request - GitHub Docs](https://docs.github.com/en/rest/pulls/pulls#get-a-pull-request) の Response schema をご参照ください。
+
+User
+
+[Get the authenticated user - GitHub Docs](https://docs.github.com/en/rest/users/users#get-the-authenticated-user) の Response schema をご参照ください。
+
+</details>
+
 ### `commit_message_reg_template`
 
 コミットメッセージ解析の正規表現雛形を変更できます。  
+構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
+
+<details>
+
+<summary>使用可能な変数</summary>
+
+| 変数名          | 型       |
+| --------------- | -------- |
+| `projectKey`    | string   |
+| `fixKeywords`   | string[] |
+| `closeKeywords` | string[] |
+
+</details>
+
+### `pr_title_reg_template`
+
+プルリクエストタイトル解析の正規表現雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
 
 <details>
