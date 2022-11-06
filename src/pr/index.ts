@@ -47,7 +47,7 @@ export const pr = async ({
     prTitleRegTemplate,
   })
   if (!parsedPullRequest) {
-    return "課題キーのついたプルリクエストではありませんでした。"
+    return "課題キーのついたプルリクエストが見つかりませんでした。"
   }
   endGroup()
 

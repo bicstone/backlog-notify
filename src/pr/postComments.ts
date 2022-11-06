@@ -70,7 +70,7 @@ export const postComments = ({
   })()
 
   if (!comment) {
-    return Promise.resolve("予期しないイベントでした。")
+    return Promise.resolve("予期しないイベントだったのでスキップしました。")
   }
 
   const status = (() => {

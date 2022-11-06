@@ -60,7 +60,9 @@ describe.each(pushEventsWithCommit)("main", (pushEvent) => {
     }))
     await expect(main()).resolves.not.toThrow()
     expect(info).toHaveBeenCalledTimes(1)
-    expect(info).toHaveBeenCalledWith("Skipped as there were no commits.")
+    expect(info).toHaveBeenCalledWith(
+      "予期しないイベントだったのでスキップしました。"
+    )
   })
 
   test("main not continue and resolve processing when the event cannot be loaded", async () => {
@@ -69,7 +71,9 @@ describe.each(pushEventsWithCommit)("main", (pushEvent) => {
     }))
     await expect(main()).resolves.not.toThrow()
     expect(info).toHaveBeenCalledTimes(1)
-    expect(info).toHaveBeenCalledWith("Skipped as there were no commits.")
+    expect(info).toHaveBeenCalledWith(
+      "予期しないイベントだったのでスキップしました。"
+    )
   })
 
   test("main calls setFailed when an error", async () => {

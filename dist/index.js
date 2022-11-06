@@ -8221,7 +8221,7 @@ const getConfigs_1 = __nccwpck_require__(6587);
 const pr_1 = __nccwpck_require__(1526);
 const push_1 = __nccwpck_require__(8616);
 const runAction = async () => {
-    (0, core_1.startGroup)(`設定を確認中`);
+    (0, core_1.startGroup)(`設定を読み込み中`);
     const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, prOpenCommentTemplate, prReadyForReviewCommentTemplate, prCloseCommentTemplate, prMergedCommentTemplate, commitMessageRegTemplate, prTitleRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
     (0, core_1.endGroup)();
     (0, core_1.startGroup)(`イベントを読み込み中`);
@@ -8258,7 +8258,7 @@ const runAction = async () => {
             prTitleRegTemplate,
         });
     }
-    return "予期しないイベントでした。";
+    return "予期しないイベントだったのでスキップしました。";
 };
 const main = async () => {
     try {
@@ -8415,7 +8415,7 @@ const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, 
         prTitleRegTemplate,
     });
     if (!parsedPullRequest) {
-        return "課題キーのついたプルリクエストではありませんでした。";
+        return "課題キーのついたプルリクエストが見つかりませんでした。";
     }
     (0, core_1.endGroup)();
     (0, core_1.startGroup)(`コメント送信中`);
@@ -8547,7 +8547,7 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenCom
         }
     })();
     if (!comment) {
-        return Promise.resolve("予期しないイベントでした。");
+        return Promise.resolve("予期しないイベントだったのでスキップしました。");
     }
     const status = (() => {
         if (isFix)

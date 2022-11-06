@@ -5,7 +5,7 @@ import { pr } from "./pr"
 import { push } from "./push"
 
 const runAction = async (): Promise<string> => {
-  startGroup(`設定を確認中`)
+  startGroup(`設定を読み込み中`)
   const {
     projectKey,
     apiHost,
@@ -62,7 +62,7 @@ const runAction = async (): Promise<string> => {
     })
   }
 
-  return "予期しないイベントでした。"
+  return "予期しないイベントだったのでスキップしました。"
 }
 
 export const main = async (): Promise<void> => {
