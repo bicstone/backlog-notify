@@ -8322,33 +8322,21 @@ const getConfigs = () => {
                 "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
                 "<% }); %>",
         prOpenCommentTemplate: (0, core_1.getInput)("pr_open_comment_template") ||
-            "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+            "<%= sender.name %>さんがプルリクエストを作成しました" +
                 "\n" +
-                "<% commits.forEach(commit=>{ %>" +
-                "\n" +
-                "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
-                "<% }); %>",
+                "+ [<%= title %>](<%= pr.html_url %>)",
         prReadyForReviewCommentTemplate: (0, core_1.getInput)("pr_ready_for_review_comment_template") ||
-            "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+            "<%= sender.name %>さんがプルリクエストを作成しました" +
                 "\n" +
-                "<% commits.forEach(commit=>{ %>" +
-                "\n" +
-                "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
-                "<% }); %>",
+                "+ [<%= title %>](<%= pr.html_url %>)",
         prCloseCommentTemplate: (0, core_1.getInput)("pr_close_comment_template") ||
-            "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+            "<%= sender.name %>さんがプルリクエストをクローズしました" +
                 "\n" +
-                "<% commits.forEach(commit=>{ %>" +
-                "\n" +
-                "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
-                "<% }); %>",
+                "+ [<%= title %>](<%= pr.html_url %>)",
         prMergedCommentTemplate: (0, core_1.getInput)("pr_merged_comment_template") ||
-            "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+            "<%= sender.name %>さんがプルリクエストをマージしました" +
                 "\n" +
-                "<% commits.forEach(commit=>{ %>" +
-                "\n" +
-                "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
-                "<% }); %>",
+                "+ [<%= title %>](<%= pr.html_url %>)",
         commitMessageRegTemplate: (0, core_1.getInput)("commit_message_reg_template") ||
             "^" +
                 "(<%= projectKey %>\\-\\d+)\\s?" +

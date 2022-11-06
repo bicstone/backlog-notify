@@ -18,10 +18,15 @@ const optionalEnv = {
   FIX_KEYWORDS: "  fixKeyword1  \n  fixKeyword2  ",
   CLOSE_KEYWORDS: "closeKeyword1\ncloseKeyword2",
   PUSH_COMMENT_TEMPLATE: "pushCommentTemplate",
+  PR_OPEN_COMMENT_TEMPLATE: "prOpenCommentTemplate",
+  PR_READY_FOR_REVIEW_COMMENT_TEMPLATE: "prReadyForReviewCommentTemplate",
+  PR_CLOSE_COMMENT_TEMPLATE: "prCloseCommentTemplate",
+  PR_MERGED_COMMENT_TEMPLATE: "prMergedCommentTemplate",
   COMMIT_MESSAGE_REG_TEMPLATE: "commitMessageRegTemplate",
+  PR_TITLE_REG_TEMPLATE: "prTitleRegTemplate",
 }
 
-const configs = {
+const configs: Configs = {
   projectKey: "projectKey",
   apiHost: "apiHost",
   apiKey: "apiKey",
@@ -29,10 +34,15 @@ const configs = {
   fixKeywords: ["fixKeyword1", "fixKeyword2"],
   closeKeywords: ["closeKeyword1", "closeKeyword2"],
   pushCommentTemplate: "pushCommentTemplate",
+  prOpenCommentTemplate: "prOpenCommentTemplate",
+  prReadyForReviewCommentTemplate: "prReadyForReviewCommentTemplate",
+  prCloseCommentTemplate: "prCloseCommentTemplate",
+  prMergedCommentTemplate: "prMergedCommentTemplate",
   commitMessageRegTemplate: "commitMessageRegTemplate",
+  prTitleRegTemplate: "prTitleRegTemplate",
   fixStatusId: "fixStatusId",
   closeStatusId: "closeStatusId",
-} as Configs
+}
 
 describe("getConfigs", () => {
   beforeEach(() => {
@@ -95,7 +105,29 @@ describe("getConfigs", () => {
         "\n" +
         "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
         "<% }); %>",
+      prOpenCommentTemplate:
+        "<%= sender.name %>さんがプルリクエストを作成しました" +
+        "\n" +
+        "+ [<%= title %>](<%= pr.html_url %>)",
+      prReadyForReviewCommentTemplate:
+        "<%= sender.name %>さんがプルリクエストを作成しました" +
+        "\n" +
+        "+ [<%= title %>](<%= pr.html_url %>)",
+      prCloseCommentTemplate:
+        "<%= sender.name %>さんがプルリクエストをクローズしました" +
+        "\n" +
+        "+ [<%= title %>](<%= pr.html_url %>)",
+      prMergedCommentTemplate:
+        "<%= sender.name %>さんがプルリクエストをマージしました" +
+        "\n" +
+        "+ [<%= title %>](<%= pr.html_url %>)",
       commitMessageRegTemplate:
+        "^" +
+        "(<%= projectKey %>\\-\\d+)\\s?" +
+        "(.*?)?\\s?" +
+        "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+        "$",
+      prTitleRegTemplate:
         "^" +
         "(<%= projectKey %>\\-\\d+)\\s?" +
         "(.*?)?\\s?" +

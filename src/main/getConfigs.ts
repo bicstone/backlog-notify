@@ -50,36 +50,24 @@ export const getConfigs = (): Configs => {
         "<% }); %>",
     prOpenCommentTemplate:
       getInput("pr_open_comment_template") ||
-      "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+      "<%= sender.name %>さんがプルリクエストを作成しました" +
         "\n" +
-        "<% commits.forEach(commit=>{ %>" +
-        "\n" +
-        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
-        "<% }); %>",
+        "+ [<%= title %>](<%= pr.html_url %>)",
     prReadyForReviewCommentTemplate:
       getInput("pr_ready_for_review_comment_template") ||
-      "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+      "<%= sender.name %>さんがプルリクエストを作成しました" +
         "\n" +
-        "<% commits.forEach(commit=>{ %>" +
-        "\n" +
-        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
-        "<% }); %>",
+        "+ [<%= title %>](<%= pr.html_url %>)",
     prCloseCommentTemplate:
       getInput("pr_close_comment_template") ||
-      "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+      "<%= sender.name %>さんがプルリクエストをクローズしました" +
         "\n" +
-        "<% commits.forEach(commit=>{ %>" +
-        "\n" +
-        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
-        "<% }); %>",
+        "+ [<%= title %>](<%= pr.html_url %>)",
     prMergedCommentTemplate:
       getInput("pr_merged_comment_template") ||
-      "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+      "<%= sender.name %>さんがプルリクエストをマージしました" +
         "\n" +
-        "<% commits.forEach(commit=>{ %>" +
-        "\n" +
-        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
-        "<% }); %>",
+        "+ [<%= title %>](<%= pr.html_url %>)",
     commitMessageRegTemplate:
       getInput("commit_message_reg_template") ||
       "^" +
