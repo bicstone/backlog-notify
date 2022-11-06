@@ -1,10 +1,11 @@
 import { startGroup, endGroup, info, setFailed } from "@actions/core"
 import { fetchEvent } from "./main/fetchEvent"
 import { getConfigs } from "./main/getConfigs"
+import { pr } from "./pr"
 import { push } from "./push"
 
 const runAction = async (): Promise<string> => {
-  startGroup(`Getting configs`)
+  startGroup(`設定を確認中`)
   const {
     projectKey,
     apiHost,
@@ -13,13 +14,18 @@ const runAction = async (): Promise<string> => {
     fixKeywords,
     closeKeywords,
     pushCommentTemplate,
+    prOpenCommentTemplate,
+    prReadyForReviewCommentTemplate,
+    prCloseCommentTemplate,
+    prMergedCommentTemplate,
     commitMessageRegTemplate,
+    prTitleRegTemplate,
     fixStatusId,
     closeStatusId,
   } = getConfigs()
   endGroup()
 
-  startGroup(`Fetching events`)
+  startGroup(`イベントを読み込み中`)
   const { event } = fetchEvent({ path: githubEventPath })
   endGroup()
 
@@ -38,7 +44,25 @@ const runAction = async (): Promise<string> => {
     })
   }
 
-  return "Skipped as there were no commits."
+  if (event && "pull_request" in event && "number" in event) {
+    return await pr({
+      event,
+      projectKey,
+      apiHost,
+      apiKey,
+      fixKeywords,
+      closeKeywords,
+      fixStatusId,
+      closeStatusId,
+      prOpenCommentTemplate,
+      prReadyForReviewCommentTemplate,
+      prCloseCommentTemplate,
+      prMergedCommentTemplate,
+      prTitleRegTemplate,
+    })
+  }
+
+  return "予期しないイベントでした。"
 }
 
 export const main = async (): Promise<void> => {
