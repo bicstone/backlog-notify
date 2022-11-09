@@ -8469,12 +8469,7 @@ const lodash_template_1 = __importDefault(__nccwpck_require__(417));
 /**
  * Parse the pull request from the event
  */
-const parsePullRequest = ({ event, projectKey, fixKeywords, closeKeywords, 
-// prOpenCommentTemplate,
-// prReadyForReviewCommentTemplate,
-// prCloseCommentTemplate,
-// prMergedCommentTemplate,
-prTitleRegTemplate, }) => {
+const parsePullRequest = ({ event, projectKey, fixKeywords, closeKeywords, prTitleRegTemplate, }) => {
     const prTitleReg = RegExp((0, lodash_template_1.default)(prTitleRegTemplate)({
         projectKey,
         fixKeywords,

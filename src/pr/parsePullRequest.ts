@@ -17,10 +17,6 @@ type ParsePullRequestProps = {
   projectKey: string
   fixKeywords: string[]
   closeKeywords: string[]
-  // prOpenCommentTemplate: string
-  // prReadyForReviewCommentTemplate: string
-  // prCloseCommentTemplate: string
-  // prMergedCommentTemplate: string
   prTitleRegTemplate: string
 }
 
@@ -32,10 +28,6 @@ export const parsePullRequest = ({
   projectKey,
   fixKeywords,
   closeKeywords,
-  // prOpenCommentTemplate,
-  // prReadyForReviewCommentTemplate,
-  // prCloseCommentTemplate,
-  // prMergedCommentTemplate,
   prTitleRegTemplate,
 }: ParsePullRequestProps): { parsedPullRequest: ParsedPullRequest | null } => {
   const prTitleReg = RegExp(
