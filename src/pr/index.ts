@@ -5,7 +5,7 @@ import type { Configs } from "../main/getConfigs"
 import { parsePullRequest } from "./parsePullRequest"
 import { postComments } from "./postComments"
 
-type PrProps = Pick<
+export type PrProps = Pick<
   Configs,
   | "projectKey"
   | "fixKeywords"
