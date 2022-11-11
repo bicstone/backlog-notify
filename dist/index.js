@@ -8419,7 +8419,7 @@ const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, 
     }
     (0, core_1.endGroup)();
     (0, core_1.startGroup)(`コメント送信中`);
-    await (0, postComments_1.postComments)({
+    const response = await (0, postComments_1.postComments)({
         parsedPullRequest,
         fixStatusId,
         closeStatusId,
@@ -8429,24 +8429,22 @@ const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, 
         prMergedCommentTemplate,
         apiHost,
         apiKey,
-    }).then((data) => {
-        if (typeof data === "string") {
-            (0, core_1.info)(data);
-            return;
-        }
-        (0, core_1.startGroup)(`${data.issueKey}:`);
-        (0, core_1.info)(data.parsedPullRequest.title);
-        if (data.isFix) {
-            (0, core_1.info)(`${data.issueKey}を処理済みにしました。`);
-        }
-        if (data.isClose) {
-            (0, core_1.info)(`${data.issueKey}を完了にしました。`);
-        }
-        (0, core_1.debug)(data.response.request.toString());
-        (0, core_1.debug)(data.response.headers.toString());
-        (0, core_1.debug)(data.response.data.toString());
-        (0, core_1.endGroup)();
     });
+    if (typeof response === "string") {
+        return response;
+    }
+    (0, core_1.startGroup)(`${parsedPullRequest.issueKey}:`);
+    (0, core_1.info)(parsedPullRequest.title);
+    if (parsedPullRequest.isFix) {
+        (0, core_1.info)(`${parsedPullRequest.issueKey}を処理済みにしました。`);
+    }
+    if (parsedPullRequest.isClose) {
+        (0, core_1.info)(`${parsedPullRequest.issueKey}を完了にしました。`);
+    }
+    (0, core_1.debug)(response.request.toString());
+    (0, core_1.debug)(response.headers.toString());
+    (0, core_1.debug)(response.data.toString());
+    (0, core_1.endGroup)();
     (0, core_1.endGroup)();
     return "正常に送信しました。";
 };
@@ -8556,7 +8554,7 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenCom
     return axios_1.default
         .patch(endpoint, new url_1.URLSearchParams(body).toString())
         .then((response) => {
-        return { response, parsedPullRequest, issueKey, isFix, isClose };
+        return response;
     });
 };
 exports.postComments = postComments;
