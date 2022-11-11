@@ -17,9 +17,6 @@ const pullRequestEvents = (webhooks.find((v) => v.name === "pull_request")
 
 const title = "title"
 const issueKey = "issueKey"
-const keywords = "keywords"
-const isFix = false
-const isClose = false
 
 describe.each(pullRequestEvents)("index", (event) => {
   const getConfigs = (configs?: Partial<PrProps>): PrProps => ({
@@ -47,9 +44,9 @@ describe.each(pullRequestEvents)("index", (event) => {
     sender: event.sender,
     issueKey,
     title,
-    keywords,
-    isFix,
-    isClose,
+    keywords: "keywords",
+    isFix: false,
+    isClose: false,
     ...parsedPullRequest,
   })
 
