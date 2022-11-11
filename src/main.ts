@@ -62,7 +62,7 @@ const runAction = async (): Promise<string> => {
     })
   }
 
-  return "予期しないイベントだったのでスキップしました。"
+  return "予期しないイベントでした。"
 }
 
 export const main = async (): Promise<void> => {

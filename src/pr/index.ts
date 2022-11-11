@@ -52,7 +52,8 @@ export const pr = async ({
   endGroup()
 
   startGroup(`コメント送信中`)
-  await postComments({
+
+  const response = await postComments({
     parsedPullRequest,
     fixStatusId,
     closeStatusId,
@@ -62,30 +63,30 @@ export const pr = async ({
     prMergedCommentTemplate,
     apiHost,
     apiKey,
-  }).then((data) => {
-    if (typeof data === "string") {
-      info(data)
-      return
-    }
-
-    startGroup(`${data.issueKey}:`)
-
-    info(data.parsedPullRequest.title)
-
-    if (data.isFix) {
-      info(`${data.issueKey}を処理済みにしました。`)
-    }
-
-    if (data.isClose) {
-      info(`${data.issueKey}を完了にしました。`)
-    }
-
-    debug(data.response.request.toString())
-    debug(data.response.headers.toString())
-    debug(data.response.data.toString())
-
-    endGroup()
   })
+
+  if (typeof response === "string") {
+    return response
+  }
+
+  startGroup(`${parsedPullRequest.issueKey}:`)
+
+  info(parsedPullRequest.title)
+
+  if (parsedPullRequest.isFix) {
+    info(`${parsedPullRequest.issueKey}を処理済みにしました。`)
+  }
+
+  if (parsedPullRequest.isClose) {
+    info(`${parsedPullRequest.issueKey}を完了にしました。`)
+  }
+
+  debug(response.request.toString())
+  debug(response.headers.toString())
+  debug(response.data.toString())
+
+  endGroup()
+
   endGroup()
 
   return "正常に送信しました。"

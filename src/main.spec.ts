@@ -87,9 +87,7 @@ describe("main", () => {
         expect(pr).toHaveBeenCalledTimes(0)
 
         expect(info).toHaveBeenCalledTimes(1)
-        expect(info).toHaveBeenCalledWith(
-          "予期しないイベントだったのでスキップしました。"
-        )
+        expect(info).toHaveBeenCalledWith("予期しないイベントでした。")
         expect(setFailed).toHaveBeenCalledTimes(0)
       })
     }
@@ -125,9 +123,7 @@ describe("main", () => {
       expect(pr).toHaveBeenCalledTimes(0)
 
       expect(info).toHaveBeenCalledTimes(1)
-      expect(info).toHaveBeenCalledWith(
-        "予期しないイベントだったのでスキップしました。"
-      )
+      expect(info).toHaveBeenCalledWith("予期しないイベントでした。")
       expect(setFailed).toHaveBeenCalledTimes(0)
     })
 

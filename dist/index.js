@@ -8258,7 +8258,7 @@ const runAction = async () => {
             prTitleRegTemplate,
         });
     }
-    return "予期しないイベントだったのでスキップしました。";
+    return "予期しないイベントでした。";
 };
 const main = async () => {
     try {
@@ -8542,7 +8542,7 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenCom
         }
     })();
     if (!comment) {
-        return Promise.resolve("予期しないイベントだったのでスキップしました。");
+        return Promise.resolve("予期しないイベントでした。");
     }
     const status = (() => {
         if (isFix)

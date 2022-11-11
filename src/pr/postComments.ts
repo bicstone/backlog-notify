@@ -9,13 +9,7 @@ const updateIssueApiUrlTemplate = template(
   "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"
 )
 
-export type Response = {
-  response: AxiosResponse<Record<string, unknown>>
-  parsedPullRequest: ParsedPullRequest
-  issueKey: string
-  isFix: boolean
-  isClose: boolean
-}
+export type Response = AxiosResponse<Record<string, unknown>>
 
 type PostCommentsProps = {
   parsedPullRequest: ParsedPullRequest
@@ -70,7 +64,7 @@ export const postComments = ({
   })()
 
   if (!comment) {
-    return Promise.resolve("予期しないイベントだったのでスキップしました。")
+    return Promise.resolve("予期しないイベントでした。")
   }
 
   const status = (() => {
@@ -83,6 +77,6 @@ export const postComments = ({
   return axios
     .patch(endpoint, new URLSearchParams(body).toString())
     .then((response) => {
-      return { response, parsedPullRequest, issueKey, isFix, isClose }
+      return response
     })
 }
