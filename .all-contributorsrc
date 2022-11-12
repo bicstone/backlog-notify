@@ -61,6 +61,15 @@
         "ideas",
         "code"
       ]
+    },
+    {
+      "login": "shuyahonda",
+      "name": "Shuya Honda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1390857?v=4",
+      "profile": "https://github.com/shuyahonda",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
