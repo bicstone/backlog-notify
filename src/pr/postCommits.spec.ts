@@ -134,7 +134,7 @@ describe("postComments", () => {
         getRequestParams(comment)
       )
     })
-    test("parseCommits post a comment and change status when change to fixed", () => {
+    test("post a comment and change status when change to fixed", () => {
       const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
       const configs = getConfigs(parsedPullRequest)
 
@@ -145,7 +145,7 @@ describe("postComments", () => {
         getRequestParams(comment, { statusId: fixStatusId })
       )
     })
-    test("parseCommits post a comment and change status when change to close", () => {
+    test("post a comment and change status when change to close", () => {
       const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
       const configs = getConfigs(parsedPullRequest)
 
@@ -175,7 +175,7 @@ describe("postComments", () => {
           getRequestParams(comment)
         )
       })
-      test("parseCommits post a comment and change status when change to fixed", () => {
+      test("post a comment and change status when change to fixed", () => {
         const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
         const configs = getConfigs(parsedPullRequest)
 
@@ -186,7 +186,7 @@ describe("postComments", () => {
           getRequestParams(comment, { statusId: fixStatusId })
         )
       })
-      test("parseCommits post a comment and change status when change to close", () => {
+      test("post a comment and change status when change to close", () => {
         const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
         const configs = getConfigs(parsedPullRequest)
 
@@ -218,7 +218,7 @@ describe("postComments", () => {
         getRequestParams(comment)
       )
     })
-    test("parseCommits post a comment and change status when change to fixed", () => {
+    test("post a comment and change status when change to fixed", () => {
       const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
       const configs = getConfigs(parsedPullRequest)
 
@@ -229,7 +229,7 @@ describe("postComments", () => {
         getRequestParams(comment, { statusId: fixStatusId })
       )
     })
-    test("parseCommits post a comment and change status when change to close", () => {
+    test("post a comment and change status when change to close", () => {
       const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
       const configs = getConfigs(parsedPullRequest)
 
@@ -257,7 +257,7 @@ describe("postComments", () => {
         getRequestParams(comment)
       )
     })
-    test("parseCommits post a comment and change status when change to fixed", () => {
+    test("post a comment and change status when change to fixed", () => {
       const event = getEvent(closedEvent)
       const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
       const configs = getConfigs(parsedPullRequest)
@@ -269,7 +269,7 @@ describe("postComments", () => {
         getRequestParams(comment, { statusId: fixStatusId })
       )
     })
-    test("parseCommits post a comment and change status when change to close", () => {
+    test("post a comment and change status when change to close", () => {
       const event = getEvent(closedEvent)
       const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
       const configs = getConfigs(parsedPullRequest)
@@ -284,7 +284,7 @@ describe("postComments", () => {
   })
 
   describe.each(unexpectedEvents)("unexpected", (unexpectedEvent) => {
-    test("postCommits post a comment to Backlog API", () => {
+    test("post a comment to Backlog API", () => {
       const event = getEvent(unexpectedEvent)
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
