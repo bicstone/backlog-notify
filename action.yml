@@ -42,25 +42,25 @@ inputs:
     description: The template for backlog issue comment on open a pull request
     required: false
     default: |-
-      <%= sender.name %>さんがプルリクエストを作成しました
+      <%= sender.login %>さんがプルリクエストを作成しました
       + [<%= title %>](<%= pr.html_url %>)
   pr_ready_for_review_comment_template:
     description: The template for backlog issue comment on ready to review a pull request
     required: false
     default: |-
-      <%= sender.name %>さんがプルリクエストを作成しました
+      <%= sender.login %>さんがプルリクエストを作成しました
       + [<%= title %>](<%= pr.html_url %>)
   pr_close_comment_template:
     description: The template for backlog issue comment on close a pull request
     required: false
     default: |-
-      <%= sender.name %>さんがプルリクエストをクローズしました
+      <%= sender.login %>さんがプルリクエストをクローズしました
       + [<%= title %>](<%= pr.html_url %>)
   pr_merged_comment_template:
     description: The template for backlog issue comment on merged a pull request
     required: false
     default: |-
-      <%= sender.name %>さんがプルリクエストをマージしました
+      <%= sender.login %>さんがプルリクエストをマージしました
       + [<%= title %>](<%= pr.html_url %>)
   commit_message_reg_template:
     description: The template for regular expressions to parse commit messages

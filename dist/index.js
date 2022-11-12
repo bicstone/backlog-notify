@@ -8340,19 +8340,19 @@ const getConfigs = () => {
                 "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
                 "<% }); %>",
         prOpenCommentTemplate: (0, core_1.getInput)("pr_open_comment_template") ||
-            "<%= sender.name %>さんがプルリクエストを作成しました" +
+            "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n" +
                 "+ [<%= title %>](<%= pr.html_url %>)",
         prReadyForReviewCommentTemplate: (0, core_1.getInput)("pr_ready_for_review_comment_template") ||
-            "<%= sender.name %>さんがプルリクエストを作成しました" +
+            "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n" +
                 "+ [<%= title %>](<%= pr.html_url %>)",
         prCloseCommentTemplate: (0, core_1.getInput)("pr_close_comment_template") ||
-            "<%= sender.name %>さんがプルリクエストをクローズしました" +
+            "<%= sender.login %>さんがプルリクエストをクローズしました" +
                 "\n" +
                 "+ [<%= title %>](<%= pr.html_url %>)",
         prMergedCommentTemplate: (0, core_1.getInput)("pr_merged_comment_template") ||
-            "<%= sender.name %>さんがプルリクエストをマージしました" +
+            "<%= sender.login %>さんがプルリクエストをマージしました" +
                 "\n" +
                 "+ [<%= title %>](<%= pr.html_url %>)",
         commitMessageRegTemplate: (0, core_1.getInput)("commit_message_reg_template") ||
@@ -8525,6 +8525,7 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenCom
     const comment = (() => {
         switch (parsedPullRequest.action) {
             case "opened":
+            case "reopened":
                 return (0, lodash_template_1.default)(prOpenCommentTemplate)(parsedPullRequest);
             case "ready_for_review":
                 return (0, lodash_template_1.default)(prReadyForReviewCommentTemplate)(parsedPullRequest);

@@ -11,7 +11,7 @@ const updateIssueApiUrlTemplate = template(
 
 export type Response = AxiosResponse<Record<string, unknown>>
 
-type PostCommentsProps = {
+export type PostCommentsProps = {
   parsedPullRequest: ParsedPullRequest
   fixStatusId: string
   closeStatusId: string
@@ -49,6 +49,7 @@ export const postComments = ({
   const comment = (() => {
     switch (parsedPullRequest.action) {
       case "opened":
+      case "reopened":
         return template(prOpenCommentTemplate)(parsedPullRequest)
       case "ready_for_review":
         return template(prReadyForReviewCommentTemplate)(parsedPullRequest)

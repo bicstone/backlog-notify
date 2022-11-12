@@ -79,16 +79,16 @@ jobs:
             <% commits.forEach(commit=>{ %>
             + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
           pr_open_comment_template: |-
-            <%= sender.name %>さんがプルリクエストを作成しました
+            <%= sender.login %>さんがプルリクエストを作成しました
             + [<%= title %>](<%= pr.html_url %>)
           pr_ready_for_review_comment_template: |-
-            <%= sender.name %>さんがプルリクエストを作成しました
+            <%= sender.login %>さんがプルリクエストを作成しました
             + [<%= title %>](<%= pr.html_url %>)
           pr_close_comment_template: |-
-            <%= sender.name %>さんがプルリクエストをクローズしました
+            <%= sender.login %>さんがプルリクエストをクローズしました
             + [<%= title %>](<%= pr.html_url %>)
           pr_merged_comment_template: |-
-            <%= sender.name %>さんがプルリクエストをマージしました
+            <%= sender.login %>さんがプルリクエストをマージしました
             + [<%= title %>](<%= pr.html_url %>)
           commit_message_reg_template: "\
             ^\

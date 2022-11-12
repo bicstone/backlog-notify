@@ -50,22 +50,22 @@ export const getConfigs = (): Configs => {
         "<% }); %>",
     prOpenCommentTemplate:
       getInput("pr_open_comment_template") ||
-      "<%= sender.name %>さんがプルリクエストを作成しました" +
+      "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n" +
         "+ [<%= title %>](<%= pr.html_url %>)",
     prReadyForReviewCommentTemplate:
       getInput("pr_ready_for_review_comment_template") ||
-      "<%= sender.name %>さんがプルリクエストを作成しました" +
+      "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n" +
         "+ [<%= title %>](<%= pr.html_url %>)",
     prCloseCommentTemplate:
       getInput("pr_close_comment_template") ||
-      "<%= sender.name %>さんがプルリクエストをクローズしました" +
+      "<%= sender.login %>さんがプルリクエストをクローズしました" +
         "\n" +
         "+ [<%= title %>](<%= pr.html_url %>)",
     prMergedCommentTemplate:
       getInput("pr_merged_comment_template") ||
-      "<%= sender.name %>さんがプルリクエストをマージしました" +
+      "<%= sender.login %>さんがプルリクエストをマージしました" +
         "\n" +
         "+ [<%= title %>](<%= pr.html_url %>)",
     commitMessageRegTemplate:
