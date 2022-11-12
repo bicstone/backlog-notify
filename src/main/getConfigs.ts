@@ -8,9 +8,9 @@ export type Configs = {
   fixKeywords: string[]
   closeKeywords: string[]
   pushCommentTemplate: string
-  prOpenCommentTemplate: string
+  prOpenedCommentTemplate: string
   prReadyForReviewCommentTemplate: string
-  prCloseCommentTemplate: string
+  prClosedCommentTemplate: string
   prMergedCommentTemplate: string
   commitMessageRegTemplate: string
   prTitleRegTemplate: string
@@ -48,8 +48,8 @@ export const getConfigs = (): Configs => {
         "\n" +
         "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
         "<% }); %>",
-    prOpenCommentTemplate:
-      getInput("pr_open_comment_template") ||
+    prOpenedCommentTemplate:
+      getInput("pr_opened_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n" +
         "+ [<%= title %>](<%= pr.html_url %>)",
@@ -58,8 +58,8 @@ export const getConfigs = (): Configs => {
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n" +
         "+ [<%= title %>](<%= pr.html_url %>)",
-    prCloseCommentTemplate:
-      getInput("pr_close_comment_template") ||
+    prClosedCommentTemplate:
+      getInput("pr_closed_comment_template") ||
       "<%= sender.login %>さんがプルリクエストをクローズしました" +
         "\n" +
         "+ [<%= title %>](<%= pr.html_url %>)",

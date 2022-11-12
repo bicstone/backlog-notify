@@ -14,9 +14,9 @@ export type PrProps = Pick<
   | "closeStatusId"
   | "apiHost"
   | "apiKey"
-  | "prOpenCommentTemplate"
+  | "prOpenedCommentTemplate"
   | "prReadyForReviewCommentTemplate"
-  | "prCloseCommentTemplate"
+  | "prClosedCommentTemplate"
   | "prMergedCommentTemplate"
   | "prTitleRegTemplate"
 > & {
@@ -32,9 +32,9 @@ export const pr = async ({
   closeStatusId,
   apiHost,
   apiKey,
-  prOpenCommentTemplate,
+  prOpenedCommentTemplate,
   prReadyForReviewCommentTemplate,
-  prCloseCommentTemplate,
+  prClosedCommentTemplate,
   prMergedCommentTemplate,
   prTitleRegTemplate,
 }: PrProps): Promise<string> => {
@@ -57,9 +57,9 @@ export const pr = async ({
     parsedPullRequest,
     fixStatusId,
     closeStatusId,
-    prOpenCommentTemplate,
+    prOpenedCommentTemplate,
     prReadyForReviewCommentTemplate,
-    prCloseCommentTemplate,
+    prClosedCommentTemplate,
     prMergedCommentTemplate,
     apiHost,
     apiKey,

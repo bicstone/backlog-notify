@@ -21,11 +21,11 @@ const apiKey = "apiKey"
 const projectKey = "projectKey"
 const issueKey = `${projectKey}-1`
 const title = "title"
-const prOpenCommentTemplate =
+const prOpenedCommentTemplate =
   "prOpened,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
 const prReadyForReviewCommentTemplate =
   "prReadyForReview,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
-const prCloseCommentTemplate =
+const prClosedCommentTemplate =
   "prClosed,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
 const prMergedCommentTemplate =
   "prMerged,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
@@ -89,9 +89,9 @@ const getConfigs = (
   parsedPullRequest,
   fixStatusId,
   closeStatusId,
-  prOpenCommentTemplate,
+  prOpenedCommentTemplate,
   prReadyForReviewCommentTemplate,
-  prCloseCommentTemplate,
+  prClosedCommentTemplate,
   prMergedCommentTemplate,
   apiHost,
   apiKey,

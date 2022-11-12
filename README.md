@@ -78,13 +78,13 @@ jobs:
             <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
             <% commits.forEach(commit=>{ %>
             + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
-          pr_open_comment_template: |-
+          pr_opened_comment_template: |-
             <%= sender.login %>さんがプルリクエストを作成しました
             + [<%= title %>](<%= pr.html_url %>)
           pr_ready_for_review_comment_template: |-
             <%= sender.login %>さんがプルリクエストを作成しました
             + [<%= title %>](<%= pr.html_url %>)
-          pr_close_comment_template: |-
+          pr_closed_comment_template: |-
             <%= sender.login %>さんがプルリクエストをクローズしました
             + [<%= title %>](<%= pr.html_url %>)
           pr_merged_comment_template: |-
@@ -118,9 +118,9 @@ jobs:
 | `fix_keywords`                         | 処理済みにするキーワード                 |
 | `close_keywords`                       | 完了にするキーワード                     |
 | `push_comment_template`                | プッシュ時のコメント雛形                 |
-| `pr_open_comment_template`             | プルリクエストオープン時のコメント雛形   |
+| `pr_opened_comment_template`           | プルリクエストオープン時のコメント雛形   |
 | `pr_ready_for_review_comment_template` | プルリクエスト下書き解除時のコメント雛形 |
-| `pr_close_comment_template`            | プルリクエストクローズ時のコメント雛形   |
+| `pr_closed_comment_template`           | プルリクエストクローズ時のコメント雛形   |
 | `pr_merged_comment_template`           | プルリクエストマージ時のコメント雛形     |
 | `commit_message_reg_template`          | コミットメッセージ解析の正規表現雛形     |
 | `pr_title_reg_template`                | プルリクエストタイトル解析の正規表現雛形 |

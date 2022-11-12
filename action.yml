@@ -38,7 +38,7 @@ inputs:
       <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
       <% commits.forEach(commit=>{ %>
       + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
-  pr_open_comment_template:
+  pr_opened_comment_template:
     description: The template for backlog issue comment on open a pull request
     required: false
     default: |-
@@ -50,7 +50,7 @@ inputs:
     default: |-
       <%= sender.login %>さんがプルリクエストを作成しました
       + [<%= title %>](<%= pr.html_url %>)
-  pr_close_comment_template:
+  pr_closed_comment_template:
     description: The template for backlog issue comment on close a pull request
     required: false
     default: |-

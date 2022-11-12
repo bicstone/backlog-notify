@@ -15,9 +15,9 @@ export type PostCommentsProps = {
   parsedPullRequest: ParsedPullRequest
   fixStatusId: string
   closeStatusId: string
-  prOpenCommentTemplate: string
+  prOpenedCommentTemplate: string
   prReadyForReviewCommentTemplate: string
-  prCloseCommentTemplate: string
+  prClosedCommentTemplate: string
   prMergedCommentTemplate: string
   apiHost: string
   apiKey: string
@@ -31,9 +31,9 @@ export const postComments = ({
   parsedPullRequest,
   fixStatusId,
   closeStatusId,
-  prOpenCommentTemplate,
+  prOpenedCommentTemplate,
   prReadyForReviewCommentTemplate,
-  prCloseCommentTemplate,
+  prClosedCommentTemplate,
   prMergedCommentTemplate,
   apiHost,
   apiKey,
@@ -50,14 +50,14 @@ export const postComments = ({
     switch (parsedPullRequest.action) {
       case "opened":
       case "reopened":
-        return template(prOpenCommentTemplate)(parsedPullRequest)
+        return template(prOpenedCommentTemplate)(parsedPullRequest)
       case "ready_for_review":
         return template(prReadyForReviewCommentTemplate)(parsedPullRequest)
       case "closed":
         if (parsedPullRequest.pr.merged) {
           return template(prMergedCommentTemplate)(parsedPullRequest)
         } else {
-          return template(prCloseCommentTemplate)(parsedPullRequest)
+          return template(prClosedCommentTemplate)(parsedPullRequest)
         }
       default:
         return undefined

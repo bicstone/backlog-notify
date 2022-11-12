@@ -8222,7 +8222,7 @@ const pr_1 = __nccwpck_require__(1526);
 const push_1 = __nccwpck_require__(8616);
 const runAction = async () => {
     (0, core_1.startGroup)(`設定を読み込み中`);
-    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, prOpenCommentTemplate, prReadyForReviewCommentTemplate, prCloseCommentTemplate, prMergedCommentTemplate, commitMessageRegTemplate, prTitleRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
+    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, prOpenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, commitMessageRegTemplate, prTitleRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
     (0, core_1.endGroup)();
     (0, core_1.startGroup)(`イベントを読み込み中`);
     const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
@@ -8251,9 +8251,9 @@ const runAction = async () => {
             closeKeywords,
             fixStatusId,
             closeStatusId,
-            prOpenCommentTemplate,
+            prOpenedCommentTemplate,
             prReadyForReviewCommentTemplate,
-            prCloseCommentTemplate,
+            prClosedCommentTemplate,
             prMergedCommentTemplate,
             prTitleRegTemplate,
         });
@@ -8339,7 +8339,7 @@ const getConfigs = () => {
                 "\n" +
                 "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
                 "<% }); %>",
-        prOpenCommentTemplate: (0, core_1.getInput)("pr_open_comment_template") ||
+        prOpenedCommentTemplate: (0, core_1.getInput)("pr_opened_comment_template") ||
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n" +
                 "+ [<%= title %>](<%= pr.html_url %>)",
@@ -8347,7 +8347,7 @@ const getConfigs = () => {
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n" +
                 "+ [<%= title %>](<%= pr.html_url %>)",
-        prCloseCommentTemplate: (0, core_1.getInput)("pr_close_comment_template") ||
+        prClosedCommentTemplate: (0, core_1.getInput)("pr_closed_comment_template") ||
             "<%= sender.login %>さんがプルリクエストをクローズしました" +
                 "\n" +
                 "+ [<%= title %>](<%= pr.html_url %>)",
@@ -8405,7 +8405,7 @@ exports.pr = void 0;
 const core_1 = __nccwpck_require__(2186);
 const parsePullRequest_1 = __nccwpck_require__(7300);
 const postComments_1 = __nccwpck_require__(1332);
-const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, closeStatusId, apiHost, apiKey, prOpenCommentTemplate, prReadyForReviewCommentTemplate, prCloseCommentTemplate, prMergedCommentTemplate, prTitleRegTemplate, }) => {
+const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, closeStatusId, apiHost, apiKey, prOpenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, prTitleRegTemplate, }) => {
     (0, core_1.startGroup)(`プルリクエストを取得中`);
     const { parsedPullRequest } = (0, parsePullRequest_1.parsePullRequest)({
         event,
@@ -8423,9 +8423,9 @@ const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, 
         parsedPullRequest,
         fixStatusId,
         closeStatusId,
-        prOpenCommentTemplate,
+        prOpenedCommentTemplate,
         prReadyForReviewCommentTemplate,
-        prCloseCommentTemplate,
+        prClosedCommentTemplate,
         prMergedCommentTemplate,
         apiHost,
         apiKey,
@@ -8515,7 +8515,7 @@ const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=api
 /**
  * Post the comment to Backlog API
  */
-const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenCommentTemplate, prReadyForReviewCommentTemplate, prCloseCommentTemplate, prMergedCommentTemplate, apiHost, apiKey, }) => {
+const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, apiHost, apiKey, }) => {
     const { issueKey, isFix, isClose } = parsedPullRequest;
     const endpoint = updateIssueApiUrlTemplate({
         apiHost,
@@ -8526,7 +8526,7 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenCom
         switch (parsedPullRequest.action) {
             case "opened":
             case "reopened":
-                return (0, lodash_template_1.default)(prOpenCommentTemplate)(parsedPullRequest);
+                return (0, lodash_template_1.default)(prOpenedCommentTemplate)(parsedPullRequest);
             case "ready_for_review":
                 return (0, lodash_template_1.default)(prReadyForReviewCommentTemplate)(parsedPullRequest);
             case "closed":
@@ -8534,7 +8534,7 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenCom
                     return (0, lodash_template_1.default)(prMergedCommentTemplate)(parsedPullRequest);
                 }
                 else {
-                    return (0, lodash_template_1.default)(prCloseCommentTemplate)(parsedPullRequest);
+                    return (0, lodash_template_1.default)(prClosedCommentTemplate)(parsedPullRequest);
                 }
             default:
                 return undefined;
