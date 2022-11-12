@@ -119,8 +119,8 @@ describe("postComments", () => {
     mockedAxios.patch.mockImplementation(() => Promise.resolve(getResponse()))
   })
 
-  describe.each(openedEvents)("opened, reopened", (openedEvent) => {
-    const event = getEvent(openedEvent)
+  describe.each(openedEvents)("opened, reopened", (_event) => {
+    const event = getEvent(_event)
     const comment = `prOpened,${login},${title},${html_url}`
 
     test("postCommits post a comment to Backlog API", () => {
@@ -158,52 +158,49 @@ describe("postComments", () => {
     })
   })
 
-  describe.each(readyForReviewEvents)(
-    "ready_for_review",
-    (readyForReviewEvent) => {
-      const event = getEvent(readyForReviewEvent)
-      const comment = `prReadyForReview,${login},${title},${html_url}`
+  describe.each(readyForReviewEvents)("ready_for_review", (_event) => {
+    const event = getEvent(_event)
+    const comment = `prReadyForReview,${login},${title},${html_url}`
 
-      test("postCommits post a comment to Backlog API", () => {
-        const parsedPullRequest = getParsedPullRequest(event)
-        const configs = getConfigs(parsedPullRequest)
+    test("postCommits post a comment to Backlog API", () => {
+      const parsedPullRequest = getParsedPullRequest(event)
+      const configs = getConfigs(parsedPullRequest)
 
-        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-        expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-        expect(mockedAxios.patch).toHaveBeenCalledWith(
-          endpoint,
-          getRequestParams(comment)
-        )
-      })
-      test("post a comment and change status when change to fixed", () => {
-        const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
-        const configs = getConfigs(parsedPullRequest)
+      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
+      expect(mockedAxios.patch).toHaveBeenCalledWith(
+        endpoint,
+        getRequestParams(comment)
+      )
+    })
+    test("post a comment and change status when change to fixed", () => {
+      const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
+      const configs = getConfigs(parsedPullRequest)
 
-        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-        expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-        expect(mockedAxios.patch).toHaveBeenCalledWith(
-          endpoint,
-          getRequestParams(comment, { statusId: fixStatusId })
-        )
-      })
-      test("post a comment and change status when change to close", () => {
-        const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
-        const configs = getConfigs(parsedPullRequest)
+      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
+      expect(mockedAxios.patch).toHaveBeenCalledWith(
+        endpoint,
+        getRequestParams(comment, { statusId: fixStatusId })
+      )
+    })
+    test("post a comment and change status when change to close", () => {
+      const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
+      const configs = getConfigs(parsedPullRequest)
 
-        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-        expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-        expect(mockedAxios.patch).toHaveBeenCalledWith(
-          endpoint,
-          getRequestParams(comment, { statusId: closeStatusId })
-        )
-      })
-    }
-  )
+      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
+      expect(mockedAxios.patch).toHaveBeenCalledWith(
+        endpoint,
+        getRequestParams(comment, { statusId: closeStatusId })
+      )
+    })
+  })
 
-  describe.each(closedEvents)("merged", (closedEvent) => {
+  describe.each(closedEvents)("merged", (_event) => {
     const event = getEvent({
-      ...closedEvent,
-      pull_request: { ...closedEvent.pull_request, merged: true },
+      ..._event,
+      pull_request: { ..._event.pull_request, merged: true },
     })
     const comment = `prMerged,${login},${title},${html_url}`
 
@@ -242,8 +239,8 @@ describe("postComments", () => {
     })
   })
 
-  describe.each(closedEvents)("closed", (closedEvent) => {
-    const event = getEvent(closedEvent)
+  describe.each(closedEvents)("closed", (_event) => {
+    const event = getEvent(_event)
     const comment = `prClosed,${login},${title},${html_url}`
 
     test("postCommits post a comment to Backlog API", () => {
@@ -258,7 +255,6 @@ describe("postComments", () => {
       )
     })
     test("post a comment and change status when change to fixed", () => {
-      const event = getEvent(closedEvent)
       const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
       const configs = getConfigs(parsedPullRequest)
 
@@ -270,7 +266,6 @@ describe("postComments", () => {
       )
     })
     test("post a comment and change status when change to close", () => {
-      const event = getEvent(closedEvent)
       const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
       const configs = getConfigs(parsedPullRequest)
 
@@ -283,9 +278,9 @@ describe("postComments", () => {
     })
   })
 
-  describe.each(unexpectedEvents)("unexpected", (unexpectedEvent) => {
+  describe.each(unexpectedEvents)("unexpected", (_event) => {
     test("post a comment to Backlog API", () => {
-      const event = getEvent(unexpectedEvent)
+      const event = getEvent(_event)
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
 

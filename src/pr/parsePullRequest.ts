@@ -12,7 +12,7 @@ export type ParsedPullRequest = {
   isClose: boolean
 }
 
-type ParsePullRequestProps = {
+export type ParsePullRequestProps = {
   event: PullRequestEvent
   projectKey: string
   fixKeywords: string[]
