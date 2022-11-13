@@ -85,7 +85,6 @@ PROJECT-123 不具合修正 #fix
 ### Workflow の作成
 
 GitHub Actions workflow を作成します (例: `.github/workflows/backlog-notify.yml` )。
-下記のような形式である必要があります。
 
 ```yaml
 name: Backlog Notify
@@ -98,7 +97,40 @@ on:
       - reopened
       - ready_for_review
       - closed
+jobs:
+  notify:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Backlog Notify
+        uses: bicstone/backlog-notify@v4
+        with:
+          project_key: PROJECT_KEY
+          api_host: example.backlog.jp
+          api_key: ${{ secrets.BACKLOG_API_KEY }}
+
+```
+
+## 高度な設定
+
+[Workflow syntax for GitHub Actions - GitHub Docs](https://docs.github.com/ja/actions/using-workflows/workflow-syntax-for-github-actions#on) を参照に実行する条件を制御することができます。
+また、コメントのフォーマットや、メッセージを解析する際の正規表現などをカスタマイズすることもできます。
+
+```yaml
+name: Backlog Notify
+
+on:
+  push:
+    branches: 
+      - main
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - closed
+    branches:
+      - releases/**
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -113,7 +145,6 @@ jobs:
           api_key: ${{ secrets.BACKLOG_API_KEY }}
 
           # 任意設定 (The following are optional settings)
-          # デフォルト値で良い場合は、ここから下はコピー不要です
           fix_keywords: |-
             #fix
             #fixes
@@ -159,7 +190,7 @@ jobs:
           close_status_id: 4
 ```
 
-## 設定一覧
+### 設定一覧
 
 | 設定名                                 | 説明                                     |
 | -------------------------------------- | ---------------------------------------- |
@@ -179,7 +210,7 @@ jobs:
 | `fix_status_id`                        | 処理済みの 状態 ID                       |
 | `close_status_id`                      | 完了の 状態 ID                           |
 
-### `push_comment_template`
+#### `push_comment_template`
 
 プッシュ時のコメントの雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
@@ -232,7 +263,7 @@ Committer
 
 </details>
 
-### `pr_*_comment_template`
+#### `pr_*_comment_template`
 
 プルリクエストイベントのコメントの雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
@@ -264,7 +295,7 @@ User
 
 </details>
 
-### `commit_message_reg_template`
+#### `commit_message_reg_template`
 
 コミットメッセージ解析の正規表現雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
@@ -281,7 +312,7 @@ User
 
 </details>
 
-### `pr_title_reg_template`
+#### `pr_title_reg_template`
 
 プルリクエストタイトル解析の正規表現雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。

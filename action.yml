@@ -45,7 +45,7 @@ inputs:
       <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
       * [<%= title %>](<%= pr.html_url %>)
   pr_reopened_comment_template:
-    description: The template for backlog issue comment on re-opened a pull request
+    description: The template for backlog issue comment on reopened a pull request
     required: false
     default: |-
       <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
