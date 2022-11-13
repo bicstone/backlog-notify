@@ -8522,14 +8522,14 @@ const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=api
  * Post the comment to Backlog API
  */
 const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, apiHost, apiKey, }) => {
-    const { issueKey, isFix, isClose } = parsedPullRequest;
+    const { issueKey, isFix, isClose, action, pr } = parsedPullRequest;
     const endpoint = updateIssueApiUrlTemplate({
         apiHost,
         apiKey,
         issueKey,
     });
     const comment = (() => {
-        switch (parsedPullRequest.action) {
+        switch (action) {
             case "opened":
                 return (0, lodash_template_1.default)(prOpenedCommentTemplate)(parsedPullRequest);
             case "reopened":
@@ -8537,7 +8537,7 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedC
             case "ready_for_review":
                 return (0, lodash_template_1.default)(prReadyForReviewCommentTemplate)(parsedPullRequest);
             case "closed":
-                if (parsedPullRequest.pr.merged) {
+                if (pr.merged) {
                     return (0, lodash_template_1.default)(prMergedCommentTemplate)(parsedPullRequest);
                 }
                 else {
@@ -8550,14 +8550,14 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedC
     if (!comment) {
         return Promise.resolve("予期しないイベントでした。");
     }
-    const draft = parsedPullRequest.pr.draft;
+    const draft = pr.draft;
     if (draft) {
         return Promise.resolve("プルリクエストが下書きでした。");
     }
     const status = (() => {
-        if (isFix)
+        if (pr.merged && isFix)
             return { statusId: fixStatusId };
-        if (isClose)
+        if (pr.merged && isClose)
             return { statusId: closeStatusId };
         else
             return undefined;
