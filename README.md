@@ -157,25 +157,25 @@ jobs:
             <% commits.forEach(commit=>{ %>
             + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
           pr_opened_comment_template: |-
-            <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
+            <%= sender.login %>さんがプルリクエストを作成しました
 
-            * [<%= title %>](<%= pr.html_url %>)
+            + [<%= title %>](<%= pr.html_url %>)
           pr_reopened_comment_template: |-
-            <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
+            <%= sender.login %>さんがプルリクエストを作成しました
 
-            * [<%= title %>](<%= pr.html_url %>)
+            + [<%= title %>](<%= pr.html_url %>)
           pr_ready_for_review_comment_template: |-
-            <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
+            <%= sender.login %>さんがプルリクエストを作成しました
 
-            * [<%= title %>](<%= pr.html_url %>)
+            + [<%= title %>](<%= pr.html_url %>)
           pr_closed_comment_template: |-
-            <% print(sender.name || sender.login) %>さんがプルリクエストをクローズしました
+            <%= sender.login %>さんがプルリクエストをクローズしました
 
-            * [<%= title %>](<%= pr.html_url %>)
+            + [<%= title %>](<%= pr.html_url %>)
           pr_merged_comment_template: |-
-            <% print(sender.name || sender.login) %>さんがプルリクエストをマージしました
+            <%= sender.login %>さんがプルリクエストをマージしました
 
-            * [<%= title %>](<%= pr.html_url %>)
+            + [<%= title %>](<%= pr.html_url %>)
           commit_message_reg_template: "\
             ^\
             (<%= projectKey %>\\-\\d+)\\s?\

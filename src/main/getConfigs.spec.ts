@@ -108,25 +108,25 @@ describe("getConfigs", () => {
         "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
         "<% }); %>",
       prOpenedCommentTemplate:
-        "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
+        "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "* [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= title %>](<%= pr.html_url %>)",
       prReopenedCommentTemplate:
-        "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
+        "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "* [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= title %>](<%= pr.html_url %>)",
       prReadyForReviewCommentTemplate:
-        "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
+        "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "* [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= title %>](<%= pr.html_url %>)",
       prClosedCommentTemplate:
-        "<% print(sender.name || sender.login) %>さんがプルリクエストをクローズしました" +
+        "<%= sender.login %>さんがプルリクエストをクローズしました" +
         "\n\n" +
-        "* [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= title %>](<%= pr.html_url %>)",
       prMergedCommentTemplate:
-        "<% print(sender.name || sender.login) %>さんがプルリクエストをマージしました" +
+        "<%= sender.login %>さんがプルリクエストをマージしました" +
         "\n\n" +
-        "* [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= title %>](<%= pr.html_url %>)",
       commitMessageRegTemplate:
         "^" +
         "(<%= projectKey %>\\-\\d+)\\s?" +
