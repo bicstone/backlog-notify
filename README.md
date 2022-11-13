@@ -17,7 +17,7 @@ GitHub 上のプッシュとプルリクエストを Backlog 課題に連携す�
 
 ### プッシュ
 
-![Backlog Notifyの動作をイメージした図。GitHub にプッシュすると Backlog にコミット情報のコメントがされる](./docs/readme_images/backlog-notify.png)
+![Backlog Notifyの動作をイメージした図。GitHub にプッシュすると Backlog にコミット情報のコメントがされる](./docs/readme_images/backlog-notify-push.png)
 
 コミットメッセージの中に課題番号 (例: `PROJECT-123` ) がある場合は、その課題にコミットログに関するコメントを送信します。課題キーは先頭にある 1 つのみ認識します。
 
@@ -37,6 +37,8 @@ PROJECT-123 不具合修正 #fix
 ※ 大量にプッシュするとそのまま投稿され、 Backlog に負荷がかかるのでご注意ください。
 
 ### プルリクエスト
+
+![Backlog Notifyの動作をイメージした図。GitHub にプルリクエストを作成すると Backlog にプルリクエスト情報のコメントがされる](./docs/readme_images/backlog-notify-pull-request.png)
 
 プルリクエストのタイトルの中に課題番号 (例: `PROJECT-123` ) がある場合は、その課題にプルリクエストに関するコメントを送信します。課題キーは先頭にある 1 つのみ認識します。
 
