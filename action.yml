@@ -43,30 +43,35 @@ inputs:
     required: false
     default: |-
       <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
+
       * [<%= title %>](<%= pr.html_url %>)
   pr_reopened_comment_template:
     description: The template for backlog issue comment on reopened a pull request
     required: false
     default: |-
       <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
+
       * [<%= title %>](<%= pr.html_url %>)
   pr_ready_for_review_comment_template:
     description: The template for backlog issue comment on ready to review a pull request
     required: false
     default: |-
       <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
+
       * [<%= title %>](<%= pr.html_url %>)
   pr_closed_comment_template:
     description: The template for backlog issue comment on closed a pull request
     required: false
     default: |-
       <% print(sender.name || sender.login) %>さんがプルリクエストをクローズしました
+
       * [<%= title %>](<%= pr.html_url %>)
   pr_merged_comment_template:
     description: The template for backlog issue comment on merged a pull request
     required: false
     default: |-
       <% print(sender.name || sender.login) %>さんがプルリクエストをマージしました
+
       * [<%= title %>](<%= pr.html_url %>)
   commit_message_reg_template:
     description: The template for regular expressions to parse commit messages

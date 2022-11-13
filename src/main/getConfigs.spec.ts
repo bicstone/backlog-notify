@@ -109,23 +109,23 @@ describe("getConfigs", () => {
         "<% }); %>",
       prOpenedCommentTemplate:
         "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
-        "\n" +
+        "\n\n" +
         "* [<%= title %>](<%= pr.html_url %>)",
       prReopenedCommentTemplate:
         "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
-        "\n" +
+        "\n\n" +
         "* [<%= title %>](<%= pr.html_url %>)",
       prReadyForReviewCommentTemplate:
         "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
-        "\n" +
+        "\n\n" +
         "* [<%= title %>](<%= pr.html_url %>)",
       prClosedCommentTemplate:
         "<% print(sender.name || sender.login) %>さんがプルリクエストをクローズしました" +
-        "\n" +
+        "\n\n" +
         "* [<%= title %>](<%= pr.html_url %>)",
       prMergedCommentTemplate:
         "<% print(sender.name || sender.login) %>さんがプルリクエストをマージしました" +
-        "\n" +
+        "\n\n" +
         "* [<%= title %>](<%= pr.html_url %>)",
       commitMessageRegTemplate:
         "^" +
