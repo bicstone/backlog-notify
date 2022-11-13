@@ -97,10 +97,10 @@ on:
       - reopened
       - ready_for_review
       - closed
+
 jobs:
   notify:
     runs-on: ubuntu-latest
-
     steps:
       - name: Backlog Notify
         uses: bicstone/backlog-notify@v4
@@ -108,7 +108,6 @@ jobs:
           project_key: PROJECT_KEY
           api_host: example.backlog.jp
           api_key: ${{ secrets.BACKLOG_API_KEY }}
-
 ```
 
 ## 高度な設定
@@ -121,7 +120,7 @@ name: Backlog Notify
 
 on:
   push:
-    branches: 
+    branches:
       - main
   pull_request:
     types:
@@ -131,10 +130,10 @@ on:
       - closed
     branches:
       - releases/**
+
 jobs:
   notify:
     runs-on: ubuntu-latest
-
     steps:
       - name: Backlog Notify
         uses: bicstone/backlog-notify@v4
