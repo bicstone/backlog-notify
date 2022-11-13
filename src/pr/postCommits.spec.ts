@@ -19,15 +19,15 @@ const projectKey = "projectKey"
 const issueKey = `${projectKey}-1`
 const title = "title"
 const prOpenedCommentTemplate =
-  "opened,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+  "opened,<% print(sender.name || sender.login) %>,<%= title %>,<%= pr.html_url %>"
 const prReopenedCommentTemplate =
-  "reopened,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+  "reopened,<% print(sender.name || sender.login) %>,<%= title %>,<%= pr.html_url %>"
 const prReadyForReviewCommentTemplate =
-  "ready_for_review,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+  "ready_for_review,<% print(sender.name || sender.login) %>,<%= title %>,<%= pr.html_url %>"
 const prClosedCommentTemplate =
-  "closed,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+  "closed,<% print(sender.name || sender.login) %>,<%= title %>,<%= pr.html_url %>"
 const prMergedCommentTemplate =
-  "merged,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+  "merged,<% print(sender.name || sender.login) %>,<%= title %>,<%= pr.html_url %>"
 const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
 
 const events = (webhooks.find((v) => v.name === "pull_request")?.examples ??

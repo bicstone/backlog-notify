@@ -15,9 +15,9 @@ GitHub 上のプッシュとプルリクエストを Backlog 課題に連携す�
 
 ## 機能
 
-![Backlog Notifyの動作をイメージした図。GitHub にプッシュすると Backlog にコミット情報のコメントがされる](./docs/readme_images/backlog-notify.png)
-
 ### プッシュ
+
+![Backlog Notifyの動作をイメージした図。GitHub にプッシュすると Backlog にコミット情報のコメントがされる](./docs/readme_images/backlog-notify.png)
 
 コミットメッセージの中に課題番号 (例: `PROJECT-123` ) がある場合は、その課題にコミットログに関するコメントを送信します。課題キーは先頭にある 1 つのみ認識します。
 
@@ -34,7 +34,7 @@ PROJECT-123 不具合修正
 PROJECT-123 不具合修正 #fix
 ```
 
-大量にプッシュするとそのまま投稿され、 Backlog に負荷がかかるのでご注意ください。
+※ 大量にプッシュするとそのまま投稿され、 Backlog に負荷がかかるのでご注意ください。
 
 ### プルリクエスト
 
@@ -54,6 +54,7 @@ PROJECT-123 不具合修正 #fix
 ```
 
 ※ プルリクエストが Draft の状態である場合はコメント送信・ステータス操作をしません。
+※ タイトルを変更した場合の通知は今のところ対応していません(対応予定)。Close → タイトルを変更 → Reopen を行うと通知されます。
 
 ## 設定方法
 
@@ -112,6 +113,7 @@ jobs:
           api_key: ${{ secrets.BACKLOG_API_KEY }}
 
           # 任意設定 (The following are optional settings)
+          # デフォルト値で良い場合は、ここから下はコピー不要です
           fix_keywords: |-
             #fix
             #fixes
@@ -125,20 +127,20 @@ jobs:
             <% commits.forEach(commit=>{ %>
             + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
           pr_opened_comment_template: |-
-            <%= sender.login %>さんがプルリクエストを作成しました
-            + [<%= title %>](<%= pr.html_url %>)
+            <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
+            * [<%= title %>](<%= pr.html_url %>)
           pr_reopened_comment_template: |-
-            <%= sender.login %>さんがプルリクエストを作成しました
-            + [<%= title %>](<%= pr.html_url %>)
+            <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
+            * [<%= title %>](<%= pr.html_url %>)
           pr_ready_for_review_comment_template: |-
-            <%= sender.login %>さんがプルリクエストを作成しました
-            + [<%= title %>](<%= pr.html_url %>)
+            <% print(sender.name || sender.login) %>さんがプルリクエストを作成しました
+            * [<%= title %>](<%= pr.html_url %>)
           pr_closed_comment_template: |-
-            <%= sender.login %>さんがプルリクエストをクローズしました
-            + [<%= title %>](<%= pr.html_url %>)
+            <% print(sender.name || sender.login) %>さんがプルリクエストをクローズしました
+            * [<%= title %>](<%= pr.html_url %>)
           pr_merged_comment_template: |-
-            <%= sender.login %>さんがプルリクエストをマージしました
-            + [<%= title %>](<%= pr.html_url %>)
+            <% print(sender.name || sender.login) %>さんがプルリクエストをマージしました
+            * [<%= title %>](<%= pr.html_url %>)
           commit_message_reg_template: "\
             ^\
             (<%= projectKey %>\\-\\d+)\\s?\

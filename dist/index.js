@@ -8341,25 +8341,25 @@ const getConfigs = () => {
                 "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
                 "<% }); %>",
         prOpenedCommentTemplate: (0, core_1.getInput)("pr_opened_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストを作成しました" +
+            "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
                 "\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "* [<%= title %>](<%= pr.html_url %>)",
         prReopenedCommentTemplate: (0, core_1.getInput)("pr_reopened_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストを作成しました" +
+            "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
                 "\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "* [<%= title %>](<%= pr.html_url %>)",
         prReadyForReviewCommentTemplate: (0, core_1.getInput)("pr_ready_for_review_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストを作成しました" +
+            "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
                 "\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "* [<%= title %>](<%= pr.html_url %>)",
         prClosedCommentTemplate: (0, core_1.getInput)("pr_closed_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストをクローズしました" +
+            "<% print(sender.name || sender.login) %>さんがプルリクエストをクローズしました" +
                 "\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "* [<%= title %>](<%= pr.html_url %>)",
         prMergedCommentTemplate: (0, core_1.getInput)("pr_merged_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストをマージしました" +
+            "<% print(sender.name || sender.login) %>さんがプルリクエストをマージしました" +
                 "\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "* [<%= title %>](<%= pr.html_url %>)",
         commitMessageRegTemplate: (0, core_1.getInput)("commit_message_reg_template") ||
             "^" +
                 "(<%= projectKey %>\\-\\d+)\\s?" +
