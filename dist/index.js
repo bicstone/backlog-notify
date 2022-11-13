@@ -8222,7 +8222,7 @@ const pr_1 = __nccwpck_require__(1526);
 const push_1 = __nccwpck_require__(8616);
 const runAction = async () => {
     (0, core_1.startGroup)(`設定を読み込み中`);
-    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, prOpenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, commitMessageRegTemplate, prTitleRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
+    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, commitMessageRegTemplate, prTitleRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
     (0, core_1.endGroup)();
     (0, core_1.startGroup)(`イベントを読み込み中`);
     const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
@@ -8252,6 +8252,7 @@ const runAction = async () => {
             fixStatusId,
             closeStatusId,
             prOpenedCommentTemplate,
+            prReopenedCommentTemplate,
             prReadyForReviewCommentTemplate,
             prClosedCommentTemplate,
             prMergedCommentTemplate,
@@ -8343,6 +8344,10 @@ const getConfigs = () => {
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n" +
                 "+ [<%= title %>](<%= pr.html_url %>)",
+        prReopenedCommentTemplate: (0, core_1.getInput)("pr_reopened_comment_template") ||
+            "<%= sender.login %>さんがプルリクエストを作成しました" +
+                "\n" +
+                "+ [<%= title %>](<%= pr.html_url %>)",
         prReadyForReviewCommentTemplate: (0, core_1.getInput)("pr_ready_for_review_comment_template") ||
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n" +
@@ -8405,7 +8410,7 @@ exports.pr = void 0;
 const core_1 = __nccwpck_require__(2186);
 const parsePullRequest_1 = __nccwpck_require__(7300);
 const postComments_1 = __nccwpck_require__(1332);
-const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, closeStatusId, apiHost, apiKey, prOpenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, prTitleRegTemplate, }) => {
+const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, closeStatusId, apiHost, apiKey, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, prTitleRegTemplate, }) => {
     (0, core_1.startGroup)(`プルリクエストを取得中`);
     const { parsedPullRequest } = (0, parsePullRequest_1.parsePullRequest)({
         event,
@@ -8424,6 +8429,7 @@ const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, 
         fixStatusId,
         closeStatusId,
         prOpenedCommentTemplate,
+        prReopenedCommentTemplate,
         prReadyForReviewCommentTemplate,
         prClosedCommentTemplate,
         prMergedCommentTemplate,
@@ -8515,7 +8521,7 @@ const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=api
 /**
  * Post the comment to Backlog API
  */
-const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, apiHost, apiKey, }) => {
+const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, apiHost, apiKey, }) => {
     const { issueKey, isFix, isClose } = parsedPullRequest;
     const endpoint = updateIssueApiUrlTemplate({
         apiHost,
@@ -8525,8 +8531,9 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedC
     const comment = (() => {
         switch (parsedPullRequest.action) {
             case "opened":
-            case "reopened":
                 return (0, lodash_template_1.default)(prOpenedCommentTemplate)(parsedPullRequest);
+            case "reopened":
+                return (0, lodash_template_1.default)(prReopenedCommentTemplate)(parsedPullRequest);
             case "ready_for_review":
                 return (0, lodash_template_1.default)(prReadyForReviewCommentTemplate)(parsedPullRequest);
             case "closed":
@@ -8542,6 +8549,10 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedC
     })();
     if (!comment) {
         return Promise.resolve("予期しないイベントでした。");
+    }
+    const draft = parsedPullRequest.pr.draft;
+    if (draft) {
+        return Promise.resolve("プルリクエストが下書きでした。");
     }
     const status = (() => {
         if (isFix)

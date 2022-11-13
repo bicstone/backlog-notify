@@ -19,6 +19,7 @@ const optionalEnv = {
   CLOSE_KEYWORDS: "closeKeyword1\ncloseKeyword2",
   PUSH_COMMENT_TEMPLATE: "pushCommentTemplate",
   PR_OPENED_COMMENT_TEMPLATE: "prOpenedCommentTemplate",
+  PR_REOPENED_COMMENT_TEMPLATE: "prReopenedCommentTemplate",
   PR_READY_FOR_REVIEW_COMMENT_TEMPLATE: "prReadyForReviewCommentTemplate",
   PR_CLOSED_COMMENT_TEMPLATE: "prClosedCommentTemplate",
   PR_MERGED_COMMENT_TEMPLATE: "prMergedCommentTemplate",
@@ -35,6 +36,7 @@ const configs: Configs = {
   closeKeywords: ["closeKeyword1", "closeKeyword2"],
   pushCommentTemplate: "pushCommentTemplate",
   prOpenedCommentTemplate: "prOpenedCommentTemplate",
+  prReopenedCommentTemplate: "prReopenedCommentTemplate",
   prReadyForReviewCommentTemplate: "prReadyForReviewCommentTemplate",
   prClosedCommentTemplate: "prClosedCommentTemplate",
   prMergedCommentTemplate: "prMergedCommentTemplate",
@@ -106,6 +108,10 @@ describe("getConfigs", () => {
         "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
         "<% }); %>",
       prOpenedCommentTemplate:
+        "<%= sender.login %>さんがプルリクエストを作成しました" +
+        "\n" +
+        "+ [<%= title %>](<%= pr.html_url %>)",
+      prReopenedCommentTemplate:
         "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n" +
         "+ [<%= title %>](<%= pr.html_url %>)",

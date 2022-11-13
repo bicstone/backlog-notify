@@ -15,6 +15,7 @@ export type PrProps = Pick<
   | "apiHost"
   | "apiKey"
   | "prOpenedCommentTemplate"
+  | "prReopenedCommentTemplate"
   | "prReadyForReviewCommentTemplate"
   | "prClosedCommentTemplate"
   | "prMergedCommentTemplate"
@@ -33,6 +34,7 @@ export const pr = async ({
   apiHost,
   apiKey,
   prOpenedCommentTemplate,
+  prReopenedCommentTemplate,
   prReadyForReviewCommentTemplate,
   prClosedCommentTemplate,
   prMergedCommentTemplate,
@@ -58,6 +60,7 @@ export const pr = async ({
     fixStatusId,
     closeStatusId,
     prOpenedCommentTemplate,
+    prReopenedCommentTemplate,
     prReadyForReviewCommentTemplate,
     prClosedCommentTemplate,
     prMergedCommentTemplate,

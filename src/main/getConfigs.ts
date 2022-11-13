@@ -9,6 +9,7 @@ export type Configs = {
   closeKeywords: string[]
   pushCommentTemplate: string
   prOpenedCommentTemplate: string
+  prReopenedCommentTemplate: string
   prReadyForReviewCommentTemplate: string
   prClosedCommentTemplate: string
   prMergedCommentTemplate: string
@@ -50,6 +51,11 @@ export const getConfigs = (): Configs => {
         "<% }); %>",
     prOpenedCommentTemplate:
       getInput("pr_opened_comment_template") ||
+      "<%= sender.login %>さんがプルリクエストを作成しました" +
+        "\n" +
+        "+ [<%= title %>](<%= pr.html_url %>)",
+    prReopenedCommentTemplate:
+      getInput("pr_reopened_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n" +
         "+ [<%= title %>](<%= pr.html_url %>)",

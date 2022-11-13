@@ -29,6 +29,7 @@ describe.each(pullRequestEvents)("index", (event) => {
     fixStatusId: "fixStatusId",
     closeStatusId: "closeStatusId",
     prOpenedCommentTemplate: "prOpenedCommentTemplate",
+    prReopenedCommentTemplate: "prReopenedCommentTemplate",
     prReadyForReviewCommentTemplate: "prReadyForReviewCommentTemplate",
     prClosedCommentTemplate: "prClosedCommentTemplate",
     prMergedCommentTemplate: "prMergedCommentTemplate",

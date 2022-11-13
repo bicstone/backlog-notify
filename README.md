@@ -81,6 +81,9 @@ jobs:
           pr_opened_comment_template: |-
             <%= sender.login %>さんがプルリクエストを作成しました
             + [<%= title %>](<%= pr.html_url %>)
+          pr_reopened_comment_template: |-
+            <%= sender.login %>さんがプルリクエストを作成しました
+            + [<%= title %>](<%= pr.html_url %>)
           pr_ready_for_review_comment_template: |-
             <%= sender.login %>さんがプルリクエストを作成しました
             + [<%= title %>](<%= pr.html_url %>)
@@ -119,6 +122,7 @@ jobs:
 | `close_keywords`                       | 完了にするキーワード                     |
 | `push_comment_template`                | プッシュ時のコメント雛形                 |
 | `pr_opened_comment_template`           | プルリクエストオープン時のコメント雛形   |
+| `pr_reopened_comment_template`         | プルリクエスト再オープン時のコメント雛形 |
 | `pr_ready_for_review_comment_template` | プルリクエスト下書き解除時のコメント雛形 |
 | `pr_closed_comment_template`           | プルリクエストクローズ時のコメント雛形   |
 | `pr_merged_comment_template`           | プルリクエストマージ時のコメント雛形     |
@@ -189,16 +193,16 @@ Committer
 
 <summary>使用可能な変数</summary>
 
-| 変数名     | 型          |
-| ---------- | ----------- |
-| `pr`       | PullRequest |
-| `action`   | TODO        |
-| `sender`   | User        |
-| `issueKey` | string      |
-| `title`    | string      |
-| `keywords` | string      |
-| `isFix`    | boolean     |
-| `isClose`  | boolean     |
+| 変数名     | 型                                                                   |
+| ---------- | -------------------------------------------------------------------- |
+| `pr`       | PullRequest                                                          |
+| `action`   | "opened" &#124; "reopened" &#124; "ready_for_review" &#124; "closed" |
+| `sender`   | User                                                                 |
+| `issueKey` | string                                                               |
+| `title`    | string                                                               |
+| `keywords` | string                                                               |
+| `isFix`    | boolean                                                              |
+| `isClose`  | boolean                                                              |
 
 PullRequest
 

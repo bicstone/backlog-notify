@@ -3,10 +3,7 @@ import url from "url"
 import axios from "axios"
 import { postComments, PostCommentsProps, Response } from "./postComments"
 import { ParsedPullRequest } from "./parsePullRequest"
-import {
-  PullRequestClosedEvent,
-  PullRequestEvent,
-} from "@octokit/webhooks-types"
+import { PullRequestEvent } from "@octokit/webhooks-types"
 import webhooks from "@octokit/webhooks-examples"
 
 jest.mock("axios")
@@ -22,26 +19,29 @@ const projectKey = "projectKey"
 const issueKey = `${projectKey}-1`
 const title = "title"
 const prOpenedCommentTemplate =
-  "prOpened,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+  "opened,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+const prReopenedCommentTemplate =
+  "reopened,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
 const prReadyForReviewCommentTemplate =
-  "prReadyForReview,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+  "ready_for_review,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
 const prClosedCommentTemplate =
-  "prClosed,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+  "closed,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
 const prMergedCommentTemplate =
-  "prMerged,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
+  "merged,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
 const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
 
 const events = (webhooks.find((v) => v.name === "pull_request")?.examples ??
   []) as PullRequestEvent[]
 
 const openedEvents =
-  events.filter((v) => v.action === "opened" || v.action === "reopened") ?? []
+  events.filter(
+    (v) =>
+      v.action === "opened" ||
+      v.action === "reopened" ||
+      v.action === "ready_for_review"
+  ) ?? []
 
-const readyForReviewEvents =
-  events.filter((v) => v.action === "ready_for_review") ?? []
-
-const closedEvents = (events.filter((v) => v.action === "closed") ??
-  []) as PullRequestClosedEvent[]
+const closedEvents = events.filter((v) => v.action === "closed") ?? []
 
 const unexpectedEvents =
   events.filter(
@@ -90,6 +90,7 @@ const getConfigs = (
   fixStatusId,
   closeStatusId,
   prOpenedCommentTemplate,
+  prReopenedCommentTemplate,
   prReadyForReviewCommentTemplate,
   prClosedCommentTemplate,
   prMergedCommentTemplate,
@@ -119,90 +120,67 @@ describe("postComments", () => {
     mockedAxios.patch.mockImplementation(() => Promise.resolve(getResponse()))
   })
 
-  describe.each(openedEvents)("opened, reopened", (_event) => {
-    const event = getEvent(_event)
-    const comment = `prOpened,${login},${title},${html_url}`
+  describe.each(openedEvents)(
+    "opened, reopened, ready_for_review",
+    (_event) => {
+      const event = getEvent(_event)
+      const comment = `${event.action},${login},${title},${html_url}`
 
-    test("postCommits post a comment to Backlog API", () => {
-      const parsedPullRequest = getParsedPullRequest(event)
-      const configs = getConfigs(parsedPullRequest)
+      test("postCommits post a comment to Backlog API", () => {
+        const parsedPullRequest = getParsedPullRequest(event)
+        const configs = getConfigs(parsedPullRequest)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment)
-      )
-    })
-    test("post a comment and change status when change to fixed", () => {
-      const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
-      const configs = getConfigs(parsedPullRequest)
+        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+        expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
+        expect(mockedAxios.patch).toHaveBeenCalledWith(
+          endpoint,
+          getRequestParams(comment)
+        )
+      })
+      test("post a comment and change status when change to fixed", () => {
+        const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
+        const configs = getConfigs(parsedPullRequest)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment, { statusId: fixStatusId })
-      )
-    })
-    test("post a comment and change status when change to close", () => {
-      const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
-      const configs = getConfigs(parsedPullRequest)
+        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+        expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
+        expect(mockedAxios.patch).toHaveBeenCalledWith(
+          endpoint,
+          getRequestParams(comment, { statusId: fixStatusId })
+        )
+      })
+      test("post a comment and change status when change to close", () => {
+        const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
+        const configs = getConfigs(parsedPullRequest)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment, { statusId: closeStatusId })
-      )
-    })
-  })
+        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+        expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
+        expect(mockedAxios.patch).toHaveBeenCalledWith(
+          endpoint,
+          getRequestParams(comment, { statusId: closeStatusId })
+        )
+      })
+      test("not continue and return message if pr is draft", () => {
+        const event = getEvent({
+          ..._event,
+          pull_request: { ..._event.pull_request, draft: true },
+        } as PullRequestEvent)
+        const parsedPullRequest = getParsedPullRequest(event)
+        const configs = getConfigs(parsedPullRequest)
 
-  describe.each(readyForReviewEvents)("ready_for_review", (_event) => {
-    const event = getEvent(_event)
-    const comment = `prReadyForReview,${login},${title},${html_url}`
-
-    test("postCommits post a comment to Backlog API", () => {
-      const parsedPullRequest = getParsedPullRequest(event)
-      const configs = getConfigs(parsedPullRequest)
-
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment)
-      )
-    })
-    test("post a comment and change status when change to fixed", () => {
-      const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
-      const configs = getConfigs(parsedPullRequest)
-
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment, { statusId: fixStatusId })
-      )
-    })
-    test("post a comment and change status when change to close", () => {
-      const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
-      const configs = getConfigs(parsedPullRequest)
-
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment, { statusId: closeStatusId })
-      )
-    })
-  })
+        expect(postComments(configs)).resolves.toStrictEqual(
+          "プルリクエストが下書きでした。"
+        )
+        expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
+      })
+    }
+  )
 
   describe.each(closedEvents)("merged", (_event) => {
     const event = getEvent({
       ..._event,
       pull_request: { ..._event.pull_request, merged: true },
-    })
-    const comment = `prMerged,${login},${title},${html_url}`
+    } as PullRequestEvent)
+    const comment = `merged,${login},${title},${html_url}`
 
     test("postCommits post a comment to Backlog API", () => {
       const parsedPullRequest = getParsedPullRequest(event)
@@ -236,12 +214,25 @@ describe("postComments", () => {
         endpoint,
         getRequestParams(comment, { statusId: closeStatusId })
       )
+    })
+    test("not continue and return message if pr is draft", () => {
+      const event = getEvent({
+        ..._event,
+        pull_request: { ..._event.pull_request, draft: true },
+      } as PullRequestEvent)
+      const parsedPullRequest = getParsedPullRequest(event)
+      const configs = getConfigs(parsedPullRequest)
+
+      expect(postComments(configs)).resolves.toStrictEqual(
+        "プルリクエストが下書きでした。"
+      )
+      expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
     })
   })
 
   describe.each(closedEvents)("closed", (_event) => {
     const event = getEvent(_event)
-    const comment = `prClosed,${login},${title},${html_url}`
+    const comment = `closed,${login},${title},${html_url}`
 
     test("postCommits post a comment to Backlog API", () => {
       const parsedPullRequest = getParsedPullRequest(event)
@@ -276,10 +267,23 @@ describe("postComments", () => {
         getRequestParams(comment, { statusId: closeStatusId })
       )
     })
+    test("not continue and return message if pr is draft", () => {
+      const event = getEvent({
+        ..._event,
+        pull_request: { ..._event.pull_request, draft: true },
+      } as PullRequestEvent)
+      const parsedPullRequest = getParsedPullRequest(event)
+      const configs = getConfigs(parsedPullRequest)
+
+      expect(postComments(configs)).resolves.toStrictEqual(
+        "プルリクエストが下書きでした。"
+      )
+      expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
+    })
   })
 
   describe.each(unexpectedEvents)("unexpected", (_event) => {
-    test("post a comment to Backlog API", () => {
+    test("not continue and return message", () => {
       const event = getEvent(_event)
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)

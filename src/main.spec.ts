@@ -39,6 +39,7 @@ describe("main", () => {
         closeKeywords: ["closeKeyword"],
         pushCommentTemplate: "pushCommentTemplate",
         prOpenedCommentTemplate: "prOpenedCommentTemplate",
+        prReopenedCommentTemplate: "prReopenedCommentTemplate",
         prReadyForReviewCommentTemplate: "prReadyForReviewCommentTemplate",
         prClosedCommentTemplate: "prClosedCommentTemplate",
         prMergedCommentTemplate: "prMergedCommentTemplate",

@@ -16,6 +16,7 @@ export type PostCommentsProps = {
   fixStatusId: string
   closeStatusId: string
   prOpenedCommentTemplate: string
+  prReopenedCommentTemplate: string
   prReadyForReviewCommentTemplate: string
   prClosedCommentTemplate: string
   prMergedCommentTemplate: string
@@ -32,6 +33,7 @@ export const postComments = ({
   fixStatusId,
   closeStatusId,
   prOpenedCommentTemplate,
+  prReopenedCommentTemplate,
   prReadyForReviewCommentTemplate,
   prClosedCommentTemplate,
   prMergedCommentTemplate,
@@ -49,8 +51,9 @@ export const postComments = ({
   const comment = (() => {
     switch (parsedPullRequest.action) {
       case "opened":
-      case "reopened":
         return template(prOpenedCommentTemplate)(parsedPullRequest)
+      case "reopened":
+        return template(prReopenedCommentTemplate)(parsedPullRequest)
       case "ready_for_review":
         return template(prReadyForReviewCommentTemplate)(parsedPullRequest)
       case "closed":
@@ -66,6 +69,11 @@ export const postComments = ({
 
   if (!comment) {
     return Promise.resolve("予期しないイベントでした。")
+  }
+
+  const draft = parsedPullRequest.pr.draft
+  if (draft) {
+    return Promise.resolve("プルリクエストが下書きでした。")
   }
 
   const status = (() => {
