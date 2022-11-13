@@ -239,18 +239,18 @@ Committer
 
 <summary>使用可能な変数</summary>
 
-| 変数名     | 型                                                                   |
-| ---------- | -------------------------------------------------------------------- |
-| `pr`       | PullRequest                                                          |
-| `action`   | "opened" &#124; "reopened" &#124; "ready_for_review" &#124; "closed" *1 |
-| `sender`   | User                                                                 |
-| `issueKey` | string                                                               |
-| `title`    | string                                                               |
-| `keywords` | string                                                               |
-| `isFix`    | boolean                                                              |
-| `isClose`  | boolean                                                              |
+| 変数名     | 型                                                                       |
+| ---------- | ------------------------------------------------------------------------ |
+| `pr`       | PullRequest                                                              |
+| `action`   | "opened" &#124; "reopened" &#124; "ready_for_review" &#124; "closed" \*1 |
+| `sender`   | User                                                                     |
+| `issueKey` | string                                                                   |
+| `title`    | string                                                                   |
+| `keywords` | string                                                                   |
+| `isFix`    | boolean                                                                  |
+| `isClose`  | boolean                                                                  |
 
-*1 マージとクローズは共に `"closed"` となります。マージかどうか判断したい場合は `pr.merged` をご確認ください。
+\*1 マージとクローズは共に `"closed"` となります。マージかどうか判断したい場合は `pr.merged` をご確認ください。
 
 PullRequest
 
