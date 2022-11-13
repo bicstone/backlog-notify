@@ -8227,6 +8227,7 @@ const runAction = async () => {
     (0, core_1.startGroup)(`イベントを読み込み中`);
     const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
     (0, core_1.endGroup)();
+    (0, core_1.debug)(event.toString());
     if (event && "commits" in event && event.commits.length > 0) {
         return await (0, push_1.push)({
             event,

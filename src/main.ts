@@ -1,4 +1,4 @@
-import { startGroup, endGroup, info, setFailed } from "@actions/core"
+import { startGroup, endGroup, info, setFailed, debug } from "@actions/core"
 import { fetchEvent } from "./main/fetchEvent"
 import { getConfigs } from "./main/getConfigs"
 import { pr } from "./pr"
@@ -29,6 +29,8 @@ const runAction = async (): Promise<string> => {
   startGroup(`イベントを読み込み中`)
   const { event } = fetchEvent({ path: githubEventPath })
   endGroup()
+
+  debug(event.toString())
 
   if (event && "commits" in event && event.commits.length > 0) {
     return await push({
