@@ -4,6 +4,7 @@ import webhooks from "@octokit/webhooks-examples"
 
 const pushEvents = webhooks.find((v) => v.name === "push")?.examples ?? []
 
+jest.mock("@actions/core")
 jest.mock("fs")
 const mockedFs = fs as jest.Mocked<typeof fs>
 
