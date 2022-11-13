@@ -90,7 +90,13 @@ GitHub Actions workflow を作成します (例: `.github/workflows/backlog-noti
 name: Backlog Notify
 
 on:
-  - push
+  push:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - closed
 
 jobs:
   notify:
@@ -98,7 +104,7 @@ jobs:
 
     steps:
       - name: Backlog Notify
-        uses: bicstone/backlog-notify@v3
+        uses: bicstone/backlog-notify@v4
         with:
           # 必須設定 (The following are required settings)
           project_key: PROJECT_KEY
@@ -236,13 +242,15 @@ Committer
 | 変数名     | 型                                                                   |
 | ---------- | -------------------------------------------------------------------- |
 | `pr`       | PullRequest                                                          |
-| `action`   | "opened" &#124; "reopened" &#124; "ready_for_review" &#124; "closed" |
+| `action`   | "opened" &#124; "reopened" &#124; "ready_for_review" &#124; "closed" *1 |
 | `sender`   | User                                                                 |
 | `issueKey` | string                                                               |
 | `title`    | string                                                               |
 | `keywords` | string                                                               |
 | `isFix`    | boolean                                                              |
 | `isClose`  | boolean                                                              |
+
+*1 マージとクローズは共に `"closed"` となります。マージかどうか判断したい場合は `pr.merged` をご確認ください。
 
 PullRequest
 
