@@ -159,23 +159,23 @@ jobs:
           pr_opened_comment_template: |-
             <%= sender.login %>さんがプルリクエストを作成しました
 
-            + [<%= title %>](<%= pr.html_url %>)
+            + [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)
           pr_reopened_comment_template: |-
             <%= sender.login %>さんがプルリクエストを作成しました
 
-            + [<%= title %>](<%= pr.html_url %>)
+            + [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)
           pr_ready_for_review_comment_template: |-
             <%= sender.login %>さんがプルリクエストを作成しました
 
-            + [<%= title %>](<%= pr.html_url %>)
+            + [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)
           pr_closed_comment_template: |-
             <%= sender.login %>さんがプルリクエストをクローズしました
 
-            + [<%= title %>](<%= pr.html_url %>)
+            + [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)
           pr_merged_comment_template: |-
             <%= sender.login %>さんがプルリクエストをマージしました
 
-            + [<%= title %>](<%= pr.html_url %>)
+            + [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)
           commit_message_reg_template: "\
             ^\
             (<%= projectKey %>\\-\\d+)\\s?\
@@ -276,18 +276,19 @@ Committer
 
 <summary>使用可能な変数</summary>
 
-| 変数名     | 型                                                                     |
-| ---------- | ---------------------------------------------------------------------- |
-| `pr`       | PullRequest                                                            |
-| `action`   | "opened" &#124; "reopened" &#124; "ready_for_review" &#124; "closed" ※ |
-| `sender`   | User                                                                   |
-| `issueKey` | string                                                                 |
-| `title`    | string                                                                 |
-| `keywords` | string                                                                 |
-| `isFix`    | boolean                                                                |
-| `isClose`  | boolean                                                                |
+| 変数名     | 型                                                                      |
+| ---------- | ----------------------------------------------------------------------- |
+| `pr`       | PullRequest                                                             |
+| `action`   | "opened" &#124; "reopened" &#124; "ready_for_review" &#124; "closed" ※1 |
+| `sender`   | User                                                                    |
+| `issueKey` | string                                                                  |
+| `title`    | string ※2                                                               |
+| `keywords` | string                                                                  |
+| `isFix`    | boolean                                                                 |
+| `isClose`  | boolean                                                                 |
 
-※ マージとクローズは共に `"closed"` となります。マージかどうか判別したい場合は `pr.merged` をご確認ください。
+※1 マージとクローズは共に `"closed"` となります。マージかどうか判別したい場合は `pr.merged` を参照ください。
+※2 課題キーとキーワードを除いたタイトルです。加工前のタイトルは `pr.title` を参照ください。
 
 PullRequest
 

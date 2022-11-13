@@ -8290,7 +8290,6 @@ exports.main = main;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fetchEvent = void 0;
 const fs_1 = __nccwpck_require__(7147);
-const core_1 = __nccwpck_require__(2186);
 /**
  * Fetch and Parses event from event.json file
  * @param path Path to event.json
@@ -8298,7 +8297,6 @@ const core_1 = __nccwpck_require__(2186);
  */
 const fetchEvent = ({ path }) => {
     const event = (0, fs_1.readFileSync)(path, "utf8");
-    (0, core_1.debug)(event);
     return { event: JSON.parse(event) };
 };
 exports.fetchEvent = fetchEvent;
@@ -8345,23 +8343,23 @@ const getConfigs = () => {
         prOpenedCommentTemplate: (0, core_1.getInput)("pr_opened_comment_template") ||
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
         prReopenedCommentTemplate: (0, core_1.getInput)("pr_reopened_comment_template") ||
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
         prReadyForReviewCommentTemplate: (0, core_1.getInput)("pr_ready_for_review_comment_template") ||
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
         prClosedCommentTemplate: (0, core_1.getInput)("pr_closed_comment_template") ||
             "<%= sender.login %>さんがプルリクエストをクローズしました" +
                 "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
         prMergedCommentTemplate: (0, core_1.getInput)("pr_merged_comment_template") ||
             "<%= sender.login %>さんがプルリクエストをマージしました" +
                 "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>)",
+                "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
         commitMessageRegTemplate: (0, core_1.getInput)("commit_message_reg_template") ||
             "^" +
                 "(<%= projectKey %>\\-\\d+)\\s?" +
@@ -8449,9 +8447,6 @@ const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, 
     if (parsedPullRequest.isClose) {
         (0, core_1.info)(`${parsedPullRequest.issueKey}を完了にしました。`);
     }
-    (0, core_1.debug)(response.request.toString());
-    (0, core_1.debug)(response.headers.toString());
-    (0, core_1.debug)(response.data.toString());
     (0, core_1.endGroup)();
     (0, core_1.endGroup)();
     return "正常に送信しました。";
@@ -8616,7 +8611,7 @@ const push = async ({ event, projectKey, fixKeywords, closeKeywords, commitMessa
         apiHost,
         apiKey,
     }).then((data) => {
-        data.forEach(({ commits, issueKey, isFix, isClose, response }) => {
+        data.forEach(({ commits, issueKey, isFix, isClose }) => {
             (0, core_1.startGroup)(`${commits[0].issueKey}:`);
             commits.forEach(({ message }) => {
                 (0, core_1.info)(message);
@@ -8627,9 +8622,6 @@ const push = async ({ event, projectKey, fixKeywords, closeKeywords, commitMessa
             if (isClose) {
                 (0, core_1.info)(`${issueKey}を完了にしました。`);
             }
-            (0, core_1.debug)(response.request.toString());
-            (0, core_1.debug)(response.headers.toString());
-            (0, core_1.debug)(response.data.toString());
             (0, core_1.endGroup)();
         });
     });

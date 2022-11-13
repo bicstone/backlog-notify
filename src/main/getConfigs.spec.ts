@@ -110,23 +110,23 @@ describe("getConfigs", () => {
       prOpenedCommentTemplate:
         "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
       prReopenedCommentTemplate:
         "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
       prReadyForReviewCommentTemplate:
         "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
       prClosedCommentTemplate:
         "<%= sender.login %>さんがプルリクエストをクローズしました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
       prMergedCommentTemplate:
         "<%= sender.login %>さんがプルリクエストをマージしました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
       commitMessageRegTemplate:
         "^" +
         "(<%= projectKey %>\\-\\d+)\\s?" +

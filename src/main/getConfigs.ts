@@ -53,27 +53,27 @@ export const getConfigs = (): Configs => {
       getInput("pr_opened_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
     prReopenedCommentTemplate:
       getInput("pr_reopened_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
     prReadyForReviewCommentTemplate:
       getInput("pr_ready_for_review_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
     prClosedCommentTemplate:
       getInput("pr_closed_comment_template") ||
       "<%= sender.login %>さんがプルリクエストをクローズしました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
     prMergedCommentTemplate:
       getInput("pr_merged_comment_template") ||
       "<%= sender.login %>さんがプルリクエストをマージしました" +
         "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>)",
+        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
     commitMessageRegTemplate:
       getInput("commit_message_reg_template") ||
       "^" +

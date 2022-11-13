@@ -1,4 +1,4 @@
-import { startGroup, endGroup, info, debug } from "@actions/core"
+import { startGroup, endGroup, info } from "@actions/core"
 import { PullRequestEvent } from "@octokit/webhooks-types"
 
 import type { Configs } from "../main/getConfigs"
@@ -83,10 +83,6 @@ export const pr = async ({
   if (parsedPullRequest.isClose) {
     info(`${parsedPullRequest.issueKey}を完了にしました。`)
   }
-
-  debug(response.request.toString())
-  debug(response.headers.toString())
-  debug(response.data.toString())
 
   endGroup()
 

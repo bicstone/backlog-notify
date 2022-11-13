@@ -1,4 +1,4 @@
-import { startGroup, endGroup, info, debug } from "@actions/core"
+import { startGroup, endGroup, info } from "@actions/core"
 import { PushEvent } from "@octokit/webhooks-types"
 
 import { parseCommits } from "./parseCommits"
@@ -60,7 +60,7 @@ export const push = async ({
     apiHost,
     apiKey,
   }).then((data) => {
-    data.forEach(({ commits, issueKey, isFix, isClose, response }) => {
+    data.forEach(({ commits, issueKey, isFix, isClose }) => {
       startGroup(`${commits[0].issueKey}:`)
 
       commits.forEach(({ message }) => {
@@ -74,10 +74,6 @@ export const push = async ({
       if (isClose) {
         info(`${issueKey}を完了にしました。`)
       }
-
-      debug(response.request.toString())
-      debug(response.headers.toString())
-      debug(response.data.toString())
 
       endGroup()
     })
