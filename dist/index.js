@@ -8343,23 +8343,23 @@ const getConfigs = () => {
         prOpenedCommentTemplate: (0, core_1.getInput)("pr_opened_comment_template") ||
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n\n" +
-                "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
         prReopenedCommentTemplate: (0, core_1.getInput)("pr_reopened_comment_template") ||
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n\n" +
-                "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
         prReadyForReviewCommentTemplate: (0, core_1.getInput)("pr_ready_for_review_comment_template") ||
             "<%= sender.login %>さんがプルリクエストを作成しました" +
                 "\n\n" +
-                "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
         prClosedCommentTemplate: (0, core_1.getInput)("pr_closed_comment_template") ||
             "<%= sender.login %>さんがプルリクエストをクローズしました" +
                 "\n\n" +
-                "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
         prMergedCommentTemplate: (0, core_1.getInput)("pr_merged_comment_template") ||
             "<%= sender.login %>さんがプルリクエストをマージしました" +
                 "\n\n" +
-                "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
         commitMessageRegTemplate: (0, core_1.getInput)("commit_message_reg_template") ||
             "^" +
                 "(<%= projectKey %>\\-\\d+)\\s?" +

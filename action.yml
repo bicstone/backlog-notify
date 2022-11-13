@@ -44,35 +44,35 @@ inputs:
     default: |-
       <%= sender.login %>さんがプルリクエストを作成しました
 
-      + [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)
+      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   pr_reopened_comment_template:
     description: The template for backlog issue comment on reopened a pull request
     required: false
     default: |-
       <%= sender.login %>さんがプルリクエストを作成しました
 
-      + [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)
+      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   pr_ready_for_review_comment_template:
     description: The template for backlog issue comment on ready to review a pull request
     required: false
     default: |-
       <%= sender.login %>さんがプルリクエストを作成しました
 
-      + [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)
+      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   pr_closed_comment_template:
     description: The template for backlog issue comment on closed a pull request
     required: false
     default: |-
       <%= sender.login %>さんがプルリクエストをクローズしました
 
-      + [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)
+      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   pr_merged_comment_template:
     description: The template for backlog issue comment on merged a pull request
     required: false
     default: |-
       <%= sender.login %>さんがプルリクエストをマージしました
 
-      + [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)
+      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   commit_message_reg_template:
     description: The template for regular expressions to parse commit messages
     required: false
