@@ -47,33 +47,33 @@ export const getConfigs = (): Configs => {
         "\n" +
         "<% commits.forEach(commit=>{ %>" +
         "\n" +
-        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
+        "+ [<%= commit.comment %>](<%= commit.url %>) (<% print(commit.id.slice(0, 7)) %>)" +
         "<% }); %>",
     prOpenedCommentTemplate:
       getInput("pr_opened_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
+        "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     prReopenedCommentTemplate:
       getInput("pr_reopened_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
+        "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     prReadyForReviewCommentTemplate:
       getInput("pr_ready_for_review_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
-        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
+        "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     prClosedCommentTemplate:
       getInput("pr_closed_comment_template") ||
       "<%= sender.login %>さんがプルリクエストをクローズしました" +
         "\n\n" +
-        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
+        "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     prMergedCommentTemplate:
       getInput("pr_merged_comment_template") ||
       "<%= sender.login %>さんがプルリクエストをマージしました" +
         "\n\n" +
-        "+ [<%= pr.title %> (#<%= pr.number %>)](<%= pr.html_url %>)",
+        "+ [<%= pr.title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     commitMessageRegTemplate:
       getInput("commit_message_reg_template") ||
       "^" +
