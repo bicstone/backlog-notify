@@ -137,7 +137,7 @@ describe("postComments", () => {
           getRequestParams(comment)
         )
       })
-      test("post a comment and change status when change to fixed", () => {
+      test("post a comment only when change to fixed", () => {
         const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
         const configs = getConfigs(parsedPullRequest)
 
@@ -145,10 +145,10 @@ describe("postComments", () => {
         expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
         expect(mockedAxios.patch).toHaveBeenCalledWith(
           endpoint,
-          getRequestParams(comment, { statusId: fixStatusId })
+          getRequestParams(comment)
         )
       })
-      test("post a comment and change status when change to close", () => {
+      test("post a comment only when change to close", () => {
         const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
         const configs = getConfigs(parsedPullRequest)
 
@@ -156,7 +156,7 @@ describe("postComments", () => {
         expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
         expect(mockedAxios.patch).toHaveBeenCalledWith(
           endpoint,
-          getRequestParams(comment, { statusId: closeStatusId })
+          getRequestParams(comment)
         )
       })
       test("not continue and return message if pr is draft", () => {
@@ -245,7 +245,7 @@ describe("postComments", () => {
         getRequestParams(comment)
       )
     })
-    test("post a comment and change status when change to fixed", () => {
+    test("post a comment only when change to fixed", () => {
       const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
       const configs = getConfigs(parsedPullRequest)
 
@@ -253,10 +253,10 @@ describe("postComments", () => {
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment, { statusId: fixStatusId })
+        getRequestParams(comment)
       )
     })
-    test("post a comment and change status when change to close", () => {
+    test("post a comment only when change to close", () => {
       const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
       const configs = getConfigs(parsedPullRequest)
 
@@ -264,7 +264,7 @@ describe("postComments", () => {
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment, { statusId: closeStatusId })
+        getRequestParams(comment)
       )
     })
     test("not continue and return message if pr is draft", () => {

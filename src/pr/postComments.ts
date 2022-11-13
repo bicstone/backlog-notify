@@ -40,7 +40,7 @@ export const postComments = ({
   apiHost,
   apiKey,
 }: PostCommentsProps): Promise<Response | string> => {
-  const { issueKey, isFix, isClose } = parsedPullRequest
+  const { issueKey, isFix, isClose, action, pr } = parsedPullRequest
 
   const endpoint = updateIssueApiUrlTemplate({
     apiHost,
@@ -49,7 +49,7 @@ export const postComments = ({
   })
 
   const comment = (() => {
-    switch (parsedPullRequest.action) {
+    switch (action) {
       case "opened":
         return template(prOpenedCommentTemplate)(parsedPullRequest)
       case "reopened":
@@ -57,7 +57,7 @@ export const postComments = ({
       case "ready_for_review":
         return template(prReadyForReviewCommentTemplate)(parsedPullRequest)
       case "closed":
-        if (parsedPullRequest.pr.merged) {
+        if (pr.merged) {
           return template(prMergedCommentTemplate)(parsedPullRequest)
         } else {
           return template(prClosedCommentTemplate)(parsedPullRequest)
@@ -71,14 +71,14 @@ export const postComments = ({
     return Promise.resolve("予期しないイベントでした。")
   }
 
-  const draft = parsedPullRequest.pr.draft
+  const draft = pr.draft
   if (draft) {
     return Promise.resolve("プルリクエストが下書きでした。")
   }
 
   const status = (() => {
-    if (isFix) return { statusId: fixStatusId }
-    if (isClose) return { statusId: closeStatusId }
+    if (pr.merged && isFix) return { statusId: fixStatusId }
+    if (pr.merged && isClose) return { statusId: closeStatusId }
     else return undefined
   })()
   const body = { comment, ...status }
