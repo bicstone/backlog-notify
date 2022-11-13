@@ -174,7 +174,7 @@ jobs:
             * [<%= title %>](<%= pr.html_url %>)
           pr_merged_comment_template: |-
             <% print(sender.name || sender.login) %>さんがプルリクエストをマージしました
-            
+
             * [<%= title %>](<%= pr.html_url %>)
           commit_message_reg_template: "\
             ^\
@@ -276,16 +276,16 @@ Committer
 
 <summary>使用可能な変数</summary>
 
-| 変数名     | 型                                                                       |
-| ---------- | ------------------------------------------------------------------------ |
-| `pr`       | PullRequest                                                              |
+| 変数名     | 型                                                                     |
+| ---------- | ---------------------------------------------------------------------- |
+| `pr`       | PullRequest                                                            |
 | `action`   | "opened" &#124; "reopened" &#124; "ready_for_review" &#124; "closed" ※ |
-| `sender`   | User                                                                     |
-| `issueKey` | string                                                                   |
-| `title`    | string                                                                   |
-| `keywords` | string                                                                   |
-| `isFix`    | boolean                                                                  |
-| `isClose`  | boolean                                                                  |
+| `sender`   | User                                                                   |
+| `issueKey` | string                                                                 |
+| `title`    | string                                                                 |
+| `keywords` | string                                                                 |
+| `isFix`    | boolean                                                                |
+| `isClose`  | boolean                                                                |
 
 ※ マージとクローズは共に `"closed"` となります。マージかどうか判別したい場合は `pr.merged` をご確認ください。
 

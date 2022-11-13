@@ -8342,23 +8342,23 @@ const getConfigs = () => {
                 "<% }); %>",
         prOpenedCommentTemplate: (0, core_1.getInput)("pr_opened_comment_template") ||
             "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
-                "\n" +
+                "\n\n" +
                 "* [<%= title %>](<%= pr.html_url %>)",
         prReopenedCommentTemplate: (0, core_1.getInput)("pr_reopened_comment_template") ||
             "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
-                "\n" +
+                "\n\n" +
                 "* [<%= title %>](<%= pr.html_url %>)",
         prReadyForReviewCommentTemplate: (0, core_1.getInput)("pr_ready_for_review_comment_template") ||
             "<% print(sender.name || sender.login) %>さんがプルリクエストを作成しました" +
-                "\n" +
+                "\n\n" +
                 "* [<%= title %>](<%= pr.html_url %>)",
         prClosedCommentTemplate: (0, core_1.getInput)("pr_closed_comment_template") ||
             "<% print(sender.name || sender.login) %>さんがプルリクエストをクローズしました" +
-                "\n" +
+                "\n\n" +
                 "* [<%= title %>](<%= pr.html_url %>)",
         prMergedCommentTemplate: (0, core_1.getInput)("pr_merged_comment_template") ||
             "<% print(sender.name || sender.login) %>さんがプルリクエストをマージしました" +
-                "\n" +
+                "\n\n" +
                 "* [<%= title %>](<%= pr.html_url %>)",
         commitMessageRegTemplate: (0, core_1.getInput)("commit_message_reg_template") ||
             "^" +
