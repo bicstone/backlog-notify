@@ -126,7 +126,7 @@ describe("postComments", () => {
       const event = getEvent(_event)
       const comment = `${event.action},${login},${title},${html_url}`
 
-      test("postCommits post a comment to Backlog API", () => {
+      test("post a comment to Backlog API", () => {
         const parsedPullRequest = getParsedPullRequest(event)
         const configs = getConfigs(parsedPullRequest)
 
@@ -182,7 +182,7 @@ describe("postComments", () => {
     } as PullRequestEvent)
     const comment = `merged,${login},${title},${html_url}`
 
-    test("postCommits post a comment to Backlog API", () => {
+    test("post a comment to Backlog API", () => {
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
 
@@ -234,7 +234,7 @@ describe("postComments", () => {
     const event = getEvent(_event)
     const comment = `closed,${login},${title},${html_url}`
 
-    test("postCommits post a comment to Backlog API", () => {
+    test("post a comment to Backlog API", () => {
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
 
