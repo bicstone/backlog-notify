@@ -8218,12 +8218,13 @@ exports.main = void 0;
 const core_1 = __nccwpck_require__(2186);
 const fetchEvent_1 = __nccwpck_require__(3410);
 const getConfigs_1 = __nccwpck_require__(6587);
+const pr_1 = __nccwpck_require__(1526);
 const push_1 = __nccwpck_require__(8616);
 const runAction = async () => {
-    (0, core_1.startGroup)(`Getting configs`);
-    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, commitMessageRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
+    (0, core_1.startGroup)(`設定を読み込み中`);
+    const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, commitMessageRegTemplate, prTitleRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
     (0, core_1.endGroup)();
-    (0, core_1.startGroup)(`Fetching events`);
+    (0, core_1.startGroup)(`イベントを読み込み中`);
     const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
     (0, core_1.endGroup)();
     if (event && "commits" in event && event.commits.length > 0) {
@@ -8240,7 +8241,25 @@ const runAction = async () => {
             closeStatusId,
         });
     }
-    return "Skipped as there were no commits.";
+    if (event && "pull_request" in event && "number" in event) {
+        return await (0, pr_1.pr)({
+            event,
+            projectKey,
+            apiHost,
+            apiKey,
+            fixKeywords,
+            closeKeywords,
+            fixStatusId,
+            closeStatusId,
+            prOpenedCommentTemplate,
+            prReopenedCommentTemplate,
+            prReadyForReviewCommentTemplate,
+            prClosedCommentTemplate,
+            prMergedCommentTemplate,
+            prTitleRegTemplate,
+        });
+    }
+    return "予期しないイベントでした。";
 };
 const main = async () => {
     try {
@@ -8319,9 +8338,35 @@ const getConfigs = () => {
                 "\n" +
                 "<% commits.forEach(commit=>{ %>" +
                 "\n" +
-                "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
+                "+ [<%= commit.comment %>](<%= commit.url %>) (<% print(commit.id.slice(0, 7)) %>)" +
                 "<% }); %>",
+        prOpenedCommentTemplate: (0, core_1.getInput)("pr_opened_comment_template") ||
+            "<%= sender.login %>さんがプルリクエストを作成しました" +
+                "\n\n" +
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+        prReopenedCommentTemplate: (0, core_1.getInput)("pr_reopened_comment_template") ||
+            "<%= sender.login %>さんがプルリクエストを作成しました" +
+                "\n\n" +
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+        prReadyForReviewCommentTemplate: (0, core_1.getInput)("pr_ready_for_review_comment_template") ||
+            "<%= sender.login %>さんがプルリクエストを作成しました" +
+                "\n\n" +
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+        prClosedCommentTemplate: (0, core_1.getInput)("pr_closed_comment_template") ||
+            "<%= sender.login %>さんがプルリクエストをクローズしました" +
+                "\n\n" +
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+        prMergedCommentTemplate: (0, core_1.getInput)("pr_merged_comment_template") ||
+            "<%= sender.login %>さんがプルリクエストをマージしました" +
+                "\n\n" +
+                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
         commitMessageRegTemplate: (0, core_1.getInput)("commit_message_reg_template") ||
+            "^" +
+                "(<%= projectKey %>\\-\\d+)\\s?" +
+                "(.*?)?\\s?" +
+                "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+                "$",
+        prTitleRegTemplate: (0, core_1.getInput)("pr_title_reg_template") ||
             "^" +
                 "(<%= projectKey %>\\-\\d+)\\s?" +
                 "(.*?)?\\s?" +
@@ -8351,6 +8396,177 @@ const getConfig = (name, options = {}) => {
     }
     return val.trim();
 };
+
+
+/***/ }),
+
+/***/ 1526:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.pr = void 0;
+const core_1 = __nccwpck_require__(2186);
+const parsePullRequest_1 = __nccwpck_require__(7300);
+const postComments_1 = __nccwpck_require__(1332);
+const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, closeStatusId, apiHost, apiKey, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, prTitleRegTemplate, }) => {
+    (0, core_1.startGroup)(`プルリクエストを取得中`);
+    const { parsedPullRequest } = (0, parsePullRequest_1.parsePullRequest)({
+        event,
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+        prTitleRegTemplate,
+    });
+    if (!parsedPullRequest) {
+        return "課題キーのついたプルリクエストが見つかりませんでした。";
+    }
+    (0, core_1.endGroup)();
+    (0, core_1.startGroup)(`コメント送信中`);
+    const response = await (0, postComments_1.postComments)({
+        parsedPullRequest,
+        fixStatusId,
+        closeStatusId,
+        prOpenedCommentTemplate,
+        prReopenedCommentTemplate,
+        prReadyForReviewCommentTemplate,
+        prClosedCommentTemplate,
+        prMergedCommentTemplate,
+        apiHost,
+        apiKey,
+    });
+    if (typeof response === "string") {
+        return response;
+    }
+    (0, core_1.startGroup)(`${parsedPullRequest.issueKey}:`);
+    (0, core_1.info)(parsedPullRequest.title);
+    if (parsedPullRequest.isFix) {
+        (0, core_1.info)(`${parsedPullRequest.issueKey}を処理済みにしました。`);
+    }
+    if (parsedPullRequest.isClose) {
+        (0, core_1.info)(`${parsedPullRequest.issueKey}を完了にしました。`);
+    }
+    (0, core_1.endGroup)();
+    (0, core_1.endGroup)();
+    return "正常に送信しました。";
+};
+exports.pr = pr;
+
+
+/***/ }),
+
+/***/ 7300:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.parsePullRequest = void 0;
+const lodash_template_1 = __importDefault(__nccwpck_require__(417));
+/**
+ * Parse the pull request from the event
+ */
+const parsePullRequest = ({ event, projectKey, fixKeywords, closeKeywords, prTitleRegTemplate, }) => {
+    const prTitleReg = RegExp((0, lodash_template_1.default)(prTitleRegTemplate)({
+        projectKey,
+        fixKeywords,
+        closeKeywords,
+    }), "s");
+    const match = event.pull_request.title.match(prTitleReg);
+    const [, issueKey = null, title = "", keywords = ""] = match ?? [];
+    if (!match || !issueKey) {
+        return { parsedPullRequest: null };
+    }
+    return {
+        parsedPullRequest: {
+            pr: event.pull_request,
+            action: event.action,
+            sender: event.sender,
+            issueKey,
+            title,
+            keywords,
+            isFix: fixKeywords.includes(keywords),
+            isClose: closeKeywords.includes(keywords),
+        },
+    };
+};
+exports.parsePullRequest = parsePullRequest;
+
+
+/***/ }),
+
+/***/ 1332:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.postComments = void 0;
+const url_1 = __nccwpck_require__(7310);
+const axios_1 = __importDefault(__nccwpck_require__(8757));
+const lodash_template_1 = __importDefault(__nccwpck_require__(417));
+// Update Issue API
+// https://developer.nulab.com/docs/backlog/api/2/update-issue/
+const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>");
+/**
+ * Post the comment to Backlog API
+ */
+const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, apiHost, apiKey, }) => {
+    const { issueKey, isFix, isClose, action, pr } = parsedPullRequest;
+    const endpoint = updateIssueApiUrlTemplate({
+        apiHost,
+        apiKey,
+        issueKey,
+    });
+    const comment = (() => {
+        switch (action) {
+            case "opened":
+                return (0, lodash_template_1.default)(prOpenedCommentTemplate)(parsedPullRequest);
+            case "reopened":
+                return (0, lodash_template_1.default)(prReopenedCommentTemplate)(parsedPullRequest);
+            case "ready_for_review":
+                return (0, lodash_template_1.default)(prReadyForReviewCommentTemplate)(parsedPullRequest);
+            case "closed":
+                if (pr.merged) {
+                    return (0, lodash_template_1.default)(prMergedCommentTemplate)(parsedPullRequest);
+                }
+                else {
+                    return (0, lodash_template_1.default)(prClosedCommentTemplate)(parsedPullRequest);
+                }
+            default:
+                return undefined;
+        }
+    })();
+    if (!comment) {
+        return Promise.resolve("予期しないイベントでした。");
+    }
+    const draft = pr.draft;
+    if (draft) {
+        return Promise.resolve("プルリクエストが下書きでした。");
+    }
+    const status = (() => {
+        if (pr.merged && isFix)
+            return { statusId: fixStatusId };
+        if (pr.merged && isClose)
+            return { statusId: closeStatusId };
+        else
+            return undefined;
+    })();
+    const body = { comment, ...status };
+    return axios_1.default
+        .patch(endpoint, new url_1.URLSearchParams(body).toString())
+        .then((response) => {
+        return response;
+    });
+};
+exports.postComments = postComments;
 
 
 /***/ }),

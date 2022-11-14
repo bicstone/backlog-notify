@@ -11,9 +11,52 @@ Notify commit messages to [Backlog.com](https://backlog.com/) issue.
 
 GitHub 上のプッシュとプルリクエストを Backlog 課題に連携する GitHub Action です。キーワードによる課題の状態変更も可能です。
 
-個人が開発した Action です。ヌーラボさまへのお問い合わせはご遠慮ください。
+個人が開発した Action です。ヌーラボ様へのお問い合わせはご遠慮ください。
 
-![Backlog Notifyの動作をイメージした図。GitHub にプッシュすると Backlog にコミット情報のコメントがされる](./docs/readme_images/backlog-notify.png)
+## 機能
+
+### プッシュ
+
+![Backlog Notifyの動作をイメージした図。GitHub にプッシュすると Backlog にコミット情報のコメントがされる](./docs/readme_images/backlog-notify-push.png)
+
+コミットメッセージの中に課題番号 (例: `PROJECT-123` ) がある場合は、その課題にコミットログに関するコメントを送信します。課題キーは先頭にある 1 つのみ認識します。
+
+```plan
+PROJECT-123 不具合修正
+```
+
+また、キーワードがある場合は、プッシュされたタイミングで課題ステータスを変更します。キーワードは末尾にある 1 つのみ認識します。
+
+- `#fix` `#fixes` `#fixed` のどれかで処理済み
+- `#close` `#closes` `#closed` のどれかで完了
+
+```plan
+PROJECT-123 不具合修正 #fix
+```
+
+※ 大量にプッシュするとそのまま投稿され、 Backlog に負荷がかかるのでご注意ください。
+
+### プルリクエスト
+
+![Backlog Notifyの動作をイメージした図。GitHub にプルリクエストを作成すると Backlog にプルリクエスト情報のコメントがされる](./docs/readme_images/backlog-notify-pull-request.png)
+
+プルリクエストのタイトルの中に課題番号 (例: `PROJECT-123` ) がある場合は、その課題にプルリクエストに関するコメントを送信します。課題キーは先頭にある 1 つのみ認識します。
+
+```plan
+PROJECT-123 不具合修正
+```
+
+また、キーワードがある場合は、マージされたタイミングで課題ステータスを変更します。キーワードは末尾にある 1 つのみ認識します。
+
+- `#fix` `#fixes` `#fixed` のどれかで処理済み
+- `#close` `#closes` `#closed` のどれかで完了
+
+```plan
+PROJECT-123 不具合修正 #fix
+```
+
+※ プルリクエストが Draft の状態である場合はコメント送信・ステータス操作をしません。  
+※ タイトルを変更した場合の通知は今のところ対応していません(対応予定)。Close → タイトルを変更 → Reopen を行うと通知されます。
 
 ## 設定方法
 
@@ -44,21 +87,58 @@ GitHub 上のプッシュとプルリクエストを Backlog 課題に連携す�
 ### Workflow の作成
 
 GitHub Actions workflow を作成します (例: `.github/workflows/backlog-notify.yml` )。
-下記のような形式である必要があります。
 
 ```yaml
 name: Backlog Notify
 
 on:
-  - push
+  push:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - closed
 
 jobs:
   notify:
     runs-on: ubuntu-latest
-
     steps:
       - name: Backlog Notify
-        uses: bicstone/backlog-notify@v3
+        uses: bicstone/backlog-notify@v4
+        with:
+          project_key: PROJECT_KEY
+          api_host: example.backlog.jp
+          api_key: ${{ secrets.BACKLOG_API_KEY }}
+```
+
+## 高度な設定
+
+[Workflow syntax for GitHub Actions - GitHub Docs](https://docs.github.com/ja/actions/using-workflows/workflow-syntax-for-github-actions#on) を参照に実行する条件を制御することができます。
+また、コメントのフォーマットや、メッセージを解析する際の正規表現などをカスタマイズすることもできます。
+
+```yaml
+name: Backlog Notify
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - closed
+    branches:
+      - releases/**
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Backlog Notify
+        uses: bicstone/backlog-notify@v4
         with:
           # 必須設定 (The following are required settings)
           project_key: PROJECT_KEY
@@ -77,8 +157,35 @@ jobs:
           push_comment_template: |-
             <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
             <% commits.forEach(commit=>{ %>
-            + <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))<% }); %>
+            + [<%= commit.comment %>](<%= commit.url %>) (<% print(commit.id.slice(0, 7)) %>)<% }); %>
+          pr_opened_comment_template: |-
+            <%= sender.login %>さんがプルリクエストを作成しました
+
+            + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
+          pr_reopened_comment_template: |-
+            <%= sender.login %>さんがプルリクエストを作成しました
+
+            + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
+          pr_ready_for_review_comment_template: |-
+            <%= sender.login %>さんがプルリクエストを作成しました
+
+            + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
+          pr_closed_comment_template: |-
+            <%= sender.login %>さんがプルリクエストをクローズしました
+
+            + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
+          pr_merged_comment_template: |-
+            <%= sender.login %>さんがプルリクエストをマージしました
+
+            + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
           commit_message_reg_template: "\
+            ^\
+            (<%= projectKey %>\\-\\d+)\\s?\
+            (.*?)?\\s?\
+            (<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?\
+            $\
+            "
+          pr_title_reg_template: "\
             ^\
             (<%= projectKey %>\\-\\d+)\\s?\
             (.*?)?\\s?\
@@ -89,21 +196,27 @@ jobs:
           close_status_id: 4
 ```
 
-## 設定一覧
+### 設定一覧
 
-| 設定名                        | 説明                                 |
-| ----------------------------- | ------------------------------------ |
-| `project_key`                 | Backlog プロジェクトキー (必須)      |
-| `api_host`                    | Backlog のホスト (必須)              |
-| `api_key`                     | Backlog API キー (必須)              |
-| `fix_keywords`                | 処理済みにするキーワード             |
-| `close_keywords`              | 完了にするキーワード                 |
-| `push_comment_template`       | プッシュ時のコメント雛形             |
-| `commit_message_reg_template` | コミットメッセージ解析の正規表現雛形 |
-| `fix_status_id`               | 処理済みの 状態 ID                   |
-| `close_status_id`             | 完了の 状態 ID                       |
+| 設定名                                 | 説明                                     |
+| -------------------------------------- | ---------------------------------------- |
+| `project_key`                          | Backlog プロジェクトキー (必須)          |
+| `api_host`                             | Backlog のホスト (必須)                  |
+| `api_key`                              | Backlog API キー (必須)                  |
+| `fix_keywords`                         | 処理済みにするキーワード                 |
+| `close_keywords`                       | 完了にするキーワード                     |
+| `push_comment_template`                | プッシュ時のコメント雛形                 |
+| `pr_opened_comment_template`           | プルリクエストオープン時のコメント雛形   |
+| `pr_reopened_comment_template`         | プルリクエスト再オープン時のコメント雛形 |
+| `pr_ready_for_review_comment_template` | プルリクエスト下書き解除時のコメント雛形 |
+| `pr_closed_comment_template`           | プルリクエストクローズ時のコメント雛形   |
+| `pr_merged_comment_template`           | プルリクエストマージ時のコメント雛形     |
+| `commit_message_reg_template`          | コミットメッセージ解析の正規表現雛形     |
+| `pr_title_reg_template`                | プルリクエストタイトル解析の正規表現雛形 |
+| `fix_status_id`                        | 処理済みの 状態 ID                       |
+| `close_status_id`                      | 完了の 状態 ID                           |
 
-### `push_comment_template`
+#### `push_comment_template`
 
 プッシュ時のコメントの雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
@@ -156,7 +269,40 @@ Committer
 
 </details>
 
-### `commit_message_reg_template`
+#### `pr_*_comment_template`
+
+プルリクエストイベントのコメントの雛形を変更できます。  
+構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
+
+<details>
+
+<summary>使用可能な変数</summary>
+
+| 変数名     | 型                                                                      |
+| ---------- | ----------------------------------------------------------------------- |
+| `pr`       | PullRequest                                                             |
+| `action`   | "opened" &#124; "reopened" &#124; "ready_for_review" &#124; "closed" ※1 |
+| `sender`   | User                                                                    |
+| `issueKey` | string                                                                  |
+| `title`    | string ※2                                                               |
+| `keywords` | string                                                                  |
+| `isFix`    | boolean                                                                 |
+| `isClose`  | boolean                                                                 |
+
+※1 マージとクローズは共に `"closed"` となります。マージかどうか判別したい場合は `pr.merged` を参照ください。  
+※2 課題キーとキーワードを除いたタイトルです。加工前のタイトルは `pr.title` を参照ください。
+
+PullRequest
+
+[Get a pull request - GitHub Docs](https://docs.github.com/en/rest/pulls/pulls#get-a-pull-request) の Response schema をご参照ください。
+
+User
+
+[Get the authenticated user - GitHub Docs](https://docs.github.com/en/rest/users/users#get-the-authenticated-user) の Response schema をご参照ください。
+
+</details>
+
+#### `commit_message_reg_template`
 
 コミットメッセージ解析の正規表現雛形を変更できます。  
 構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
@@ -173,29 +319,30 @@ Committer
 
 </details>
 
-## 使用方法
+#### `pr_title_reg_template`
 
-[Backlog の Git](https://support-ja.backlog.com/hc/ja/articles/360035640734) と同様です。課題キーは先頭にある 1 つ目のキーのみ認識します。  
-付加機能として、コミットログで課題を操作することができます。
+プルリクエストタイトル解析の正規表現雛形を変更できます。  
+構文については [lodash/template](https://lodash.com/docs/4.17.15#template) をご参照ください。
 
-- `#fix` `#fixes` `#fixed` のどれかで処理済み
-- `#close` `#closes` `#closed` のどれかで完了
+<details>
 
-例えば下記のようにコミットメッセージを設定してください。
+<summary>使用可能な変数</summary>
 
-```
-PROJECT-123 不具合修正 #fix
-```
+| 変数名          | 型       |
+| --------------- | -------- |
+| `projectKey`    | string   |
+| `fixKeywords`   | string[] |
+| `closeKeywords` | string[] |
 
-大量にプッシュするとそのまま投稿され、 Backlog に負荷がかかるのでご注意ください。
+</details>
 
 ## よくある質問と回答
 
 - 何をプッシュしても実行に失敗し、ログに 401 エラーとある  
-  →API キーが誤っている可能性があります。
+  API キーが誤っている可能性があります。
 
 - プロジェクトキーと課題キーが正しいのに実行に失敗し、ログに 404 エラーとある  
-  → 該当 API キーのユーザーがプロジェクトに参加していない可能性があります。
+  該当 API キーのユーザーがプロジェクトに参加していない可能性があります。
 
 ## 貢献
 

@@ -18,10 +18,16 @@ const optionalEnv = {
   FIX_KEYWORDS: "  fixKeyword1  \n  fixKeyword2  ",
   CLOSE_KEYWORDS: "closeKeyword1\ncloseKeyword2",
   PUSH_COMMENT_TEMPLATE: "pushCommentTemplate",
+  PR_OPENED_COMMENT_TEMPLATE: "prOpenedCommentTemplate",
+  PR_REOPENED_COMMENT_TEMPLATE: "prReopenedCommentTemplate",
+  PR_READY_FOR_REVIEW_COMMENT_TEMPLATE: "prReadyForReviewCommentTemplate",
+  PR_CLOSED_COMMENT_TEMPLATE: "prClosedCommentTemplate",
+  PR_MERGED_COMMENT_TEMPLATE: "prMergedCommentTemplate",
   COMMIT_MESSAGE_REG_TEMPLATE: "commitMessageRegTemplate",
+  PR_TITLE_REG_TEMPLATE: "prTitleRegTemplate",
 }
 
-const configs = {
+const configs: Configs = {
   projectKey: "projectKey",
   apiHost: "apiHost",
   apiKey: "apiKey",
@@ -29,10 +35,16 @@ const configs = {
   fixKeywords: ["fixKeyword1", "fixKeyword2"],
   closeKeywords: ["closeKeyword1", "closeKeyword2"],
   pushCommentTemplate: "pushCommentTemplate",
+  prOpenedCommentTemplate: "prOpenedCommentTemplate",
+  prReopenedCommentTemplate: "prReopenedCommentTemplate",
+  prReadyForReviewCommentTemplate: "prReadyForReviewCommentTemplate",
+  prClosedCommentTemplate: "prClosedCommentTemplate",
+  prMergedCommentTemplate: "prMergedCommentTemplate",
   commitMessageRegTemplate: "commitMessageRegTemplate",
+  prTitleRegTemplate: "prTitleRegTemplate",
   fixStatusId: "fixStatusId",
   closeStatusId: "closeStatusId",
-} as Configs
+}
 
 describe("getConfigs", () => {
   beforeEach(() => {
@@ -93,9 +105,35 @@ describe("getConfigs", () => {
         "\n" +
         "<% commits.forEach(commit=>{ %>" +
         "\n" +
-        "+ <%= commit.comment %> ([<% print(commit.id.slice(0, 7)) %>](<%= commit.url %>))" +
+        "+ [<%= commit.comment %>](<%= commit.url %>) (<% print(commit.id.slice(0, 7)) %>)" +
         "<% }); %>",
+      prOpenedCommentTemplate:
+        "<%= sender.login %>さんがプルリクエストを作成しました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+      prReopenedCommentTemplate:
+        "<%= sender.login %>さんがプルリクエストを作成しました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+      prReadyForReviewCommentTemplate:
+        "<%= sender.login %>さんがプルリクエストを作成しました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+      prClosedCommentTemplate:
+        "<%= sender.login %>さんがプルリクエストをクローズしました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+      prMergedCommentTemplate:
+        "<%= sender.login %>さんがプルリクエストをマージしました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
       commitMessageRegTemplate:
+        "^" +
+        "(<%= projectKey %>\\-\\d+)\\s?" +
+        "(.*?)?\\s?" +
+        "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+        "$",
+      prTitleRegTemplate:
         "^" +
         "(<%= projectKey %>\\-\\d+)\\s?" +
         "(.*?)?\\s?" +
