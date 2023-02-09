@@ -1,0 +1,14 @@
+{
+  "assignees": ["bicstone"],
+  "extends": ["config:base"],
+  "packageRules": [
+    {
+      "groupName": "dependencies",
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"]
+    }
+  ],
+  "reviewers": ["bicstone"],
+  "schedule": ["before 6am on Saturday"],
+  "timezone": "Asia/Tokyo"
+}
