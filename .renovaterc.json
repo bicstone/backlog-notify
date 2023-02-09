@@ -9,6 +9,6 @@
     }
   ],
   "reviewers": ["bicstone"],
-  "schedule": ["before 6am on Sunday"],
+  "schedule": ["before 6am on Saturday"],
   "timezone": "Asia/Tokyo"
 }
