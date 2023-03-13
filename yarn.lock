@@ -1071,10 +1071,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:18.x":
+"@types/node@npm:*":
   version: 18.15.0
   resolution: "@types/node@npm:18.15.0"
   checksum: d81372276dd5053b1743338b61a2178ff9722dc609189d01fc7d1c2acd539414039e0e4780678730514390dad3f29c366a28c29e8dbd5b0025651181f6dd6669
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:16.x":
+  version: 16.18.15
+  resolution: "@types/node@npm:16.18.15"
+  checksum: 9184897164bfe1d82fdc8ddc2a41cbef08c1bc27f86c0026e13fc8081f7bcb34ea051dc2bdc96b4d8f8f3a6c935d1535d8399be9fa533608b7031423cc2ba4d3
   languageName: node
   linkType: hard
 
@@ -1603,7 +1610,7 @@ __metadata:
     "@octokit/webhooks-types": 6.10.0
     "@types/jest": 29.4.0
     "@types/lodash.template": 4.5.1
-    "@types/node": 18.x
+    "@types/node": 16.x
     "@typescript-eslint/eslint-plugin": 5.54.1
     "@typescript-eslint/parser": 5.54.1
     "@vercel/ncc": 0.36.1
