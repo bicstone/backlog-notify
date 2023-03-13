@@ -6,6 +6,10 @@
       "matchDepTypes": ["dependencies"],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "enabled": false,
+      "matchPackagePatterns": ["axios"]
     }
   ]
 }
