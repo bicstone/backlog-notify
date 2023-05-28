@@ -887,26 +887,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octokit/webhooks-examples@npm:6.11.0":
-  version: 6.11.0
-  resolution: "@octokit/webhooks-examples@npm:6.11.0"
+"@octokit/webhooks-examples@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@octokit/webhooks-examples@npm:7.0.2"
   dependencies:
-    "@octokit/webhooks-types": ^6.0.0
-  checksum: e34ac8c88d5a34171c11d0ed5d56b0799d13e878394c2dc8449d6673a89e35963ace796630b0aa020c1fca2cf21b2fe5bf54b4a666b8df30dbd437ed484a7d3e
+    "@octokit/webhooks-types": ^7.0.0
+  checksum: a9935e0eb87d61cf9126d1d16250f5eb508d3412d50f9dbdefcddf6bbcdcdcf393e2b5b79d502d9763b910081a4e3a072cbd583cb2fea46524495f307fecd741
   languageName: node
   linkType: hard
 
-"@octokit/webhooks-types@npm:7.0.2":
+"@octokit/webhooks-types@npm:7.0.2, @octokit/webhooks-types@npm:^7.0.0":
   version: 7.0.2
   resolution: "@octokit/webhooks-types@npm:7.0.2"
   checksum: 6dd241619e5b697ac0721d85f568c0a0ac44c8fcba6f9641ee79a34b1ca4782243ef26cea1416838c628abca47051c427612f832e2a0f2c17b8493563c292e8b
-  languageName: node
-  linkType: hard
-
-"@octokit/webhooks-types@npm:^6.0.0":
-  version: 6.10.0
-  resolution: "@octokit/webhooks-types@npm:6.10.0"
-  checksum: 6eac226f070a48d9ef2594df952e8540b001e2a8760c4fa5ac2f78c1750694a6c3b8de42fb4dbb4bb78335f091d9268539d4261c52a1a91fb9ef1e9af1959b44
   languageName: node
   linkType: hard
 
@@ -1620,7 +1613,7 @@ __metadata:
   resolution: "backlog-notify@workspace:."
   dependencies:
     "@actions/core": 1.10.0
-    "@octokit/webhooks-examples": 6.11.0
+    "@octokit/webhooks-examples": 7.0.2
     "@octokit/webhooks-types": 7.0.2
     "@types/jest": 29.5.1
     "@types/lodash.template": 4.5.1

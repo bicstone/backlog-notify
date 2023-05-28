@@ -31,7 +31,7 @@
     "lodash.template": "4.5.0"
   },
   "devDependencies": {
-    "@octokit/webhooks-examples": "6.11.0",
+    "@octokit/webhooks-examples": "7.0.2",
     "@octokit/webhooks-types": "7.0.2",
     "@types/jest": "29.5.1",
     "@types/lodash.template": "4.5.1",
