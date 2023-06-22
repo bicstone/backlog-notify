@@ -1,7 +1,6 @@
 # Backlog Notify
 
-[![GitHub Actions による CI check の結果](https://github.com/bicstone/backlog-notify/actions/workflows/ci.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/ci.yml)
-[![njsscan sarif による静的解析の結果](https://github.com/bicstone/backlog-notify/actions/workflows/njsscan-analysis.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/njsscan-analysis.yml)
+[![GitHub Actions による CI check の結果](https://github.com/bicstone/backlog-notify/actions/workflows/test.yml/badge.svg)](https://github.com/bicstone/backlog-notify/actions/workflows/ci.yml)
 [![FOSSA によるライセンス分析の結果](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbicstone%2Fbacklog-notify?ref=badge_shield)
 [![Sonar Cloud による静的解析の結果](https://sonarcloud.io/api/project_badges/measure?project=bicstone_backlog-notify&metric=alert_status)](https://sonarcloud.io/dashboard?id=bicstone_backlog-notify)
 [![Deep Source による静的解析の結果](https://deepsource.io/gh/bicstone/backlog-notify.svg/?label=active+issues&token=iPw2LS4cY5EQQH_JiN72YOr2)](https://deepsource.io/gh/bicstone/backlog-notify/?ref=repository-badge)
