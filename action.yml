@@ -5,7 +5,7 @@ branding:
   icon: bell
   color: green
 runs:
-  using: node18
+  using: node16
   main: dist/index.js
 inputs:
   project_key:
