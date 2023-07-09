@@ -102,7 +102,7 @@ describe("postComments", () => {
         pushCommentTemplate,
         apiHost,
         apiKey,
-      })
+      }),
     ).resolves.toStrictEqual([response])
     expect(mockedAxios.patch).toHaveBeenCalled()
     expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
@@ -149,7 +149,7 @@ describe("postComments", () => {
         pushCommentTemplate,
         apiHost,
         apiKey,
-      })
+      }),
     ).resolves.toStrictEqual([response])
     expect(mockedAxios.patch).toHaveBeenCalled()
     expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
@@ -196,7 +196,7 @@ describe("postComments", () => {
         pushCommentTemplate,
         apiHost,
         apiKey,
-      })
+      }),
     ).resolves.toStrictEqual([response])
     expect(mockedAxios.patch).toHaveBeenCalled()
     expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
@@ -250,7 +250,7 @@ describe("postComments", () => {
         pushCommentTemplate,
         apiHost,
         apiKey,
-      })
+      }),
     ).resolves.toStrictEqual([response1, response2])
     expect(mockedAxios.patch).toHaveBeenCalled()
     expect(mockedAxios.patch).toHaveBeenCalledTimes(2)

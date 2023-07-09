@@ -66,7 +66,7 @@ describe("getConfigs", () => {
     (key) => {
       process.env[`INPUT_${key}`] = ""
       expect(getConfigs()).toStrictEqual(configs)
-    }
+    },
   )
 
   test.each(Object.keys(requiredEnv))(
@@ -75,7 +75,7 @@ describe("getConfigs", () => {
       process.env[key] = ""
       process.env[`INPUT_${key}`] = ""
       expect(() => getConfigs()).toThrow("Input required and not supplied")
-    }
+    },
   )
 
   test.each(Object.keys(optionalEnv))(
@@ -84,7 +84,7 @@ describe("getConfigs", () => {
       process.env[key] = ""
       process.env[`INPUT_${key}`] = ""
       expect(() => getConfigs()).not.toThrowError()
-    }
+    },
   )
 
   test("getConfigs return configs for current version when we set configs as of version 2.x.x", () => {

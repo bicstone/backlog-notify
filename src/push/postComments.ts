@@ -7,7 +7,7 @@ import { ParsedRef } from "./parseRef"
 // Update Issue API
 // https://developer.nulab.com/docs/backlog/api/2/update-issue/#
 const updateIssueApiUrlTemplate = template(
-  "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"
+  "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>",
 )
 
 export type Response = {
@@ -54,7 +54,7 @@ export const postComments = ({
         issueKey,
         ref: parsedRef,
         ...configs,
-      })
+      }),
     )
   }
 

@@ -38,7 +38,7 @@ describe.each(pullRequestEvents)("index", (event) => {
   })
 
   const getParsedPullRequest = (
-    parsedPullRequest?: Partial<ParsedPullRequest>
+    parsedPullRequest?: Partial<ParsedPullRequest>,
   ): ParsedPullRequest => ({
     pr: event.pull_request,
     action: event.action,
@@ -68,13 +68,13 @@ describe.each(pullRequestEvents)("index", (event) => {
       parsedPullRequest: getParsedPullRequest(),
     }))
     mocked(postComments).mockImplementation(() =>
-      Promise.resolve(getResponse())
+      Promise.resolve(getResponse()),
     )
   })
 
   test("resolve with the message", async () => {
     await expect(pr(getConfigs())).resolves.toStrictEqual(
-      "正常に送信しました。"
+      "正常に送信しました。",
     )
 
     expect(parsePullRequest).toHaveBeenCalledTimes(1)
@@ -89,7 +89,7 @@ describe.each(pullRequestEvents)("index", (event) => {
     }))
 
     await expect(pr(getConfigs())).resolves.toStrictEqual(
-      "正常に送信しました。"
+      "正常に送信しました。",
     )
 
     expect(parsePullRequest).toHaveBeenCalledTimes(1)
@@ -105,7 +105,7 @@ describe.each(pullRequestEvents)("index", (event) => {
     }))
 
     await expect(pr(getConfigs())).resolves.toStrictEqual(
-      "正常に送信しました。"
+      "正常に送信しました。",
     )
 
     expect(parsePullRequest).toHaveBeenCalledTimes(1)
@@ -131,7 +131,7 @@ describe.each(pullRequestEvents)("index", (event) => {
     }))
 
     await expect(pr(getConfigs())).resolves.toStrictEqual(
-      "課題キーのついたプルリクエストが見つかりませんでした。"
+      "課題キーのついたプルリクエストが見つかりませんでした。",
     )
 
     expect(parsePullRequest).toHaveBeenCalledTimes(1)

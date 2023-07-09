@@ -42,7 +42,7 @@ export const parseCommits = ({
       fixKeywords,
       closeKeywords,
     }),
-    "s"
+    "s",
   )
 
   commits.forEach((commit) => {

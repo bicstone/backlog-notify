@@ -60,7 +60,7 @@ describe("parseCommits", () => {
         fixKeywords,
         closeKeywords,
         commitMessageRegTemplate,
-      })
+      }),
     ).toStrictEqual({
       parsedCommits,
     })
@@ -79,7 +79,7 @@ describe("parseCommits", () => {
         fixKeywords,
         closeKeywords,
         commitMessageRegTemplate,
-      })
+      }),
     ).toStrictEqual({
       parsedCommits,
     })
@@ -120,7 +120,7 @@ describe("parseCommits", () => {
         fixKeywords,
         closeKeywords,
         commitMessageRegTemplate,
-      })
+      }),
     ).toStrictEqual({
       parsedCommits,
     })
@@ -152,7 +152,7 @@ describe("parseCommits", () => {
         fixKeywords,
         closeKeywords,
         commitMessageRegTemplate,
-      })
+      }),
     ).toStrictEqual({
       parsedCommits,
     })
@@ -184,7 +184,7 @@ describe("parseCommits", () => {
         fixKeywords,
         closeKeywords,
         commitMessageRegTemplate,
-      })
+      }),
     ).toStrictEqual({
       parsedCommits,
     })
@@ -217,7 +217,7 @@ describe("parseCommits", () => {
         fixKeywords,
         closeKeywords,
         commitMessageRegTemplate,
-      })
+      }),
     ).toStrictEqual({
       parsedCommits,
     })
@@ -247,7 +247,7 @@ describe("parseCommits", () => {
         fixKeywords,
         closeKeywords,
         commitMessageRegTemplate,
-      })
+      }),
     ).toStrictEqual({
       parsedCommits,
     })
@@ -262,7 +262,7 @@ describe("parseCommits", () => {
         fixKeywords,
         closeKeywords,
         commitMessageRegTemplate,
-      })
+      }),
     ).toStrictEqual({
       parsedCommits: null,
     })
@@ -282,7 +282,7 @@ describe("parseCommits", () => {
         fixKeywords,
         closeKeywords,
         commitMessageRegTemplate,
-      })
+      }),
     ).toStrictEqual({
       parsedCommits: null,
     })

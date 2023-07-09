@@ -36,7 +36,7 @@ export const parsePullRequest = ({
       fixKeywords,
       closeKeywords,
     }),
-    "s"
+    "s",
   )
 
   const match = event.pull_request.title.match(prTitleReg)

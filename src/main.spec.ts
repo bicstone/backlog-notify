@@ -21,7 +21,7 @@ const pushEvents = (webhooks.find((v) => v.name === "push")?.examples ??
 
 const pushEventsWithCommits = pushEvents.filter((v) => v?.commits?.length > 0)
 const pushEventsWithoutCommits = pushEvents.filter(
-  (v) => v?.commits?.length === 0
+  (v) => v?.commits?.length === 0,
 )
 
 const pullRequestEvents = (webhooks.find((v) => v.name === "pull_request")
@@ -71,7 +71,7 @@ describe("main", () => {
         expect(info).toHaveBeenCalledWith("push!")
         expect(setFailed).toHaveBeenCalledTimes(0)
       })
-    }
+    },
   )
 
   describe.each(pushEventsWithoutCommits)(
@@ -91,7 +91,7 @@ describe("main", () => {
         expect(info).toHaveBeenCalledWith("予期しないイベントでした。")
         expect(setFailed).toHaveBeenCalledTimes(0)
       })
-    }
+    },
   )
 
   describe.each(pullRequestEvents)("pull request event", (prEvent) => {
