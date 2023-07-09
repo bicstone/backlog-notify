@@ -37,7 +37,7 @@ const getEvent = <T extends PullRequestEvent>(event: T, title: string): T => ({
 
 const getConfigs = (
   event: PullRequestEvent,
-  configs?: Partial<ParsePullRequestProps>
+  configs?: Partial<ParsePullRequestProps>,
 ): ParsePullRequestProps => ({
   event,
   projectKey,
@@ -49,7 +49,7 @@ const getConfigs = (
 
 const getParsedPullRequest = (
   event: PullRequestEvent,
-  parsedPullRequest?: Partial<ParsedPullRequest>
+  parsedPullRequest?: Partial<ParsedPullRequest>,
 ): ParsedPullRequest => {
   return {
     pr: event.pull_request,
@@ -104,7 +104,7 @@ describe.each(events)("parsePullRequest", (_event) => {
   test("return parsed pull request with fix_keyword and close_keyword", () => {
     const event = getEvent(
       _event,
-      `${issueKey} ${title} ${fixKeyword} ${closeKeyword}`
+      `${issueKey} ${title} ${fixKeyword} ${closeKeyword}`,
     )
     const configs = getConfigs(event)
     const parsedPullRequest = getParsedPullRequest(event, {

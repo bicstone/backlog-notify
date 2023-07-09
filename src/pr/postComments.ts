@@ -6,7 +6,7 @@ import { ParsedPullRequest } from "./parsePullRequest"
 // Update Issue API
 // https://developer.nulab.com/docs/backlog/api/2/update-issue/
 const updateIssueApiUrlTemplate = template(
-  "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>"
+  "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>",
 )
 
 export type Response = AxiosResponse<Record<string, unknown>>

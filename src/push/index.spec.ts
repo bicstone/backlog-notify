@@ -70,10 +70,10 @@ describe.each(pushEvents)("index", (event) => {
   test("resolve with the message", async () => {
     const postCommentsResponse: Response = basePostCommentsResponse
     mocked(postComments).mockImplementation(() =>
-      Promise.resolve([postCommentsResponse])
+      Promise.resolve([postCommentsResponse]),
     )
     await expect(push({ ...configs, event })).resolves.toStrictEqual(
-      "正常に送信しました。"
+      "正常に送信しました。",
     )
     expect(info).toHaveBeenCalledTimes(1)
     expect(info).toHaveBeenCalledWith(message)
@@ -85,10 +85,10 @@ describe.each(pushEvents)("index", (event) => {
       isFix: true,
     }
     mocked(postComments).mockImplementation(() =>
-      Promise.resolve([postCommentsResponse])
+      Promise.resolve([postCommentsResponse]),
     )
     await expect(push({ ...configs, event })).resolves.toStrictEqual(
-      "正常に送信しました。"
+      "正常に送信しました。",
     )
     expect(info).toHaveBeenCalledTimes(2)
     expect(info).toHaveBeenCalledWith(message)
@@ -101,10 +101,10 @@ describe.each(pushEvents)("index", (event) => {
       isClose: true,
     }
     mocked(postComments).mockImplementation(() =>
-      Promise.resolve([postCommentsResponse])
+      Promise.resolve([postCommentsResponse]),
     )
     await expect(push({ ...configs, event })).resolves.toStrictEqual(
-      "正常に送信しました。"
+      "正常に送信しました。",
     )
     expect(info).toHaveBeenCalledTimes(2)
     expect(info).toHaveBeenCalledWith(message)
@@ -116,14 +116,14 @@ describe.each(pushEvents)("index", (event) => {
       parsedCommits: null,
     }))
     await expect(push({ ...configs, event })).resolves.toStrictEqual(
-      "課題キーのついたコミットが1件も見つかりませんでした。"
+      "課題キーのついたコミットが1件も見つかりませんでした。",
     )
   })
 
   test("not continue and resolve processing when the event.ref is invalid", async () => {
     mocked(parseRef).mockImplementation(() => undefined)
     await expect(push({ ...configs, event })).resolves.toStrictEqual(
-      "Git referenceの解析に失敗しました。"
+      "Git referenceの解析に失敗しました。",
     )
   })
 })

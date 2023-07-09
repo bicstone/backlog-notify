@@ -16,7 +16,7 @@ export type ParsedRef = {
  */
 export const parseRef = (
   ref: string,
-  repositoryHtmlUrl: string
+  repositoryHtmlUrl: string,
 ): ParsedRef | undefined => {
   // e.g. Get name `feature/foo ` for ref `refs/heads/feature/foo`
   const name = refReg.exec(ref)?.[1]

@@ -38,7 +38,7 @@ const openedEvents =
     (v) =>
       v.action === "opened" ||
       v.action === "reopened" ||
-      v.action === "ready_for_review"
+      v.action === "ready_for_review",
   ) ?? []
 
 const closedEvents = events.filter((v) => v.action === "closed") ?? []
@@ -49,7 +49,7 @@ const unexpectedEvents =
       v.action !== "opened" &&
       v.action !== "reopened" &&
       v.action !== "ready_for_review" &&
-      v.action !== "closed"
+      v.action !== "closed",
   ) ?? []
 
 const getEvent = <T extends PullRequestEvent>(event: T): T => ({
@@ -67,7 +67,7 @@ const getEvent = <T extends PullRequestEvent>(event: T): T => ({
 
 const getParsedPullRequest = (
   event: PullRequestEvent,
-  parsedPullRequest?: Partial<ParsedPullRequest>
+  parsedPullRequest?: Partial<ParsedPullRequest>,
 ): ParsedPullRequest => {
   return {
     pr: event.pull_request,
@@ -84,7 +84,7 @@ const getParsedPullRequest = (
 
 const getConfigs = (
   parsedPullRequest: ParsedPullRequest,
-  configs?: Partial<PostCommentsProps>
+  configs?: Partial<PostCommentsProps>,
 ): PostCommentsProps => ({
   parsedPullRequest,
   fixStatusId,
@@ -134,7 +134,7 @@ describe("postComments", () => {
         expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
         expect(mockedAxios.patch).toHaveBeenCalledWith(
           endpoint,
-          getRequestParams(comment)
+          getRequestParams(comment),
         )
       })
       test("post a comment only when change to fixed", () => {
@@ -145,7 +145,7 @@ describe("postComments", () => {
         expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
         expect(mockedAxios.patch).toHaveBeenCalledWith(
           endpoint,
-          getRequestParams(comment)
+          getRequestParams(comment),
         )
       })
       test("post a comment only when change to close", () => {
@@ -156,7 +156,7 @@ describe("postComments", () => {
         expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
         expect(mockedAxios.patch).toHaveBeenCalledWith(
           endpoint,
-          getRequestParams(comment)
+          getRequestParams(comment),
         )
       })
       test("not continue and return message if pr is draft", () => {
@@ -168,11 +168,11 @@ describe("postComments", () => {
         const configs = getConfigs(parsedPullRequest)
 
         expect(postComments(configs)).resolves.toStrictEqual(
-          "プルリクエストが下書きでした。"
+          "プルリクエストが下書きでした。",
         )
         expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
       })
-    }
+    },
   )
 
   describe.each(closedEvents)("merged", (_event) => {
@@ -190,7 +190,7 @@ describe("postComments", () => {
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment)
+        getRequestParams(comment),
       )
     })
     test("post a comment and change status when change to fixed", () => {
@@ -201,7 +201,7 @@ describe("postComments", () => {
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment, { statusId: fixStatusId })
+        getRequestParams(comment, { statusId: fixStatusId }),
       )
     })
     test("post a comment and change status when change to close", () => {
@@ -212,7 +212,7 @@ describe("postComments", () => {
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment, { statusId: closeStatusId })
+        getRequestParams(comment, { statusId: closeStatusId }),
       )
     })
     test("not continue and return message if pr is draft", () => {
@@ -224,7 +224,7 @@ describe("postComments", () => {
       const configs = getConfigs(parsedPullRequest)
 
       expect(postComments(configs)).resolves.toStrictEqual(
-        "プルリクエストが下書きでした。"
+        "プルリクエストが下書きでした。",
       )
       expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
     })
@@ -242,7 +242,7 @@ describe("postComments", () => {
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment)
+        getRequestParams(comment),
       )
     })
     test("post a comment only when change to fixed", () => {
@@ -253,7 +253,7 @@ describe("postComments", () => {
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment)
+        getRequestParams(comment),
       )
     })
     test("post a comment only when change to close", () => {
@@ -264,7 +264,7 @@ describe("postComments", () => {
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment)
+        getRequestParams(comment),
       )
     })
     test("not continue and return message if pr is draft", () => {
@@ -276,7 +276,7 @@ describe("postComments", () => {
       const configs = getConfigs(parsedPullRequest)
 
       expect(postComments(configs)).resolves.toStrictEqual(
-        "プルリクエストが下書きでした。"
+        "プルリクエストが下書きでした。",
       )
       expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
     })
@@ -289,7 +289,7 @@ describe("postComments", () => {
       const configs = getConfigs(parsedPullRequest)
 
       expect(postComments(configs)).resolves.toStrictEqual(
-        "予期しないイベントでした。"
+        "予期しないイベントでした。",
       )
       expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
     })
