@@ -4,7 +4,7 @@ import webhooks from "@octokit/webhooks-examples"
 
 import type { PullRequestEvent } from "@octokit/webhooks-types"
 
-import { pr, PrProps } from "./"
+import { pr, PrProps } from "."
 import { ParsedPullRequest, parsePullRequest } from "./parsePullRequest"
 import { postComments } from "./postComments"
 import { Result } from "result-type-ts"

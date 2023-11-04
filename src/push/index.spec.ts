@@ -4,7 +4,7 @@ import webhooks from "@octokit/webhooks-examples"
 
 import type { PushEvent } from "@octokit/webhooks-types"
 
-import { push } from "./"
+import { push } from "."
 import { parseRef } from "./parseRef"
 import { parseCommits, ParsedCommit } from "./parseCommits"
 import { postComments, Response } from "./postComments"
