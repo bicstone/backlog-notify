@@ -29,6 +29,7 @@ const prClosedCommentTemplate =
 const prMergedCommentTemplate =
   "merged,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
 const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
+const statusText = "OK"
 
 const events = (webhooks.find((v) => v.name === "pull_request")?.examples ??
   []) as PullRequestEvent[]
@@ -102,7 +103,7 @@ const getConfigs = (
 const getResponse = (response?: Partial<Response>): Response => ({
   data: {},
   status: 200,
-  statusText: "OK",
+  statusText,
   headers: {},
   config: {},
   request: {},
@@ -126,50 +127,57 @@ describe("postComments", () => {
       const event = getEvent(_event)
       const comment = `${event.action},${login},${title},${html_url}`
 
-      test("post a comment to Backlog API", () => {
+      it("post a comment to Backlog API", async () => {
         const parsedPullRequest = getParsedPullRequest(event)
         const configs = getConfigs(parsedPullRequest)
+        const result = await postComments(configs)
 
-        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+        expect(result.isSuccess).toEqual(true)
+        expect(result.value).toEqual(statusText)
         expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
         expect(mockedAxios.patch).toHaveBeenCalledWith(
           endpoint,
           getRequestParams(comment),
         )
       })
-      test("post a comment only when change to fixed", () => {
+      it("post a comment only when change to fixed", async () => {
         const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
         const configs = getConfigs(parsedPullRequest)
+        const result = await postComments(configs)
 
-        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+        expect(result.isSuccess).toEqual(true)
+        expect(result.value).toEqual(statusText)
         expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
         expect(mockedAxios.patch).toHaveBeenCalledWith(
           endpoint,
           getRequestParams(comment),
         )
       })
-      test("post a comment only when change to close", () => {
+      it("post a comment only when change to close", async () => {
         const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
         const configs = getConfigs(parsedPullRequest)
+        const result = await postComments(configs)
 
-        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+        expect(result.isSuccess).toEqual(true)
+        expect(result.value).toEqual(statusText)
         expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
         expect(mockedAxios.patch).toHaveBeenCalledWith(
           endpoint,
           getRequestParams(comment),
         )
       })
-      test("not continue and return message if pr is draft", () => {
+      it("not continue and return message if pr is draft", async () => {
         const event = getEvent({
           ..._event,
           pull_request: { ..._event.pull_request, draft: true },
         } as PullRequestEvent)
         const parsedPullRequest = getParsedPullRequest(event)
         const configs = getConfigs(parsedPullRequest)
+        const result = await postComments(configs)
 
-        expect(postComments(configs)).resolves.toStrictEqual(
-          "プルリクエストが下書きでした。",
-        )
+        expect(result.isSuccess).toEqual(false)
+        expect(result.error).toEqual("プルリクエストが下書きでした。")
+
         expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
       })
     },
@@ -182,50 +190,57 @@ describe("postComments", () => {
     } as PullRequestEvent)
     const comment = `merged,${login},${title},${html_url}`
 
-    test("post a comment to Backlog API", () => {
+    it("post a comment to Backlog API", async () => {
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
         getRequestParams(comment),
       )
     })
-    test("post a comment and change status when change to fixed", () => {
+    it("post a comment and change status when change to fixed", async () => {
       const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
         getRequestParams(comment, { statusId: fixStatusId }),
       )
     })
-    test("post a comment and change status when change to close", () => {
+    it("post a comment and change status when change to close", async () => {
       const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
         getRequestParams(comment, { statusId: closeStatusId }),
       )
     })
-    test("not continue and return message if pr is draft", () => {
+    it("not continue and return message if pr is draft", async () => {
       const event = getEvent({
         ..._event,
         pull_request: { ..._event.pull_request, draft: true },
       } as PullRequestEvent)
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(
-        "プルリクエストが下書きでした。",
-      )
+      expect(result.isSuccess).toEqual(false)
+      expect(result.error).toEqual("プルリクエストが下書きでした。")
+
       expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
     })
   })
@@ -234,63 +249,71 @@ describe("postComments", () => {
     const event = getEvent(_event)
     const comment = `closed,${login},${title},${html_url}`
 
-    test("post a comment to Backlog API", () => {
+    it("post a comment to Backlog API", async () => {
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
         getRequestParams(comment),
       )
     })
-    test("post a comment only when change to fixed", () => {
+    it("post a comment only when change to fixed", async () => {
       const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
         getRequestParams(comment),
       )
     })
-    test("post a comment only when change to close", () => {
+    it("post a comment only when change to close", async () => {
       const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
       expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
       expect(mockedAxios.patch).toHaveBeenCalledWith(
         endpoint,
         getRequestParams(comment),
       )
     })
-    test("not continue and return message if pr is draft", () => {
+    it("not continue and return message if pr is draft", async () => {
       const event = getEvent({
         ..._event,
         pull_request: { ..._event.pull_request, draft: true },
       } as PullRequestEvent)
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(
-        "プルリクエストが下書きでした。",
-      )
+      expect(result.isSuccess).toEqual(false)
+      expect(result.error).toEqual("プルリクエストが下書きでした。")
+
       expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
     })
   })
 
   describe.each(unexpectedEvents)("unexpected", (_event) => {
-    test("not continue and return message", () => {
+    it("not continue and return message", async () => {
       const event = getEvent(_event)
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(
-        "予期しないイベントでした。",
-      )
+      expect(result.isSuccess).toEqual(false)
+      expect(result.error).toEqual("予期しないイベントでした。")
+
       expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
     })
   })

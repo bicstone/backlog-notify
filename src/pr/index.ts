@@ -55,7 +55,7 @@ export const pr = async ({
 
   startGroup(`コメント送信中`)
 
-  const response = await postComments({
+  const result = await postComments({
     parsedPullRequest,
     fixStatusId,
     closeStatusId,
@@ -68,8 +68,8 @@ export const pr = async ({
     apiKey,
   })
 
-  if (typeof response === "string") {
-    return response
+  if (result.isFailure) {
+    return result.error
   }
 
   startGroup(`${parsedPullRequest.issueKey}:`)

@@ -1,9 +1,3 @@
 {
-  "extends": ["github>bicstone/renovate-config"],
-  "packageRules": [
-    {
-      "enabled": false,
-      "matchPackagePatterns": ["axios"]
-    }
-  ]
+  "extends": ["github>bicstone/renovate-config"]
 }
