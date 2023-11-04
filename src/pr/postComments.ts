@@ -1,6 +1,5 @@
 import { Result } from "result-type-ts"
 import { URLSearchParams } from "url"
-import axios, { AxiosResponse } from "axios"
 import template from "lodash.template"
 import { ParsedPullRequest } from "./parsePullRequest"
 
@@ -9,8 +8,6 @@ import { ParsedPullRequest } from "./parsePullRequest"
 const updateIssueApiUrlTemplate = template(
   "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>",
 )
-
-export type Response = AxiosResponse<Record<string, unknown>>
 
 export type PostCommentsProps = {
   parsedPullRequest: ParsedPullRequest
@@ -84,10 +81,16 @@ export const postComments = async ({
   })()
   const body = { comment, ...status }
 
-  const response = await axios.patch(
-    endpoint,
-    new URLSearchParams(body).toString(),
-  )
+  const fetchOptions: RequestInit = {
+    method: "PATCH",
+    body: new URLSearchParams(body),
+  }
+
+  const response = await fetch(endpoint, fetchOptions)
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
 
   return Result.success(response.statusText)
 }
