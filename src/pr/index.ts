@@ -40,7 +40,7 @@ export const pr = async ({
   prMergedCommentTemplate,
   prTitleRegTemplate,
 }: PrProps): Promise<string> => {
-  startGroup(`プルリクエストを取得中`)
+  startGroup("プルリクエストを取得中")
   const { parsedPullRequest } = parsePullRequest({
     event,
     projectKey,
@@ -53,7 +53,7 @@ export const pr = async ({
   }
   endGroup()
 
-  startGroup(`コメント送信中`)
+  startGroup("コメント送信中")
 
   const result = await postComments({
     parsedPullRequest,

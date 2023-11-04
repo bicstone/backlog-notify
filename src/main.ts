@@ -5,7 +5,7 @@ import { pr } from "./pr"
 import { push } from "./push"
 
 const runAction = async (): Promise<string> => {
-  startGroup(`設定を読み込み中`)
+  startGroup("設定を読み込み中")
   const {
     projectKey,
     apiHost,
@@ -26,7 +26,7 @@ const runAction = async (): Promise<string> => {
   } = getConfigs()
   endGroup()
 
-  startGroup(`イベントを読み込み中`)
+  startGroup("イベントを読み込み中")
   const { event } = fetchEvent({ path: githubEventPath })
   endGroup()
 

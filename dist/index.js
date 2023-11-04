@@ -5002,10 +5002,10 @@ const getConfigs_1 = __nccwpck_require__(6587);
 const pr_1 = __nccwpck_require__(1526);
 const push_1 = __nccwpck_require__(8616);
 const runAction = async () => {
-    (0, core_1.startGroup)(`設定を読み込み中`);
+    (0, core_1.startGroup)("設定を読み込み中");
     const { projectKey, apiHost, apiKey, githubEventPath, fixKeywords, closeKeywords, pushCommentTemplate, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, commitMessageRegTemplate, prTitleRegTemplate, fixStatusId, closeStatusId, } = (0, getConfigs_1.getConfigs)();
     (0, core_1.endGroup)();
-    (0, core_1.startGroup)(`イベントを読み込み中`);
+    (0, core_1.startGroup)("イベントを読み込み中");
     const { event } = (0, fetchEvent_1.fetchEvent)({ path: githubEventPath });
     (0, core_1.endGroup)();
     if (event && "commits" in event && event.commits.length > 0) {
@@ -5192,7 +5192,7 @@ const core_1 = __nccwpck_require__(2186);
 const parsePullRequest_1 = __nccwpck_require__(7300);
 const postComments_1 = __nccwpck_require__(1332);
 const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, closeStatusId, apiHost, apiKey, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, prTitleRegTemplate, }) => {
-    (0, core_1.startGroup)(`プルリクエストを取得中`);
+    (0, core_1.startGroup)("プルリクエストを取得中");
     const { parsedPullRequest } = (0, parsePullRequest_1.parsePullRequest)({
         event,
         projectKey,
@@ -5204,7 +5204,7 @@ const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, 
         return "課題キーのついたプルリクエストが見つかりませんでした。";
     }
     (0, core_1.endGroup)();
-    (0, core_1.startGroup)(`コメント送信中`);
+    (0, core_1.startGroup)("コメント送信中");
     const result = await (0, postComments_1.postComments)({
         parsedPullRequest,
         fixStatusId,
@@ -5368,7 +5368,7 @@ const parseCommits_1 = __nccwpck_require__(4956);
 const parseRef_1 = __nccwpck_require__(7085);
 const postComments_1 = __nccwpck_require__(2745);
 const push = async ({ event, projectKey, fixKeywords, closeKeywords, commitMessageRegTemplate, pushCommentTemplate, fixStatusId, closeStatusId, apiHost, apiKey, }) => {
-    (0, core_1.startGroup)(`コミット取得中`);
+    (0, core_1.startGroup)("コミット取得中");
     const { parsedCommits } = (0, parseCommits_1.parseCommits)({
         commits: event.commits,
         projectKey,
@@ -5380,13 +5380,13 @@ const push = async ({ event, projectKey, fixKeywords, closeKeywords, commitMessa
         return "課題キーのついたコミットが1件も見つかりませんでした。";
     }
     (0, core_1.endGroup)();
-    (0, core_1.startGroup)(`Push先の確認中`);
+    (0, core_1.startGroup)("Push先の確認中");
     const parsedRef = (0, parseRef_1.parseRef)(event.ref, event.repository.html_url);
     if (!parsedRef) {
         return "Git referenceの解析に失敗しました。";
     }
     (0, core_1.endGroup)();
-    (0, core_1.startGroup)(`コメント送信中`);
+    (0, core_1.startGroup)("コメント送信中");
     await (0, postComments_1.postComments)({
         parsedCommits,
         parsedRef,
