@@ -86,7 +86,6 @@ describe("postComments", () => {
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
-      response: axiosResponse,
       commits: parsedCommits[issueKey],
       issueKey: issueKey,
       isFix: false,
@@ -133,7 +132,6 @@ describe("postComments", () => {
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
-      response: axiosResponse,
       commits: parsedCommits[issueKey],
       issueKey: issueKey,
       isFix: true,
@@ -180,7 +178,6 @@ describe("postComments", () => {
     }
     const params = new url.URLSearchParams(body).toString()
     const response: Response = {
-      response: axiosResponse,
       commits: parsedCommits[issueKey],
       issueKey: issueKey,
       isFix: false,
@@ -227,14 +224,12 @@ describe("postComments", () => {
     }
     const parsedRef: ParsedRef = baseParsedRef
     const response1: Response = {
-      response: axiosResponse,
       commits: parsedCommits[`${projectKey}-1`],
       issueKey: `${projectKey}-1`,
       isFix: false,
       isClose: false,
     }
     const response2: Response = {
-      response: axiosResponse,
       commits: parsedCommits[`${projectKey}-2`],
       issueKey: `${projectKey}-2`,
       isFix: false,
