@@ -9023,8 +9023,8 @@ const createPatchCommentRequest = ({ commits, ref, issueKey, fixStatusId, closeS
     const body = { comment, ...status };
     return axios_1.default
         .patch(endpoint, new url_1.URLSearchParams(body).toString())
-        .then((response) => {
-        return { response, commits, issueKey, isFix, isClose };
+        .then(() => {
+        return { commits, issueKey, isFix, isClose };
     });
 };
 
