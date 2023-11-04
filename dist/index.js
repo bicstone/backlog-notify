@@ -7154,6 +7154,220 @@ exports.getProxyForUrl = getProxyForUrl;
 
 /***/ }),
 
+/***/ 6556:
+/***/ ((module) => {
+
+"use strict";
+
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  Result: () => Result,
+  prototype: () => prototype
+});
+module.exports = __toCommonJS(src_exports);
+function getOrThrow() {
+  if (this.isSuccess)
+    return this.value;
+  throw this.error;
+}
+function toUnion() {
+  if (this.isSuccess)
+    return this.value;
+  return this.error;
+}
+function ifSuccess(f) {
+  if (this.isFailure)
+    return void 0;
+  return f(this.value);
+}
+function ifFailure(f) {
+  if (this.isSuccess)
+    return void 0;
+  return f(this.error);
+}
+function match(f, g) {
+  if (this.isSuccess)
+    return f(this.value);
+  return g(this.error);
+}
+function map(f) {
+  if (this.isFailure)
+    return this;
+  return Result.success(f(this.value));
+}
+function mapError(f) {
+  if (this.isSuccess)
+    return this;
+  return Result.failure(f(this.error));
+}
+function flatMap(f) {
+  if (this.isFailure)
+    return this;
+  return f(this.value);
+}
+function flatten() {
+  if (this.isFailure)
+    return this;
+  return this.value;
+}
+function assertErrorInstanceOf(constructor) {
+  if (this.isSuccess)
+    return this;
+  if (this.error instanceof constructor)
+    return this;
+  throw new TypeError(`Assertion failed: Expected error to be an instance of ${constructor.name}.`);
+}
+var prototype = {
+  /**
+   * Returns `this.value` if `this` is a successful result, otherwise throws `this.error`.
+   * @example Returns the payload of a successful result.
+   * Result.success(123).getOrThrow() // 123
+   * @example Throws the payload of a failed result.
+   * Result.failure('error').getOrThrow() // throws 'error'
+   */
+  getOrThrow,
+  /**
+   * Returns the payload of the result.
+   * @example Returns the payload of a successful result.
+   * Result.success(123).toUnion() // 123
+   * @example Returns the payload of a failed result.
+   * Result.failure('error').toUnion() // 'error'
+   */
+  toUnion,
+  /**
+   * Applies the given function to this.value if it's a successful result, otherwise returns undefined.
+   * @example
+   * Result.success(123).ifSuccess((x) => x * 2) // 246
+   * Result.failure('error').ifSuccess((x: number) => x * 2) // undefined
+   */
+  ifSuccess,
+  /**
+   * Applies the given function to this.error if it's a failed result, otherwise returns undefined.
+   * @example
+   * Result.success(123).ifFailure((x: string) => x + '!') // undefined
+   * Result.failure('error').ifFailure((x) => x + '!') // 'error!'
+   */
+  ifFailure,
+  /**
+   * Return the result of applying one of the given functions to the payload.
+   * @example
+   * Result.success(123).match((x) => x * 2, (x: string) => x + '!') // 246
+   * Result.failure('error').match((x: number) => x * 2, (x) => x + '!') // 'error!'
+   */
+  match,
+  /**
+   * Creates a Result value by modifying the payload of the successful result using the given function.
+   * @example
+   * Result.success(123).map((x) => x * 2) // Result.success(246)
+   * Result.failure('error').map((x: number) => x * 2) // Result.failure('error')
+   */
+  map,
+  /**
+   * Creates a Result value by modifying the payload of the failed result using the given function.
+   * @example
+   * Result.success(123).mapError((x: string) => x + '!') // Result.success(123)
+   * Result.failure('error').mapError((x) => x + '!') // Result.failure('error!')
+   */
+  mapError,
+  /**
+   * Maps the payload of the successful result and flattens the nested Result type.
+   * @example
+   * Result.success(123).flatMap((x) => Result.success(x * 2)) // Result.success(246)
+   * Result.success(123).flatMap((x) => Result.failure('error')) // Result.failure('error')
+   * Result.failure('error').flatMap((x: number) => Result.success(x * 2)) // Result.failure('error')
+   * Result.failure('error').flatMap((x) => Result.failure('failure')) // Result.failure('error')
+   */
+  flatMap,
+  /**
+   * Flattens the nested Result type.
+   * @example
+   * Result.success(Result.success(123)).flatten() // Result.success(123)
+   * Result.success(Result.failure('error')).flatten() // Result.failure('error')
+   * Result.failure('error').flatten() // Result.failure('error')
+   */
+  flatten,
+  /**
+   * Perform a safe cast of the error type to the given class. If the payload of the failed result is not instance of constructor, throws TypeError.
+   * @example
+   * const result: Result<number, Error> = Result.tryCatch(() => {
+   *   if (Math.random() >= 0) {
+   *     throw new Error('error')
+   *   } else {
+   *     return 123
+   *   }
+   * }).assertErrorInstanceOf(Error)
+   */
+  assertErrorInstanceOf
+};
+var Result;
+((Result2) => {
+  function success(value) {
+    return withPrototype({ value, isSuccess: true, isFailure: false }, prototype);
+  }
+  Result2.success = success;
+  function failure(error) {
+    return withPrototype({ error, isSuccess: false, isFailure: true }, prototype);
+  }
+  Result2.failure = failure;
+  function tryCatch(f) {
+    try {
+      return success(f());
+    } catch (error) {
+      return failure(error);
+    }
+  }
+  Result2.tryCatch = tryCatch;
+  async function fromPromise(promise) {
+    try {
+      return success(await promise);
+    } catch (error) {
+      return failure(error);
+    }
+  }
+  Result2.fromPromise = fromPromise;
+  function fromNullish(value) {
+    return value != null ? success(value) : failure(value);
+  }
+  Result2.fromNullish = fromNullish;
+  function all(results) {
+    const values = [];
+    for (const result of results) {
+      if (result.isFailure)
+        return result;
+      values.push(result.value);
+    }
+    return success(values);
+  }
+  Result2.all = all;
+})(Result || (Result = {}));
+function withPrototype(target, prototype2) {
+  return Object.assign(Object.create(prototype2), target);
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (0);
+
+
+/***/ }),
+
 /***/ 9318:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -8439,7 +8653,7 @@ const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, 
     }
     (0, core_1.endGroup)();
     (0, core_1.startGroup)(`コメント送信中`);
-    const response = await (0, postComments_1.postComments)({
+    const result = await (0, postComments_1.postComments)({
         parsedPullRequest,
         fixStatusId,
         closeStatusId,
@@ -8451,8 +8665,8 @@ const pr = async ({ event, projectKey, fixKeywords, closeKeywords, fixStatusId, 
         apiHost,
         apiKey,
     });
-    if (typeof response === "string") {
-        return response;
+    if (result.isFailure) {
+        return result.error;
     }
     (0, core_1.startGroup)(`${parsedPullRequest.issueKey}:`);
     (0, core_1.info)(parsedPullRequest.title);
@@ -8524,6 +8738,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.postComments = void 0;
+const result_type_ts_1 = __nccwpck_require__(6556);
 const url_1 = __nccwpck_require__(7310);
 const axios_1 = __importDefault(__nccwpck_require__(8757));
 const lodash_template_1 = __importDefault(__nccwpck_require__(417));
@@ -8533,7 +8748,7 @@ const updateIssueApiUrlTemplate = (0, lodash_template_1.default)("https://<%=api
 /**
  * Post the comment to Backlog API
  */
-const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, apiHost, apiKey, }) => {
+const postComments = async ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedCommentTemplate, prReopenedCommentTemplate, prReadyForReviewCommentTemplate, prClosedCommentTemplate, prMergedCommentTemplate, apiHost, apiKey, }) => {
     const { issueKey, isFix, isClose, action, pr } = parsedPullRequest;
     const endpoint = updateIssueApiUrlTemplate({
         apiHost,
@@ -8560,11 +8775,11 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedC
         }
     })();
     if (!comment) {
-        return Promise.resolve("予期しないイベントでした。");
+        return result_type_ts_1.Result.failure("予期しないイベントでした。");
     }
     const draft = pr.draft;
     if (draft) {
-        return Promise.resolve("プルリクエストが下書きでした。");
+        return result_type_ts_1.Result.failure("プルリクエストが下書きでした。");
     }
     const status = (() => {
         if (pr.merged && isFix)
@@ -8575,11 +8790,8 @@ const postComments = ({ parsedPullRequest, fixStatusId, closeStatusId, prOpenedC
             return undefined;
     })();
     const body = { comment, ...status };
-    return axios_1.default
-        .patch(endpoint, new url_1.URLSearchParams(body).toString())
-        .then((response) => {
-        return response;
-    });
+    const response = await axios_1.default.patch(endpoint, new url_1.URLSearchParams(body).toString());
+    return result_type_ts_1.Result.success(response.statusText);
 };
 exports.postComments = postComments;
 
