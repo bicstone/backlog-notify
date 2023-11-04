@@ -252,4 +252,28 @@ describe("postComments", () => {
     ).resolves.toStrictEqual([response1, response2])
     expect(fetchSpy).toHaveBeenCalledTimes(2)
   })
+
+  it("throw error if fetch failed with a status code other than 200", async () => {
+    fetchSpy.mockImplementation(() =>
+      Promise.resolve({
+        ok: false,
+        statusText: "500",
+      } as NodeJS.fetch.Response),
+    )
+
+    try {
+      await postComments({
+        parsedCommits: baseCommits,
+        parsedRef: baseParsedRef,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
+    } catch (e) {
+      expect(e).toEqual(new Error("500"))
+    }
+    expect.assertions(1)
+  })
 })

@@ -177,6 +177,25 @@ describe("postComments", () => {
         expect(result.error).toEqual("プルリクエストが下書きでした。")
         expect(fetchSpy).toHaveBeenCalledTimes(0)
       })
+      it("throw error if fetch failed with a status code other than 200", async () => {
+        fetchSpy.mockImplementation(() =>
+          Promise.resolve({
+            ok: false,
+            statusText: "500",
+          } as Response),
+        )
+
+        const event = getEvent(_event)
+        const parsedPullRequest = getParsedPullRequest(event)
+        const configs = getConfigs(parsedPullRequest)
+
+        try {
+          await postComments(configs)
+        } catch (e) {
+          expect(e).toEqual(new Error("500"))
+        }
+        expect.assertions(1)
+      })
     },
   )
 
@@ -236,6 +255,25 @@ describe("postComments", () => {
       expect(result.error).toEqual("プルリクエストが下書きでした。")
       expect(fetchSpy).toHaveBeenCalledTimes(0)
     })
+    it("throw error if fetch failed with a status code other than 200", async () => {
+      fetchSpy.mockImplementation(() =>
+        Promise.resolve({
+          ok: false,
+          statusText: "500",
+        } as Response),
+      )
+
+      const event = getEvent(_event)
+      const parsedPullRequest = getParsedPullRequest(event)
+      const configs = getConfigs(parsedPullRequest)
+
+      try {
+        await postComments(configs)
+      } catch (e) {
+        expect(e).toEqual(new Error("500"))
+      }
+      expect.assertions(1)
+    })
   })
 
   describe.each(closedEvents)("closed", (_event) => {
@@ -284,6 +322,25 @@ describe("postComments", () => {
       expect(result.isSuccess).toEqual(false)
       expect(result.error).toEqual("プルリクエストが下書きでした。")
       expect(fetchSpy).toHaveBeenCalledTimes(0)
+    })
+    it("throw error if fetch failed with a status code other than 200", async () => {
+      fetchSpy.mockImplementation(() =>
+        Promise.resolve({
+          ok: false,
+          statusText: "500",
+        } as Response),
+      )
+
+      const event = getEvent(_event)
+      const parsedPullRequest = getParsedPullRequest(event)
+      const configs = getConfigs(parsedPullRequest)
+
+      try {
+        await postComments(configs)
+      } catch (e) {
+        expect(e).toEqual(new Error("500"))
+      }
+      expect.assertions(1)
     })
   })
 
