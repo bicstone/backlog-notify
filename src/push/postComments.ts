@@ -80,8 +80,8 @@ const createPatchCommentRequest = async ({
   apiKey,
 }: CreatePatchCommentRequestProps): Promise<Response> => {
   const endpoint = updateIssueApiUrlTemplate({
-    apiHost: apiHost,
-    apiKey: apiKey,
+    apiHost,
+    apiKey,
     issueKey,
   })
 

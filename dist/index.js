@@ -5561,8 +5561,8 @@ const postComments = ({ parsedCommits, parsedRef, ...configs }) => {
 exports.postComments = postComments;
 const createPatchCommentRequest = async ({ commits, ref, issueKey, fixStatusId, closeStatusId, pushCommentTemplate, apiHost, apiKey, }) => {
     const endpoint = updateIssueApiUrlTemplate({
-        apiHost: apiHost,
-        apiKey: apiKey,
+        apiHost,
+        apiKey,
         issueKey,
     });
     const comment = (0, lodash_template_1.default)(pushCommentTemplate)({ commits, ref });

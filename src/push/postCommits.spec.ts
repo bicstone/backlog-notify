@@ -84,7 +84,7 @@ describe("postComments", () => {
     const parsedRef: ParsedRef = baseParsedRef
     const response: Response = {
       commits: parsedCommits[issueKey],
-      issueKey: issueKey,
+      issueKey,
       isFix: false,
       isClose: false,
     }
@@ -128,7 +128,7 @@ describe("postComments", () => {
     const parsedRef: ParsedRef = baseParsedRef
     const response: Response = {
       commits: parsedCommits[issueKey],
-      issueKey: issueKey,
+      issueKey,
       isFix: true,
       isClose: false,
     }
@@ -173,7 +173,7 @@ describe("postComments", () => {
     const parsedRef: ParsedRef = baseParsedRef
     const response: Response = {
       commits: parsedCommits[issueKey],
-      issueKey: issueKey,
+      issueKey,
       isFix: false,
       isClose: true,
     }
