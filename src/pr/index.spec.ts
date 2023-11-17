@@ -9,7 +9,7 @@ import { ParsedPullRequest, parsePullRequest } from "./parsePullRequest"
 import { postComments } from "./postComments"
 import { Result } from "result-type-ts"
 
-jest.mock("./common/stdout")
+jest.mock("../common/stdout")
 jest.mock("./parsePullRequest")
 jest.mock("./postComments")
 
