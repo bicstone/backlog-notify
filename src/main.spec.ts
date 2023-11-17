@@ -1,4 +1,4 @@
-import { info, setFailed } from "@actions/core"
+import { info, setFailed } from "./common/stdout"
 import { mocked } from "jest-mock"
 import webhooks from "@octokit/webhooks-examples"
 
@@ -10,7 +10,7 @@ import { fetchEvent } from "./main/fetchEvent"
 import { push } from "./push"
 import { pr } from "./pr"
 
-jest.mock("@actions/core")
+jest.mock("./common/stdout")
 jest.mock("./main/getConfigs")
 jest.mock("./main/fetchEvent")
 jest.mock("./push")

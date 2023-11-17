@@ -1,4 +1,4 @@
-import { startGroup, endGroup, info } from "@actions/core"
+import { startGroup, endGroup, info } from "../common/stdout"
 import { PushEvent } from "@octokit/webhooks-types"
 
 import { parseCommits } from "./parseCommits"

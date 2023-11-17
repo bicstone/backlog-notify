@@ -1,4 +1,4 @@
-import { startGroup, endGroup, info, setFailed } from "@actions/core"
+import { startGroup, endGroup, info, setFailed } from "./common/stdout"
 import { fetchEvent } from "./main/fetchEvent"
 import { getConfigs } from "./main/getConfigs"
 import { pr } from "./pr"

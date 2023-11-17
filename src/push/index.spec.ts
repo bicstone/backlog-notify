@@ -1,4 +1,4 @@
-import { info, setFailed } from "@actions/core"
+import { info, setFailed } from "../common/stdout"
 import { mocked } from "jest-mock"
 import webhooks from "@octokit/webhooks-examples"
 
@@ -9,7 +9,7 @@ import { parseRef } from "./parseRef"
 import { parseCommits, ParsedCommit } from "./parseCommits"
 import { postComments, Response } from "./postComments"
 
-jest.mock("@actions/core")
+jest.mock("../common/stdout")
 jest.mock("./parseRef")
 jest.mock("./parseCommits")
 jest.mock("./postComments")

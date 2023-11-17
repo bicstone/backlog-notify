@@ -1,5 +1,3 @@
-import { getInput, getMultilineInput } from "@actions/core"
-
 export type Configs = {
   projectKey: string
   apiHost: string
@@ -31,18 +29,14 @@ export const getConfigs = (): Configs => {
     apiHost: getConfig("api_host", { required: true }),
     apiKey: getConfig("api_key", { required: true }),
     githubEventPath: getConfig("github_event_path", { required: true }),
-    fixKeywords: getInput("fix_keywords")
-      ? getMultilineInput("fix_keywords", {
-          trimWhitespace: true,
-        })
+    fixKeywords: getConfig("fix_keywords")
+      ? getMultilineInput("fix_keywords")
       : ["#fix", "#fixes", "#fixed"],
-    closeKeywords: getInput("close_keywords")
-      ? getMultilineInput("close_keywords", {
-          trimWhitespace: true,
-        })
+    closeKeywords: getConfig("close_keywords")
+      ? getMultilineInput("close_keywords")
       : ["#close", "#closes", "#closed"],
     pushCommentTemplate:
-      getInput("push_comment_template") ||
+      getConfig("push_comment_template") ||
       "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
         "\n" +
         "<% commits.forEach(commit=>{ %>" +
@@ -50,46 +44,46 @@ export const getConfigs = (): Configs => {
         "+ [<%= commit.comment %>](<%= commit.url %>) (<% print(commit.id.slice(0, 7)) %>)" +
         "<% }); %>",
     prOpenedCommentTemplate:
-      getInput("pr_opened_comment_template") ||
+      getConfig("pr_opened_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
         "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     prReopenedCommentTemplate:
-      getInput("pr_reopened_comment_template") ||
+      getConfig("pr_reopened_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
         "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     prReadyForReviewCommentTemplate:
-      getInput("pr_ready_for_review_comment_template") ||
+      getConfig("pr_ready_for_review_comment_template") ||
       "<%= sender.login %>さんがプルリクエストを作成しました" +
         "\n\n" +
         "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     prClosedCommentTemplate:
-      getInput("pr_closed_comment_template") ||
+      getConfig("pr_closed_comment_template") ||
       "<%= sender.login %>さんがプルリクエストをクローズしました" +
         "\n\n" +
         "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     prMergedCommentTemplate:
-      getInput("pr_merged_comment_template") ||
+      getConfig("pr_merged_comment_template") ||
       "<%= sender.login %>さんがプルリクエストをマージしました" +
         "\n\n" +
         "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
     commitMessageRegTemplate:
-      getInput("commit_message_reg_template") ||
+      getConfig("commit_message_reg_template") ||
       "^" +
         "(<%= projectKey %>\\-\\d+)\\s?" +
         "(.*?)?\\s?" +
         "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
         "$",
     prTitleRegTemplate:
-      getInput("pr_title_reg_template") ||
+      getConfig("pr_title_reg_template") ||
       "^" +
         "(<%= projectKey %>\\-\\d+)\\s?" +
         "(.*?)?\\s?" +
         "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
         "$",
-    fixStatusId: getInput("fix_status_id") || "3",
-    closeStatusId: getInput("close_status_id") || "4",
+    fixStatusId: getConfig("fix_status_id") || "3",
+    closeStatusId: getConfig("close_status_id") || "4",
   }
 }
 
@@ -118,4 +112,23 @@ const getConfig = (name: string, options: InputOptions = {}): string => {
   }
 
   return val.trim()
+}
+
+/**
+ * Gets the values of an multiline input.
+ * Each value is also trimmed.
+ *
+ * @param name Name of the input to get
+ * @returns string[]
+ *
+ */
+export function getMultilineInput(
+  name: string,
+  options: InputOptions = {},
+): string[] {
+  const inputs: string[] = getConfig(name, options)
+    .split("\n")
+    .filter((x) => x !== "")
+
+  return inputs.map((input) => input.trim())
 }

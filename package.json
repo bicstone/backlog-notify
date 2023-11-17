@@ -4,7 +4,8 @@
   "description": "Notify commit messages to Backlog issue",
   "main": "dist/index.js",
   "scripts": {
-    "build": "npm run lint -- --fix && npm run format && ncc build ./src/main.ts --target es2021 --license index.js.LICENSE.txt",
+    "build": "npm run lint -- --fix && npm run format && npm run compile",
+    "compile": "ncc build ./src/main.ts --target es2021 --minify --source-map --license index.js.LICENSE.txt",
     "lint": "eslint --ext .ts ./src/ --max-warnings 0",
     "format": "prettier --write .",
     "prepare": "husky install",
@@ -26,7 +27,6 @@
   "author": "Oishi Takanori",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "1.10.1",
     "lodash.template": "4.5.0",
     "result-type-ts": "2.1.3"
   },
