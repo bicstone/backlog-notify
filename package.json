@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run lint -- --fix && npm run format && npm run compile",
-    "compile": "ncc build ./src/main.ts --target es2021 --minify --source-map --license index.js.LICENSE.txt",
+    "compile": "ncc build ./src/main.ts --target es2022 --license index.js.LICENSE.txt",
     "lint": "eslint --ext .ts ./src/ --max-warnings 0",
     "format": "prettier --write .",
     "prepare": "husky install",
