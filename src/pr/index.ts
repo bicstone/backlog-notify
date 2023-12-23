@@ -1,4 +1,4 @@
-import { startGroup, endGroup, info } from "@actions/core"
+import { startGroup, endGroup, info } from "../common/stdout"
 import { PullRequestEvent } from "@octokit/webhooks-types"
 
 import type { Configs } from "../main/getConfigs"
@@ -40,7 +40,7 @@ export const pr = async ({
   prMergedCommentTemplate,
   prTitleRegTemplate,
 }: PrProps): Promise<string> => {
-  startGroup(`プルリクエストを取得中`)
+  startGroup("プルリクエストを取得中")
   const { parsedPullRequest } = parsePullRequest({
     event,
     projectKey,
@@ -53,9 +53,9 @@ export const pr = async ({
   }
   endGroup()
 
-  startGroup(`コメント送信中`)
+  startGroup("コメント送信中")
 
-  const response = await postComments({
+  const result = await postComments({
     parsedPullRequest,
     fixStatusId,
     closeStatusId,
@@ -68,8 +68,8 @@ export const pr = async ({
     apiKey,
   })
 
-  if (typeof response === "string") {
-    return response
+  if (result.isFailure) {
+    return result.error
   }
 
   startGroup(`${parsedPullRequest.issueKey}:`)

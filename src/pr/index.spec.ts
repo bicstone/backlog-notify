@@ -1,14 +1,15 @@
-import { info, setFailed } from "@actions/core"
+import { info, setFailed } from "../common/stdout"
 import { mocked } from "jest-mock"
 import webhooks from "@octokit/webhooks-examples"
 
 import type { PullRequestEvent } from "@octokit/webhooks-types"
 
-import { pr, PrProps } from "./"
+import { pr, PrProps } from "."
 import { ParsedPullRequest, parsePullRequest } from "./parsePullRequest"
-import { postComments, Response } from "./postComments"
+import { postComments } from "./postComments"
+import { Result } from "result-type-ts"
 
-jest.mock("@actions/core")
+jest.mock("../common/stdout")
 jest.mock("./parsePullRequest")
 jest.mock("./postComments")
 
@@ -51,16 +52,6 @@ describe.each(pullRequestEvents)("index", (event) => {
     ...parsedPullRequest,
   })
 
-  const getResponse = (response?: Partial<Response>): Response => ({
-    data: {},
-    status: 200,
-    statusText: "OK",
-    headers: {},
-    config: {},
-    request: {},
-    ...response,
-  })
-
   beforeEach(() => {
     mocked(info).mockImplementation((m) => m)
     mocked(setFailed).mockImplementation((m) => m)
@@ -68,7 +59,7 @@ describe.each(pullRequestEvents)("index", (event) => {
       parsedPullRequest: getParsedPullRequest(),
     }))
     mocked(postComments).mockImplementation(() =>
-      Promise.resolve(getResponse()),
+      Promise.resolve(Result.success("OK")),
     )
   })
 
@@ -116,9 +107,11 @@ describe.each(pullRequestEvents)("index", (event) => {
   })
 
   test("not continue and resolve processing when pr title without issueKey", async () => {
-    mocked(postComments).mockImplementation(() => Promise.resolve("string"))
+    mocked(postComments).mockImplementation(() =>
+      Promise.resolve(Result.failure("failed")),
+    )
 
-    await expect(pr(getConfigs())).resolves.toStrictEqual("string")
+    await expect(pr(getConfigs())).resolves.toStrictEqual("failed")
 
     expect(parsePullRequest).toHaveBeenCalledTimes(1)
     expect(postComments).toHaveBeenCalledTimes(1)

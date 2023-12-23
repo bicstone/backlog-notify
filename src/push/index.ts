@@ -1,4 +1,4 @@
-import { startGroup, endGroup, info } from "@actions/core"
+import { startGroup, endGroup, info } from "../common/stdout"
 import { PushEvent } from "@octokit/webhooks-types"
 
 import { parseCommits } from "./parseCommits"
@@ -30,7 +30,7 @@ export const push = async ({
   | "apiHost"
   | "apiKey"
 > & { event: PushEvent }): Promise<string> => {
-  startGroup(`コミット取得中`)
+  startGroup("コミット取得中")
   const { parsedCommits } = parseCommits({
     commits: event.commits,
     projectKey,
@@ -43,14 +43,14 @@ export const push = async ({
   }
   endGroup()
 
-  startGroup(`Push先の確認中`)
+  startGroup("Push先の確認中")
   const parsedRef = parseRef(event.ref, event.repository.html_url)
   if (!parsedRef) {
     return "Git referenceの解析に失敗しました。"
   }
   endGroup()
 
-  startGroup(`コメント送信中`)
+  startGroup("コメント送信中")
   await postComments({
     parsedCommits,
     parsedRef,

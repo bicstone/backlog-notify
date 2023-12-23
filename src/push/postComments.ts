@@ -1,5 +1,3 @@
-import { URLSearchParams } from "url"
-import axios, { AxiosResponse } from "axios"
 import template from "lodash.template"
 import { ParsedCommits, ParsedCommit } from "./parseCommits"
 import { ParsedRef } from "./parseRef"
@@ -11,7 +9,6 @@ const updateIssueApiUrlTemplate = template(
 )
 
 export type Response = {
-  response: AxiosResponse<Record<string, unknown>>
   commits: ParsedCommit[]
   issueKey: string
   isFix: boolean
@@ -72,7 +69,7 @@ type CreatePatchCommentRequestProps = {
   apiKey: string
 }
 
-const createPatchCommentRequest = ({
+const createPatchCommentRequest = async ({
   commits,
   ref,
   issueKey,
@@ -83,8 +80,8 @@ const createPatchCommentRequest = ({
   apiKey,
 }: CreatePatchCommentRequestProps): Promise<Response> => {
   const endpoint = updateIssueApiUrlTemplate({
-    apiHost: apiHost,
-    apiKey: apiKey,
+    apiHost,
+    apiKey,
     issueKey,
   })
 
@@ -98,9 +95,16 @@ const createPatchCommentRequest = ({
   })()
   const body = { comment, ...status }
 
-  return axios
-    .patch(endpoint, new URLSearchParams(body).toString())
-    .then((response) => {
-      return { response, commits, issueKey, isFix, isClose }
-    })
+  const fetchOptions: RequestInit = {
+    method: "PATCH",
+    body: new URLSearchParams(body),
+  }
+
+  const response = await fetch(endpoint, fetchOptions)
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+
+  return { commits, issueKey, isFix, isClose }
 }

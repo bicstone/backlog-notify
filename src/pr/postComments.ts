@@ -1,5 +1,5 @@
+import { Result } from "result-type-ts"
 import { URLSearchParams } from "url"
-import axios, { AxiosResponse } from "axios"
 import template from "lodash.template"
 import { ParsedPullRequest } from "./parsePullRequest"
 
@@ -8,8 +8,6 @@ import { ParsedPullRequest } from "./parsePullRequest"
 const updateIssueApiUrlTemplate = template(
   "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>",
 )
-
-export type Response = AxiosResponse<Record<string, unknown>>
 
 export type PostCommentsProps = {
   parsedPullRequest: ParsedPullRequest
@@ -28,7 +26,7 @@ export type PostCommentsProps = {
  * Post the comment to Backlog API
  */
 
-export const postComments = ({
+export const postComments = async ({
   parsedPullRequest,
   fixStatusId,
   closeStatusId,
@@ -39,7 +37,7 @@ export const postComments = ({
   prMergedCommentTemplate,
   apiHost,
   apiKey,
-}: PostCommentsProps): Promise<Response | string> => {
+}: PostCommentsProps): Promise<Result<string, string>> => {
   const { issueKey, isFix, isClose, action, pr } = parsedPullRequest
 
   const endpoint = updateIssueApiUrlTemplate({
@@ -68,12 +66,12 @@ export const postComments = ({
   })()
 
   if (!comment) {
-    return Promise.resolve("予期しないイベントでした。")
+    return Result.failure("予期しないイベントでした。")
   }
 
   const draft = pr.draft
   if (draft) {
-    return Promise.resolve("プルリクエストが下書きでした。")
+    return Result.failure("プルリクエストが下書きでした。")
   }
 
   const status = (() => {
@@ -83,9 +81,16 @@ export const postComments = ({
   })()
   const body = { comment, ...status }
 
-  return axios
-    .patch(endpoint, new URLSearchParams(body).toString())
-    .then((response) => {
-      return response
-    })
+  const fetchOptions: RequestInit = {
+    method: "PATCH",
+    body: new URLSearchParams(body),
+  }
+
+  const response = await fetch(endpoint, fetchOptions)
+
+  if (!response.ok) {
+    throw new Error(response.statusText)
+  }
+
+  return Result.success(response.statusText)
 }

@@ -1,11 +1,7 @@
-import url from "url"
-import axios, { AxiosResponse } from "axios"
+/* eslint-disable @typescript-eslint/naming-convention */
 import { ParsedCommits } from "./parseCommits"
-import { postComments, Response } from "./postComments"
+import { postComments, Response as ApiResponse } from "./postComments"
 import { ParsedRef } from "./parseRef"
-
-jest.mock("axios")
-const mockedAxios = axios as jest.Mocked<typeof axios>
 
 const fixStatusId = "fixStatusId"
 const closeStatusId = "closeStatusId"
@@ -58,37 +54,37 @@ const baseParsedRef: ParsedRef = {
   name: "branch-name",
   url: "https://example.com/foo/bar/tree/branch-name",
 }
-const axiosResponse: AxiosResponse = {
-  data: {},
-  status: 200,
-  statusText: "OK",
-  headers: {},
-  config: {},
-  request: {},
-}
+
+const getFetchOptions = (
+  comment: string,
+  params?: Record<string, unknown>,
+) => ({
+  method: "PATCH",
+  body: new URLSearchParams({
+    comment,
+    ...params,
+  }),
+})
 
 describe("postComments", () => {
+  let fetchSpy = jest.spyOn(global, "fetch")
+
   beforeEach(() => {
-    mockedAxios.patch.mockImplementation(() => Promise.resolve(axiosResponse))
+    fetchSpy = jest.spyOn(global, "fetch")
+    fetchSpy.mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+      } as Response),
+    )
   })
 
   test("parseCommits post a comment to Backlog API", () => {
     const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
     const parsedCommits: ParsedCommits = baseCommits
     const parsedRef: ParsedRef = baseParsedRef
-    const body = {
-      comment:
-        `${baseCommit.author.name}さんが[${baseParsedRef.name}](${baseParsedRef.url})にプッシュしました` +
-        "\n" +
-        "\n" +
-        `+ ${baseCommit.comment} ` +
-        `([${baseCommit.id.slice(0, 7).slice(0, 7)}](${baseCommit.url}))`,
-    }
-    const params = new url.URLSearchParams(body).toString()
-    const response: Response = {
-      response: axiosResponse,
+    const response: ApiResponse = {
       commits: parsedCommits[issueKey],
-      issueKey: issueKey,
+      issueKey,
       isFix: false,
       isClose: false,
     }
@@ -104,9 +100,17 @@ describe("postComments", () => {
         apiKey,
       }),
     ).resolves.toStrictEqual([response])
-    expect(mockedAxios.patch).toHaveBeenCalled()
-    expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-    expect(mockedAxios.patch).toHaveBeenCalledWith(endpoint, params)
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(fetchSpy).toHaveBeenCalledWith(
+      endpoint,
+      getFetchOptions(
+        `${baseCommit.author.name}さんが[${baseParsedRef.name}](${baseParsedRef.url})にプッシュしました` +
+          "\n" +
+          "\n" +
+          `+ ${baseCommit.comment} ` +
+          `([${baseCommit.id.slice(0, 7).slice(0, 7)}](${baseCommit.url}))`,
+      ),
+    )
   })
 
   test("parseCommits post a comment and change status when change to fixed", () => {
@@ -122,20 +126,9 @@ describe("postComments", () => {
       ],
     }
     const parsedRef: ParsedRef = baseParsedRef
-    const body = {
-      comment:
-        `${baseCommit.author.name}さんが[${baseParsedRef.name}](${baseParsedRef.url})にプッシュしました` +
-        "\n" +
-        "\n" +
-        `+ ${baseCommit.comment} ` +
-        `([${baseCommit.id.slice(0, 7)}](${baseCommit.url}))`,
-      statusId: fixStatusId,
-    }
-    const params = new url.URLSearchParams(body).toString()
-    const response: Response = {
-      response: axiosResponse,
+    const response: ApiResponse = {
       commits: parsedCommits[issueKey],
-      issueKey: issueKey,
+      issueKey,
       isFix: true,
       isClose: false,
     }
@@ -151,9 +144,18 @@ describe("postComments", () => {
         apiKey,
       }),
     ).resolves.toStrictEqual([response])
-    expect(mockedAxios.patch).toHaveBeenCalled()
-    expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-    expect(mockedAxios.patch).toHaveBeenCalledWith(endpoint, params)
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(fetchSpy).toHaveBeenCalledWith(
+      endpoint,
+      getFetchOptions(
+        `${baseCommit.author.name}さんが[${baseParsedRef.name}](${baseParsedRef.url})にプッシュしました` +
+          "\n" +
+          "\n" +
+          `+ ${baseCommit.comment} ` +
+          `([${baseCommit.id.slice(0, 7)}](${baseCommit.url}))`,
+        { statusId: fixStatusId },
+      ),
+    )
   })
 
   test("parseCommits post a comment and change status when change to close", () => {
@@ -169,20 +171,9 @@ describe("postComments", () => {
       ],
     }
     const parsedRef: ParsedRef = baseParsedRef
-    const body = {
-      comment:
-        `${baseCommit.author.name}さんが[${baseParsedRef.name}](${baseParsedRef.url})にプッシュしました` +
-        "\n" +
-        "\n" +
-        `+ ${baseCommit.comment} ` +
-        `([${baseCommit.id.slice(0, 7)}](${baseCommit.url}))`,
-      statusId: closeStatusId,
-    }
-    const params = new url.URLSearchParams(body).toString()
-    const response: Response = {
-      response: axiosResponse,
+    const response: ApiResponse = {
       commits: parsedCommits[issueKey],
-      issueKey: issueKey,
+      issueKey,
       isFix: false,
       isClose: true,
     }
@@ -198,9 +189,18 @@ describe("postComments", () => {
         apiKey,
       }),
     ).resolves.toStrictEqual([response])
-    expect(mockedAxios.patch).toHaveBeenCalled()
-    expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-    expect(mockedAxios.patch).toHaveBeenCalledWith(endpoint, params)
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(fetchSpy).toHaveBeenCalledWith(
+      endpoint,
+      getFetchOptions(
+        `${baseCommit.author.name}さんが[${baseParsedRef.name}](${baseParsedRef.url})にプッシュしました` +
+          "\n" +
+          "\n" +
+          `+ ${baseCommit.comment} ` +
+          `([${baseCommit.id.slice(0, 7)}](${baseCommit.url}))`,
+        { statusId: closeStatusId },
+      ),
+    )
   })
 
   test("parseCommits post 2 comments to Backlog API when 2 issueKeys", () => {
@@ -226,15 +226,13 @@ describe("postComments", () => {
       ],
     }
     const parsedRef: ParsedRef = baseParsedRef
-    const response1: Response = {
-      response: axiosResponse,
+    const response1: ApiResponse = {
       commits: parsedCommits[`${projectKey}-1`],
       issueKey: `${projectKey}-1`,
       isFix: false,
       isClose: false,
     }
-    const response2: Response = {
-      response: axiosResponse,
+    const response2: ApiResponse = {
       commits: parsedCommits[`${projectKey}-2`],
       issueKey: `${projectKey}-2`,
       isFix: false,
@@ -252,7 +250,30 @@ describe("postComments", () => {
         apiKey,
       }),
     ).resolves.toStrictEqual([response1, response2])
-    expect(mockedAxios.patch).toHaveBeenCalled()
-    expect(mockedAxios.patch).toHaveBeenCalledTimes(2)
+    expect(fetchSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it("throw error if fetch failed with a status code other than 200", async () => {
+    fetchSpy.mockImplementation(() =>
+      Promise.resolve({
+        ok: false,
+        statusText: "500",
+      } as Response),
+    )
+
+    try {
+      await postComments({
+        parsedCommits: baseCommits,
+        parsedRef: baseParsedRef,
+        fixStatusId,
+        closeStatusId,
+        pushCommentTemplate,
+        apiHost,
+        apiKey,
+      })
+    } catch (e) {
+      expect(e).toEqual(new Error("500"))
+    }
+    expect.assertions(1)
   })
 })

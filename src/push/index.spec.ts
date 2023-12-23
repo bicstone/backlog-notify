@@ -1,16 +1,15 @@
-import { info, setFailed } from "@actions/core"
+import { info, setFailed } from "../common/stdout"
 import { mocked } from "jest-mock"
 import webhooks from "@octokit/webhooks-examples"
 
-import type { AxiosResponse } from "axios"
 import type { PushEvent } from "@octokit/webhooks-types"
 
-import { push } from "./"
+import { push } from "."
 import { parseRef } from "./parseRef"
 import { parseCommits, ParsedCommit } from "./parseCommits"
 import { postComments, Response } from "./postComments"
 
-jest.mock("@actions/core")
+jest.mock("../common/stdout")
 jest.mock("./parseRef")
 jest.mock("./parseCommits")
 jest.mock("./postComments")
@@ -30,20 +29,10 @@ const configs = {
   closeStatusId: "closeStatusId",
 }
 
-const axiosResponse: AxiosResponse = {
-  data: {},
-  status: 200,
-  statusText: "OK",
-  headers: {},
-  config: {},
-  request: {},
-}
-
 const message = "message"
 const issueKey = "issueKey"
 
 const basePostCommentsResponse: Response = {
-  response: axiosResponse,
   commits: [
     {
       message,

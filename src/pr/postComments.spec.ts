@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import url from "url"
-import axios from "axios"
-import { postComments, PostCommentsProps, Response } from "./postComments"
+import { postComments, PostCommentsProps } from "./postComments"
 import { ParsedPullRequest } from "./parsePullRequest"
 import { PullRequestEvent } from "@octokit/webhooks-types"
 import webhooks from "@octokit/webhooks-examples"
-
-jest.mock("axios")
-const mockedAxios = axios as jest.Mocked<typeof axios>
 
 const login = "login"
 const html_url = "html_url"
@@ -29,6 +24,7 @@ const prClosedCommentTemplate =
 const prMergedCommentTemplate =
   "merged,<%= sender.login %>,<%= title %>,<%= pr.html_url %>"
 const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
+const statusText = "OK"
 
 const events = (webhooks.find((v) => v.name === "pull_request")?.examples ??
   []) as PullRequestEvent[]
@@ -99,25 +95,28 @@ const getConfigs = (
   ...configs,
 })
 
-const getResponse = (response?: Partial<Response>): Response => ({
-  data: {},
-  status: 200,
-  statusText: "OK",
-  headers: {},
-  config: {},
-  request: {},
-  ...response,
-})
-
-const getRequestParams = (comment: string, params?: Record<string, unknown>) =>
-  new url.URLSearchParams({
+const getFetchOptions = (
+  comment: string,
+  params?: Record<string, unknown>,
+) => ({
+  method: "PATCH",
+  body: new URLSearchParams({
     comment,
     ...params,
-  }).toString()
+  }),
+})
 
 describe("postComments", () => {
+  let fetchSpy = jest.spyOn(global, "fetch")
+
   beforeEach(() => {
-    mockedAxios.patch.mockImplementation(() => Promise.resolve(getResponse()))
+    fetchSpy = jest.spyOn(global, "fetch")
+    fetchSpy.mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        statusText: statusText,
+      } as Response),
+    )
   })
 
   describe.each(openedEvents)(
@@ -126,51 +125,76 @@ describe("postComments", () => {
       const event = getEvent(_event)
       const comment = `${event.action},${login},${title},${html_url}`
 
-      test("post a comment to Backlog API", () => {
+      it("post a comment to Backlog API", async () => {
         const parsedPullRequest = getParsedPullRequest(event)
         const configs = getConfigs(parsedPullRequest)
+        const result = await postComments(configs)
 
-        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-        expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-        expect(mockedAxios.patch).toHaveBeenCalledWith(
+        expect(result.isSuccess).toEqual(true)
+        expect(result.value).toEqual(statusText)
+        expect(fetchSpy).toHaveBeenCalledTimes(1)
+        expect(fetchSpy).toHaveBeenCalledWith(
           endpoint,
-          getRequestParams(comment),
+          getFetchOptions(comment),
         )
       })
-      test("post a comment only when change to fixed", () => {
+      it("post a comment only when change to fixed", async () => {
         const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
         const configs = getConfigs(parsedPullRequest)
+        const result = await postComments(configs)
 
-        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-        expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-        expect(mockedAxios.patch).toHaveBeenCalledWith(
+        expect(result.isSuccess).toEqual(true)
+        expect(result.value).toEqual(statusText)
+        expect(fetchSpy).toHaveBeenCalledTimes(1)
+        expect(fetchSpy).toHaveBeenCalledWith(
           endpoint,
-          getRequestParams(comment),
+          getFetchOptions(comment),
         )
       })
-      test("post a comment only when change to close", () => {
+      it("post a comment only when change to close", async () => {
         const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
         const configs = getConfigs(parsedPullRequest)
+        const result = await postComments(configs)
 
-        expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-        expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-        expect(mockedAxios.patch).toHaveBeenCalledWith(
+        expect(result.isSuccess).toEqual(true)
+        expect(result.value).toEqual(statusText)
+        expect(fetchSpy).toHaveBeenCalledTimes(1)
+        expect(fetchSpy).toHaveBeenCalledWith(
           endpoint,
-          getRequestParams(comment),
+          getFetchOptions(comment),
         )
       })
-      test("not continue and return message if pr is draft", () => {
+      it("not continue and return message if pr is draft", async () => {
         const event = getEvent({
           ..._event,
           pull_request: { ..._event.pull_request, draft: true },
         } as PullRequestEvent)
         const parsedPullRequest = getParsedPullRequest(event)
         const configs = getConfigs(parsedPullRequest)
+        const result = await postComments(configs)
 
-        expect(postComments(configs)).resolves.toStrictEqual(
-          "プルリクエストが下書きでした。",
+        expect(result.isSuccess).toEqual(false)
+        expect(result.error).toEqual("プルリクエストが下書きでした。")
+        expect(fetchSpy).toHaveBeenCalledTimes(0)
+      })
+      it("throw error if fetch failed with a status code other than 200", async () => {
+        fetchSpy.mockImplementation(() =>
+          Promise.resolve({
+            ok: false,
+            statusText: "500",
+          } as Response),
         )
-        expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
+
+        const event = getEvent(_event)
+        const parsedPullRequest = getParsedPullRequest(event)
+        const configs = getConfigs(parsedPullRequest)
+
+        try {
+          await postComments(configs)
+        } catch (e) {
+          expect(e).toEqual(new Error("500"))
+        }
+        expect.assertions(1)
       })
     },
   )
@@ -182,51 +206,73 @@ describe("postComments", () => {
     } as PullRequestEvent)
     const comment = `merged,${login},${title},${html_url}`
 
-    test("post a comment to Backlog API", () => {
+    it("post a comment to Backlog API", async () => {
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment),
-      )
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+      expect(fetchSpy).toHaveBeenCalledWith(endpoint, getFetchOptions(comment))
     })
-    test("post a comment and change status when change to fixed", () => {
+    it("post a comment and change status when change to fixed", async () => {
       const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+      expect(fetchSpy).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment, { statusId: fixStatusId }),
+        getFetchOptions(comment, { statusId: fixStatusId }),
       )
     })
-    test("post a comment and change status when change to close", () => {
+    it("post a comment and change status when change to close", async () => {
       const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+      expect(fetchSpy).toHaveBeenCalledWith(
         endpoint,
-        getRequestParams(comment, { statusId: closeStatusId }),
+        getFetchOptions(comment, { statusId: closeStatusId }),
       )
     })
-    test("not continue and return message if pr is draft", () => {
+    it("not continue and return message if pr is draft", async () => {
       const event = getEvent({
         ..._event,
         pull_request: { ..._event.pull_request, draft: true },
       } as PullRequestEvent)
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(
-        "プルリクエストが下書きでした。",
+      expect(result.isSuccess).toEqual(false)
+      expect(result.error).toEqual("プルリクエストが下書きでした。")
+      expect(fetchSpy).toHaveBeenCalledTimes(0)
+    })
+    it("throw error if fetch failed with a status code other than 200", async () => {
+      fetchSpy.mockImplementation(() =>
+        Promise.resolve({
+          ok: false,
+          statusText: "500",
+        } as Response),
       )
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
+
+      const event = getEvent(_event)
+      const parsedPullRequest = getParsedPullRequest(event)
+      const configs = getConfigs(parsedPullRequest)
+
+      try {
+        await postComments(configs)
+      } catch (e) {
+        expect(e).toEqual(new Error("500"))
+      }
+      expect.assertions(1)
     })
   })
 
@@ -234,64 +280,80 @@ describe("postComments", () => {
     const event = getEvent(_event)
     const comment = `closed,${login},${title},${html_url}`
 
-    test("post a comment to Backlog API", () => {
+    it("post a comment to Backlog API", async () => {
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment),
-      )
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+      expect(fetchSpy).toHaveBeenCalledWith(endpoint, getFetchOptions(comment))
     })
-    test("post a comment only when change to fixed", () => {
+    it("post a comment only when change to fixed", async () => {
       const parsedPullRequest = getParsedPullRequest(event, { isFix: true })
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment),
-      )
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+      expect(fetchSpy).toHaveBeenCalledWith(endpoint, getFetchOptions(comment))
     })
-    test("post a comment only when change to close", () => {
+    it("post a comment only when change to close", async () => {
       const parsedPullRequest = getParsedPullRequest(event, { isClose: true })
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(getResponse())
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(1)
-      expect(mockedAxios.patch).toHaveBeenCalledWith(
-        endpoint,
-        getRequestParams(comment),
-      )
+      expect(result.isSuccess).toEqual(true)
+      expect(result.value).toEqual(statusText)
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+      expect(fetchSpy).toHaveBeenCalledWith(endpoint, getFetchOptions(comment))
     })
-    test("not continue and return message if pr is draft", () => {
+    it("not continue and return message if pr is draft", async () => {
       const event = getEvent({
         ..._event,
         pull_request: { ..._event.pull_request, draft: true },
       } as PullRequestEvent)
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
 
-      expect(postComments(configs)).resolves.toStrictEqual(
-        "プルリクエストが下書きでした。",
-      )
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
+      expect(result.isSuccess).toEqual(false)
+      expect(result.error).toEqual("プルリクエストが下書きでした。")
+      expect(fetchSpy).toHaveBeenCalledTimes(0)
     })
-  })
+    it("throw error if fetch failed with a status code other than 200", async () => {
+      fetchSpy.mockImplementation(() =>
+        Promise.resolve({
+          ok: false,
+          statusText: "500",
+        } as Response),
+      )
 
-  describe.each(unexpectedEvents)("unexpected", (_event) => {
-    test("not continue and return message", () => {
       const event = getEvent(_event)
       const parsedPullRequest = getParsedPullRequest(event)
       const configs = getConfigs(parsedPullRequest)
 
-      expect(postComments(configs)).resolves.toStrictEqual(
-        "予期しないイベントでした。",
-      )
-      expect(mockedAxios.patch).toHaveBeenCalledTimes(0)
+      try {
+        await postComments(configs)
+      } catch (e) {
+        expect(e).toEqual(new Error("500"))
+      }
+      expect.assertions(1)
+    })
+  })
+
+  describe.each(unexpectedEvents)("unexpected", (_event) => {
+    it("not continue and return message", async () => {
+      const event = getEvent(_event)
+      const parsedPullRequest = getParsedPullRequest(event)
+      const configs = getConfigs(parsedPullRequest)
+      const result = await postComments(configs)
+
+      expect(result.isSuccess).toEqual(false)
+      expect(result.error).toEqual("予期しないイベントでした。")
+      expect(fetchSpy).toHaveBeenCalledTimes(0)
     })
   })
 })
