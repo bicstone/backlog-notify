@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ParsedCommits } from "./parseCommits"
-import { postComments, Response } from "./postComments"
+import { postComments, Response as ApiResponse } from "./postComments"
 import { ParsedRef } from "./parseRef"
 
 const fixStatusId = "fixStatusId"
@@ -74,7 +74,7 @@ describe("postComments", () => {
     fetchSpy.mockImplementation(() =>
       Promise.resolve({
         ok: true,
-      } as NodeJS.fetch.Response),
+      } as Response),
     )
   })
 
@@ -82,7 +82,7 @@ describe("postComments", () => {
     const endpoint = `https://${apiHost}/api/v2/issues/${issueKey}?apiKey=${apiKey}`
     const parsedCommits: ParsedCommits = baseCommits
     const parsedRef: ParsedRef = baseParsedRef
-    const response: Response = {
+    const response: ApiResponse = {
       commits: parsedCommits[issueKey],
       issueKey,
       isFix: false,
@@ -126,7 +126,7 @@ describe("postComments", () => {
       ],
     }
     const parsedRef: ParsedRef = baseParsedRef
-    const response: Response = {
+    const response: ApiResponse = {
       commits: parsedCommits[issueKey],
       issueKey,
       isFix: true,
@@ -171,7 +171,7 @@ describe("postComments", () => {
       ],
     }
     const parsedRef: ParsedRef = baseParsedRef
-    const response: Response = {
+    const response: ApiResponse = {
       commits: parsedCommits[issueKey],
       issueKey,
       isFix: false,
@@ -226,13 +226,13 @@ describe("postComments", () => {
       ],
     }
     const parsedRef: ParsedRef = baseParsedRef
-    const response1: Response = {
+    const response1: ApiResponse = {
       commits: parsedCommits[`${projectKey}-1`],
       issueKey: `${projectKey}-1`,
       isFix: false,
       isClose: false,
     }
-    const response2: Response = {
+    const response2: ApiResponse = {
       commits: parsedCommits[`${projectKey}-2`],
       issueKey: `${projectKey}-2`,
       isFix: false,
@@ -258,7 +258,7 @@ describe("postComments", () => {
       Promise.resolve({
         ok: false,
         statusText: "500",
-      } as NodeJS.fetch.Response),
+      } as Response),
     )
 
     try {
