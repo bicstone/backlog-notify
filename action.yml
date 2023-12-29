@@ -20,84 +20,36 @@ inputs:
   fix_keywords:
     description: Keywords to change the status of the issue to fixed
     required: false
-    default: |-
-      #fix
-      #fixes
-      #fixed
   close_keywords:
     description: Keywords to change the status of the issue to closed
     required: false
-    default: |-
-      #close
-      #closes
-      #closed
   push_comment_template:
     description: The template for backlog issue comment on push events
     required: false
-    default: |-
-      <%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました
-      <% commits.forEach(commit=>{ %>
-      + [<%= commit.comment %>](<%= commit.url %>) (<% print(commit.id.slice(0, 7)) %>)<% }); %>
   pr_opened_comment_template:
     description: The template for backlog issue comment on opened a pull request
     required: false
-    default: |-
-      <%= sender.login %>さんがプルリクエストを作成しました
-
-      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   pr_reopened_comment_template:
     description: The template for backlog issue comment on reopened a pull request
     required: false
-    default: |-
-      <%= sender.login %>さんがプルリクエストを作成しました
-
-      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   pr_ready_for_review_comment_template:
     description: The template for backlog issue comment on ready to review a pull request
     required: false
-    default: |-
-      <%= sender.login %>さんがプルリクエストを作成しました
-
-      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   pr_closed_comment_template:
     description: The template for backlog issue comment on closed a pull request
     required: false
-    default: |-
-      <%= sender.login %>さんがプルリクエストをクローズしました
-
-      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   pr_merged_comment_template:
     description: The template for backlog issue comment on merged a pull request
     required: false
-    default: |-
-      <%= sender.login %>さんがプルリクエストをマージしました
-
-      + [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)
   commit_message_reg_template:
     description: The template for regular expressions to parse commit messages
     required: false
-    default: "\
-      ^\
-      (<%= projectKey %>\\-\\d+)\\s?\
-      (.*?)?\\s?\
-      (<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?\
-      $\
-      "
   pr_title_reg_template:
     description: The template for regular expressions to parse pull request title
     required: false
-    default: "\
-      ^\
-      (<%= projectKey %>\\-\\d+)\\s?\
-      (.*?)?\\s?\
-      (<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?\
-      $\
-      "
   fix_status_id:
     description: Status ID to mark as fixed
     required: false
-    default: 3
   close_status_id:
     description: Status ID to mark as closed
     required: false
-    default: 4
