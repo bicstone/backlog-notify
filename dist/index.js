@@ -2460,7 +2460,27 @@ exports.fetchEvent = fetchEvent;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getMultilineInput = exports.getConfigs = void 0;
+exports.getMultilineInput = exports.getConfigs = exports.defaultConfigs = void 0;
+exports.defaultConfigs = {
+    fixKeywords: ["#fix", "#fixes", "#fixed"],
+    closeKeywords: ["#close", "#closes", "#closed"],
+    pushCommentTemplate: "<%= commits[0].author.login %> pushed to [<%= ref %>](<%= compare %>)",
+    prOpenedCommentTemplate: "<%= sender.login %> opened a pull request in <%= repository.full_name %>:",
+    prReopenedCommentTemplate: "<%= sender.login %> reopened a pull request in <%= repository.full_name %>:",
+    prReadyForReviewCommentTemplate: "<%= sender.login %> marked a pull request as ready for review in <%= repository.full_name %>:",
+    prClosedCommentTemplate: "<%= sender.login %> closed a pull request in <%= repository.full_name %>:",
+    prMergedCommentTemplate: "<%= sender.login %> merged a pull request in <%= repository.full_name %>:",
+    commitMessageRegTemplate: "^(?<issueKey><%= projectKey %>\\-\\d+)\\s?" +
+        "(?<commitMessage>.*?)?\\s?" +
+        "(?<keyword><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+        "$",
+    prTitleRegTemplate: "^(?<issueKey><%= projectKey %>\\-\\d+)\\s?" +
+        "(?<pullRequestTitle>.*?)?\\s?" +
+        "(?<keyword><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+        "$",
+    fixStatusId: "3",
+    closeStatusId: "4",
+};
 /**
  * Parses and validations the action configuration
  * @returns Parsed the action configuration
@@ -2474,51 +2494,26 @@ const getConfigs = () => {
         githubEventPath: getConfig("github_event_path", { required: true }),
         fixKeywords: getConfig("fix_keywords")
             ? getMultilineInput("fix_keywords")
-            : ["#fix", "#fixes", "#fixed"],
+            : exports.defaultConfigs.fixKeywords,
         closeKeywords: getConfig("close_keywords")
             ? getMultilineInput("close_keywords")
-            : ["#close", "#closes", "#closed"],
-        pushCommentTemplate: getConfig("push_comment_template") ||
-            "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
-                "\n" +
-                "<% commits.forEach(commit=>{ %>" +
-                "\n" +
-                "+ [<%= commit.comment %>](<%= commit.url %>) (<% print(commit.id.slice(0, 7)) %>)" +
-                "<% }); %>",
+            : exports.defaultConfigs.closeKeywords,
+        pushCommentTemplate: getConfig("push_comment_template") || exports.defaultConfigs.pushCommentTemplate,
         prOpenedCommentTemplate: getConfig("pr_opened_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストを作成しました" +
-                "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+            exports.defaultConfigs.prOpenedCommentTemplate,
         prReopenedCommentTemplate: getConfig("pr_reopened_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストを作成しました" +
-                "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+            exports.defaultConfigs.prReopenedCommentTemplate,
         prReadyForReviewCommentTemplate: getConfig("pr_ready_for_review_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストを作成しました" +
-                "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+            exports.defaultConfigs.prReadyForReviewCommentTemplate,
         prClosedCommentTemplate: getConfig("pr_closed_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストをクローズしました" +
-                "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+            exports.defaultConfigs.prClosedCommentTemplate,
         prMergedCommentTemplate: getConfig("pr_merged_comment_template") ||
-            "<%= sender.login %>さんがプルリクエストをマージしました" +
-                "\n\n" +
-                "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+            exports.defaultConfigs.prMergedCommentTemplate,
         commitMessageRegTemplate: getConfig("commit_message_reg_template") ||
-            "^" +
-                "(<%= projectKey %>\\-\\d+)\\s?" +
-                "(.*?)?\\s?" +
-                "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
-                "$",
-        prTitleRegTemplate: getConfig("pr_title_reg_template") ||
-            "^" +
-                "(<%= projectKey %>\\-\\d+)\\s?" +
-                "(.*?)?\\s?" +
-                "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
-                "$",
-        fixStatusId: getConfig("fix_status_id") || "3",
-        closeStatusId: getConfig("close_status_id") || "4",
+            exports.defaultConfigs.commitMessageRegTemplate,
+        prTitleRegTemplate: getConfig("pr_title_reg_template") || exports.defaultConfigs.prTitleRegTemplate,
+        fixStatusId: getConfig("fix_status_id") || exports.defaultConfigs.fixStatusId,
+        closeStatusId: getConfig("close_status_id") || exports.defaultConfigs.closeStatusId,
     };
 };
 exports.getConfigs = getConfigs;
