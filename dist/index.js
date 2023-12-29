@@ -2464,19 +2464,36 @@ exports.getMultilineInput = exports.getConfigs = exports.defaultConfigs = void 0
 exports.defaultConfigs = {
     fixKeywords: ["#fix", "#fixes", "#fixed"],
     closeKeywords: ["#close", "#closes", "#closed"],
-    pushCommentTemplate: "<%= commits[0].author.login %> pushed to [<%= ref %>](<%= compare %>)",
-    prOpenedCommentTemplate: "<%= sender.login %> opened a pull request in <%= repository.full_name %>:",
-    prReopenedCommentTemplate: "<%= sender.login %> reopened a pull request in <%= repository.full_name %>:",
-    prReadyForReviewCommentTemplate: "<%= sender.login %> marked a pull request as ready for review in <%= repository.full_name %>:",
-    prClosedCommentTemplate: "<%= sender.login %> closed a pull request in <%= repository.full_name %>:",
-    prMergedCommentTemplate: "<%= sender.login %> merged a pull request in <%= repository.full_name %>:",
-    commitMessageRegTemplate: "^(?<issueKey><%= projectKey %>\\-\\d+)\\s?" +
-        "(?<commitMessage>.*?)?\\s?" +
-        "(?<keyword><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+    pushCommentTemplate: "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
+        "\n" +
+        "<% commits.forEach(commit=>{ %>" +
+        "\n" +
+        "+ [<%= commit.comment %>](<%= commit.url %>) (<% print(commit.id.slice(0, 7)) %>)" +
+        "<% }); %>",
+    prOpenedCommentTemplate: "<%= sender.login %>さんがプルリクエストを作成しました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+    prReopenedCommentTemplate: "<%= sender.login %>さんがプルリクエストを作成しました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+    prReadyForReviewCommentTemplate: "<%= sender.login %>さんがプルリクエストを作成しました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+    prClosedCommentTemplate: "<%= sender.login %>さんがプルリクエストをクローズしました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+    prMergedCommentTemplate: "<%= sender.login %>さんがプルリクエストをマージしました" +
+        "\n\n" +
+        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
+    commitMessageRegTemplate: "^" +
+        "(<%= projectKey %>\\-\\d+)\\s?" +
+        "(.*?)?\\s?" +
+        "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
         "$",
-    prTitleRegTemplate: "^(?<issueKey><%= projectKey %>\\-\\d+)\\s?" +
-        "(?<pullRequestTitle>.*?)?\\s?" +
-        "(?<keyword><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
+    prTitleRegTemplate: "^" +
+        "(<%= projectKey %>\\-\\d+)\\s?" +
+        "(.*?)?\\s?" +
+        "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
         "$",
     fixStatusId: "3",
     closeStatusId: "4",
