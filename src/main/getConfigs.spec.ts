@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { getConfigs, Configs } from "./getConfigs"
+import {
+  getConfigs,
+  Configs,
+  defaultConfigs,
+  RequiredConfigKeys,
+} from "./getConfigs"
 
 const requiredEnv = {
   // whitespace added before and after the value
@@ -27,11 +32,14 @@ const optionalEnv = {
   PR_TITLE_REG_TEMPLATE: "prTitleRegTemplate",
 }
 
-const configs: Configs = {
+const requiredConfigs: Pick<Configs, RequiredConfigKeys> = {
   projectKey: "projectKey",
   apiHost: "apiHost",
   apiKey: "apiKey",
   githubEventPath: "githubEventPath",
+}
+
+const optionalConfigs: Omit<Configs, RequiredConfigKeys> = {
   fixKeywords: ["fixKeyword1", "fixKeyword2"],
   closeKeywords: ["closeKeyword1", "closeKeyword2"],
   pushCommentTemplate: "pushCommentTemplate",
@@ -58,14 +66,20 @@ describe("getConfigs", () => {
   })
 
   test("getConfigs return trimmed configs", () => {
-    expect(getConfigs()).toStrictEqual(configs)
+    expect(getConfigs()).toStrictEqual({
+      ...requiredConfigs,
+      ...optionalConfigs,
+    })
   })
 
   test.each(Object.keys(requiredEnv))(
     "getConfigs does not throw when %s is defined only by env",
     (key) => {
       process.env[`INPUT_${key}`] = ""
-      expect(getConfigs()).toStrictEqual(configs)
+      expect(getConfigs()).toStrictEqual({
+        ...requiredConfigs,
+        ...optionalConfigs,
+      })
     },
   )
 
@@ -83,7 +97,7 @@ describe("getConfigs", () => {
     (key) => {
       process.env[key] = ""
       process.env[`INPUT_${key}`] = ""
-      expect(() => getConfigs()).not.toThrowError()
+      expect(() => getConfigs()).not.toThrow()
     },
   )
 
@@ -95,52 +109,8 @@ describe("getConfigs", () => {
       process.env[`INPUT_${key}`] = ``
     })
     expect(getConfigs()).toStrictEqual({
-      ...configs,
-      // parseCommits.ts of version 2.x.x
-      fixKeywords: ["#fix", "#fixes", "#fixed"],
-      closeKeywords: ["#close", "#closes", "#closed"],
-      // postComments.ts of version 2.x.x
-      pushCommentTemplate:
-        "<%= commits[0].author.name %>さんが[<%= ref.name %>](<%= ref.url %>)にプッシュしました" +
-        "\n" +
-        "<% commits.forEach(commit=>{ %>" +
-        "\n" +
-        "+ [<%= commit.comment %>](<%= commit.url %>) (<% print(commit.id.slice(0, 7)) %>)" +
-        "<% }); %>",
-      prOpenedCommentTemplate:
-        "<%= sender.login %>さんがプルリクエストを作成しました" +
-        "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
-      prReopenedCommentTemplate:
-        "<%= sender.login %>さんがプルリクエストを作成しました" +
-        "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
-      prReadyForReviewCommentTemplate:
-        "<%= sender.login %>さんがプルリクエストを作成しました" +
-        "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
-      prClosedCommentTemplate:
-        "<%= sender.login %>さんがプルリクエストをクローズしました" +
-        "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
-      prMergedCommentTemplate:
-        "<%= sender.login %>さんがプルリクエストをマージしました" +
-        "\n\n" +
-        "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
-      commitMessageRegTemplate:
-        "^" +
-        "(<%= projectKey %>\\-\\d+)\\s?" +
-        "(.*?)?\\s?" +
-        "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
-        "$",
-      prTitleRegTemplate:
-        "^" +
-        "(<%= projectKey %>\\-\\d+)\\s?" +
-        "(.*?)?\\s?" +
-        "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
-        "$",
-      fixStatusId: "3",
-      closeStatusId: "4",
+      ...defaultConfigs,
+      ...requiredConfigs,
     })
   })
 })
