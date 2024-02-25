@@ -1,3 +1,13 @@
 {
-  "extends": ["github>bicstone/renovate-config"]
+  "extends": ["github>bicstone/renovate-config"],
+  "packageRules": [
+    {
+      "automerge": true,
+      "groupName": "devDependencies",
+      "matchDepTypes": ["devDependencies"],
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "platformAutomerge": true
+    }
+  ]
 }
