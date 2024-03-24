@@ -37,9 +37,9 @@
     "@octokit/webhooks-types": "7.4.0",
     "@types/jest": "29.5.12",
     "@types/lodash.template": "4.5.3",
-    "@types/node": "20.11.28",
-    "@typescript-eslint/eslint-plugin": "7.2.0",
-    "@typescript-eslint/parser": "7.2.0",
+    "@types/node": "20.11.30",
+    "@typescript-eslint/eslint-plugin": "7.3.1",
+    "@typescript-eslint/parser": "7.3.1",
     "@vercel/ncc": "0.38.1",
     "all-contributors-cli": "6.26.1",
     "eslint": "8.57.0",
@@ -47,14 +47,14 @@
     "eslint-plugin-import": "2.29.1",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "6.1.1",
-    "eslint-plugin-regexp": "2.3.0",
+    "eslint-plugin-regexp": "2.4.0",
     "husky": "9.0.11",
     "jest": "29.7.0",
     "jest-mock": "29.7.0",
     "prettier": "3.2.5",
     "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
-    "typescript": "5.4.2"
+    "typescript": "5.4.3"
   },
   "volta": {
     "node": "20.11.1"
