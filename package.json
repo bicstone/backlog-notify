@@ -57,7 +57,7 @@
     "typescript": "5.4.5"
   },
   "volta": {
-    "node": "20.12.1"
+    "node": "20.12.2"
   },
   "engines": {
     "node": "^20.0.0"
