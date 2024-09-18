@@ -8,6 +8,6 @@ export default [
     // TODO: eslintPluginImport
     ...eslintPluginRegexp,
     files: ['**/*.ts'],
-    ignores: ['.yarn', 'coverage', 'node_modules', 'dist', 'docs']
+    ignores: ['coverage', 'node_modules', 'dist', 'docs']
   }
 ]
