@@ -18,14 +18,16 @@ Pull Requests are always welcome, but please discuss larger changes via issue be
 
 1. Fork the repository.
 1. Clone the fork to your local machine
-1. Install the dependencies with npm
-   `npm install`
+1. Enable corepack
+   `corepack enable`
+1. Install the dependencies with pnpm
+   `pnpm install`
 1. Create a new topic branch
    `git checkout -b fix/topic`
 1. Make changes
 1. Run build & test
-   `npm run build`
-   `npm run test`
+   `pnpm run build`
+   `pnpm run test`
 1. commit and push
    `git push -u origin HEAD`
 1. make a Pull Request.
