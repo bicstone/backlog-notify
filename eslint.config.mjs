@@ -1,13 +1,17 @@
 import eslintConfigLove from "eslint-config-love"
-import eslintPluginImport from "eslint-plugin-import"
 import eslintPluginRegexp from "eslint-plugin-regexp"
 
 export default [
   {
     ...eslintConfigLove,
-    ...eslintPluginImport.flatConfigs.recommended,
+    files: ["src/**/*.ts"],
+    rules: {
+      ...eslintConfigLove.rules,
+      "@typescript-eslint/no-magic-numbers": "off",
+    },
+  },
+  {
     ...eslintPluginRegexp.configs["flat/recommended"],
-    files: ["**/*.ts"],
-    ignores: ["coverage", "node_modules", "dist", "docs"],
+    files: ["src/**/*.ts"],
   },
 ]
