@@ -1,23 +1,27 @@
-import { PullRequest, PullRequestEvent, User } from "@octokit/webhooks-types"
-import template from "lodash.template"
+import type {
+  PullRequest,
+  PullRequestEvent,
+  User,
+} from "@octokit/webhooks-types";
+import template from "lodash.template";
 
-export type ParsedPullRequest = {
-  pr: PullRequest
-  action: PullRequestEvent["action"]
-  sender: User
-  issueKey: string
-  title: string
-  keywords: string
-  isFix: boolean
-  isClose: boolean
+export interface ParsedPullRequest {
+  pr: PullRequest;
+  action: PullRequestEvent["action"];
+  sender: User;
+  issueKey: string;
+  title: string;
+  keywords: string;
+  isFix: boolean;
+  isClose: boolean;
 }
 
-export type ParsePullRequestProps = {
-  event: PullRequestEvent
-  projectKey: string
-  fixKeywords: string[]
-  closeKeywords: string[]
-  prTitleRegTemplate: string
+export interface ParsePullRequestProps {
+  event: PullRequestEvent;
+  projectKey: string;
+  fixKeywords: string[];
+  closeKeywords: string[];
+  prTitleRegTemplate: string;
 }
 
 /**
@@ -37,14 +41,14 @@ export const parsePullRequest = ({
       closeKeywords,
     }),
     "s",
-  )
+  );
 
-  const match = event.pull_request.title.match(prTitleReg)
+  const match = event.pull_request.title.match(prTitleReg);
 
-  const [, issueKey = null, title = "", keywords = ""] = match ?? []
+  const [, issueKey = null, title = "", keywords = ""] = match ?? [];
 
   if (!match || !issueKey) {
-    return { parsedPullRequest: null }
+    return { parsedPullRequest: null };
   }
 
   return {
@@ -58,5 +62,5 @@ export const parsePullRequest = ({
       isFix: fixKeywords.includes(keywords),
       isClose: closeKeywords.includes(keywords),
     },
-  }
-}
+  };
+};

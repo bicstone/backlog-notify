@@ -1,11 +1,11 @@
-import { startGroup, endGroup, info } from "../common/stdout"
-import { PushEvent } from "@octokit/webhooks-types"
+import { startGroup, endGroup, info } from "../common/stdout";
+import type { PushEvent } from "@octokit/webhooks-types";
 
-import { parseCommits } from "./parseCommits"
-import { parseRef } from "./parseRef"
-import { postComments } from "./postComments"
+import { parseCommits } from "./parseCommits";
+import { parseRef } from "./parseRef";
+import { postComments } from "./postComments";
 
-import type { Configs } from "../main/getConfigs"
+import type { Configs } from "../main/getConfigs";
 
 export const push = async ({
   event,
@@ -30,27 +30,27 @@ export const push = async ({
   | "apiHost"
   | "apiKey"
 > & { event: PushEvent }): Promise<string> => {
-  startGroup("コミット取得中")
+  startGroup("コミット取得中");
   const { parsedCommits } = parseCommits({
     commits: event.commits,
     projectKey,
     fixKeywords,
     closeKeywords,
     commitMessageRegTemplate,
-  })
+  });
   if (!parsedCommits) {
-    return "課題キーのついたコミットが1件も見つかりませんでした。"
+    return "課題キーのついたコミットが1件も見つかりませんでした。";
   }
-  endGroup()
+  endGroup();
 
-  startGroup("Push先の確認中")
-  const parsedRef = parseRef(event.ref, event.repository.html_url)
+  startGroup("Push先の確認中");
+  const parsedRef = parseRef(event.ref, event.repository.html_url);
   if (!parsedRef) {
-    return "Git referenceの解析に失敗しました。"
+    return "Git referenceの解析に失敗しました。";
   }
-  endGroup()
+  endGroup();
 
-  startGroup("コメント送信中")
+  startGroup("コメント送信中");
   await postComments({
     parsedCommits,
     parsedRef,
@@ -61,24 +61,24 @@ export const push = async ({
     apiKey,
   }).then((data) => {
     data.forEach(({ commits, issueKey, isFix, isClose }) => {
-      startGroup(`${commits[0].issueKey}:`)
+      startGroup(`${commits[0].issueKey}:`);
 
       commits.forEach(({ message }) => {
-        info(message)
-      })
+        info(message);
+      });
 
       if (isFix) {
-        info(`${issueKey}を処理済みにしました。`)
+        info(`${issueKey}を処理済みにしました。`);
       }
 
       if (isClose) {
-        info(`${issueKey}を完了にしました。`)
+        info(`${issueKey}を完了にしました。`);
       }
 
-      endGroup()
-    })
-  })
-  endGroup()
+      endGroup();
+    });
+  });
+  endGroup();
 
-  return "正常に送信しました。"
-}
+  return "正常に送信しました。";
+};
