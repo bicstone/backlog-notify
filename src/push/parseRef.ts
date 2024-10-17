@@ -1,11 +1,11 @@
-import template from "lodash.template"
+import template from "lodash.template";
 
-const refReg = /refs\/[a-z]*\/(.*)/
-const refUrlTemplate = template("<%= repositoryHtmlUrl %>/tree/<%= name %>")
+const refReg = /refs\/[a-z]*\/(.*)/;
+const refUrlTemplate = template("<%= repositoryHtmlUrl %>/tree/<%= name %>");
 
-export type ParsedRef = {
-  name: string
-  url: string
+export interface ParsedRef {
+  name: string;
+  url: string;
 }
 
 /**
@@ -19,10 +19,10 @@ export const parseRef = (
   repositoryHtmlUrl: string,
 ): ParsedRef | undefined => {
   // e.g. Get name `feature/foo ` for ref `refs/heads/feature/foo`
-  const name = refReg.exec(ref)?.[1]
-  if (!name) return
+  const name = refReg.exec(ref)?.[1];
+  if (!name) return;
 
-  const url = refUrlTemplate({ repositoryHtmlUrl, name })
+  const url = refUrlTemplate({ repositoryHtmlUrl, name });
 
-  return { name, url }
-}
+  return { name, url };
+};

@@ -12,14 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version-file: ".node-version"
-          cache: "npm"
-      - run: npm ci
-      - run: npm audit signatures
-      - run: npm run build
-      - run: npm run test
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - run: pnpm run test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:

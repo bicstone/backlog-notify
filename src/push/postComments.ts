@@ -1,28 +1,28 @@
-import template from "lodash.template"
-import { ParsedCommits, ParsedCommit } from "./parseCommits"
-import { ParsedRef } from "./parseRef"
+import template from "lodash.template";
+import type { ParsedCommits, ParsedCommit } from "./parseCommits";
+import type { ParsedRef } from "./parseRef";
 
 // Update Issue API
 // https://developer.nulab.com/docs/backlog/api/2/update-issue/#
 const updateIssueApiUrlTemplate = template(
   "https://<%=apiHost%>/api/v2/issues/<%=issueKey%>?apiKey=<%=apiKey%>",
-)
+);
 
-export type Response = {
-  commits: ParsedCommit[]
-  issueKey: string
-  isFix: boolean
-  isClose: boolean
+export interface Response {
+  commits: ParsedCommit[];
+  issueKey: string;
+  isFix: boolean;
+  isClose: boolean;
 }
 
-type PostCommentsProps = {
-  parsedCommits: ParsedCommits
-  parsedRef: ParsedRef
-  fixStatusId: string
-  closeStatusId: string
-  pushCommentTemplate: string
-  apiHost: string
-  apiKey: string
+interface PostCommentsProps {
+  parsedCommits: ParsedCommits;
+  parsedRef: ParsedRef;
+  fixStatusId: string;
+  closeStatusId: string;
+  pushCommentTemplate: string;
+  apiHost: string;
+  apiKey: string;
 }
 
 /**
@@ -37,12 +37,12 @@ type PostCommentsProps = {
  * @returns Patch comment request promises
  */
 
-export const postComments = ({
+export const postComments = async ({
   parsedCommits,
   parsedRef,
   ...configs
 }: PostCommentsProps): Promise<Response[]> => {
-  const promiseArray: Promise<Response>[] = []
+  const promiseArray: Array<Promise<Response>> = [];
 
   for (const [issueKey, commits] of Object.entries(parsedCommits)) {
     promiseArray.push(
@@ -52,21 +52,21 @@ export const postComments = ({
         ref: parsedRef,
         ...configs,
       }),
-    )
+    );
   }
 
-  return Promise.all(promiseArray)
-}
+  return await Promise.all(promiseArray);
+};
 
-type CreatePatchCommentRequestProps = {
-  commits: ParsedCommit[]
-  ref: ParsedRef
-  issueKey: string
-  fixStatusId: string
-  closeStatusId: string
-  pushCommentTemplate: string
-  apiHost: string
-  apiKey: string
+interface CreatePatchCommentRequestProps {
+  commits: ParsedCommit[];
+  ref: ParsedRef;
+  issueKey: string;
+  fixStatusId: string;
+  closeStatusId: string;
+  pushCommentTemplate: string;
+  apiHost: string;
+  apiKey: string;
 }
 
 const createPatchCommentRequest = async ({
@@ -83,28 +83,28 @@ const createPatchCommentRequest = async ({
     apiHost,
     apiKey,
     issueKey,
-  })
+  });
 
-  const comment = template(pushCommentTemplate)({ commits, ref })
-  const isFix = commits.map((commit) => commit.isFix).includes(true)
-  const isClose = commits.map((commit) => commit.isClose).includes(true)
+  const comment = template(pushCommentTemplate)({ commits, ref });
+  const isFix = commits.map((commit) => commit.isFix).includes(true);
+  const isClose = commits.map((commit) => commit.isClose).includes(true);
   const status = (() => {
-    if (isFix) return { statusId: fixStatusId }
-    if (isClose) return { statusId: closeStatusId }
-    else return undefined
-  })()
-  const body = { comment, ...status }
+    if (isFix) return { statusId: fixStatusId };
+    if (isClose) return { statusId: closeStatusId };
+    else return undefined;
+  })();
+  const body = { comment, ...status };
 
   const fetchOptions: RequestInit = {
     method: "PATCH",
     body: new URLSearchParams(body),
-  }
+  };
 
-  const response = await fetch(endpoint, fetchOptions)
+  const response = await fetch(endpoint, fetchOptions);
 
   if (!response.ok) {
-    throw new Error(response.statusText)
+    throw new Error(response.statusText);
   }
 
-  return { commits, issueKey, isFix, isClose }
-}
+  return { commits, issueKey, isFix, isClose };
+};
