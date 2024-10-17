@@ -148,7 +148,8 @@ describe("main", () => {
     test("main calls setFailed when an unexpected error", async () => {
       const error = "error!";
       mocked(fetchEvent).mockImplementation(() => {
-        throw new Error(error);
+        // eslint-disable-next-line @typescript-eslint/only-throw-error -- expected unexpected error
+        throw error;
       });
 
       await expect(main()).resolves.not.toThrow();
@@ -157,7 +158,7 @@ describe("main", () => {
       expect(pr).toHaveBeenCalledTimes(0);
 
       expect(setFailed).toHaveBeenCalledTimes(1);
-      expect(setFailed).toHaveBeenCalledWith(new Error(error));
+      expect(setFailed).toHaveBeenCalledWith(error);
     });
   });
 });
