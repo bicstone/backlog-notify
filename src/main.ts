@@ -1,11 +1,11 @@
-import { startGroup, endGroup, info, setFailed } from "./common/stdout"
-import { fetchEvent } from "./main/fetchEvent"
-import { getConfigs } from "./main/getConfigs"
-import { pr } from "./pr"
-import { push } from "./push"
+import { startGroup, endGroup, info, setFailed } from "./common/stdout";
+import { fetchEvent } from "./main/fetchEvent";
+import { getConfigs } from "./main/getConfigs";
+import { pr } from "./pr";
+import { push } from "./push";
 
 const runAction = async (): Promise<string> => {
-  startGroup("設定を読み込み中")
+  startGroup("設定を読み込み中");
   const {
     projectKey,
     apiHost,
@@ -23,12 +23,12 @@ const runAction = async (): Promise<string> => {
     prTitleRegTemplate,
     fixStatusId,
     closeStatusId,
-  } = getConfigs()
-  endGroup()
+  } = getConfigs();
+  endGroup();
 
-  startGroup("イベントを読み込み中")
-  const { event } = fetchEvent({ path: githubEventPath })
-  endGroup()
+  startGroup("イベントを読み込み中");
+  const { event } = fetchEvent({ path: githubEventPath });
+  endGroup();
 
   if (event && "commits" in event && event.commits.length > 0) {
     return await push({
@@ -42,7 +42,7 @@ const runAction = async (): Promise<string> => {
       commitMessageRegTemplate,
       fixStatusId,
       closeStatusId,
-    })
+    });
   }
 
   if (event && "pull_request" in event && "number" in event) {
@@ -61,24 +61,24 @@ const runAction = async (): Promise<string> => {
       prClosedCommentTemplate,
       prMergedCommentTemplate,
       prTitleRegTemplate,
-    })
+    });
   }
 
-  return "予期しないイベントでした。"
-}
+  return "予期しないイベントでした。";
+};
 
 export const main = async (): Promise<void> => {
   try {
-    const message = await runAction()
-    info(message)
+    const message = await runAction();
+    info(message);
   } catch (error) {
     if (error instanceof Error) {
-      setFailed(error)
+      setFailed(error);
     } else {
-      setFailed(String(error))
+      setFailed(String(error));
     }
   }
-  endGroup()
-}
+  endGroup();
+};
 
-main()
+void main();

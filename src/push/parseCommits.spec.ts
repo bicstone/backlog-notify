@@ -1,25 +1,29 @@
-import { parseCommits, ParsedCommit, ParsedCommits } from "./parseCommits"
-import { Commit } from "@octokit/webhooks-types"
+import {
+  parseCommits,
+  type ParsedCommit,
+  type ParsedCommits,
+} from "./parseCommits";
+import type { Commit } from "@octokit/webhooks-types";
 
-type Commits = Commit[]
+type Commits = Commit[];
 
-const projectKey = "BUNBUN_NINE9"
-const fixKeyword = "#fix"
-const fixKeywords = [fixKeyword]
-const closeKeyword = "#close"
-const closeKeywords = [closeKeyword]
+const projectKey = "BUNBUN_NINE9";
+const fixKeyword = "#fix";
+const fixKeywords = [fixKeyword];
+const closeKeyword = "#close";
+const closeKeywords = [closeKeyword];
 const commitMessageRegTemplate =
   "^" +
   "(<%= projectKey %>\\-\\d+)\\s?" +
   "(.*?)?\\s?" +
   "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
-  "$"
-const issueKey = `${projectKey}-1`
-const comment = "Hare Hare Yukai!"
+  "$";
+const issueKey = `${projectKey}-1`;
+const comment = "Hare Hare Yukai!";
 
 const baseCommit: Commit = {
   id: "id3456789012345",
-  // eslint-disable-next-line @typescript-eslint/naming-convention
+
   tree_id: "tree_id89012345",
   distinct: true,
   message: `${issueKey} ${comment}`,
@@ -37,21 +41,21 @@ const baseCommit: Commit = {
   added: ["added"],
   removed: ["removed"],
   modified: ["modified"],
-}
+};
 
 const baseParsedCommit: ParsedCommit = {
   ...baseCommit,
-  comment: comment,
+  comment,
   issueKey,
   keywords: "",
   isFix: false,
   isClose: false,
-}
+};
 
 describe("parseCommits", () => {
   test("parseCommits return a parsed commit", () => {
-    const commits: Commits = [baseCommit]
-    const parsedCommits: ParsedCommits = { [issueKey]: [baseParsedCommit] }
+    const commits: Commits = [baseCommit];
+    const parsedCommits: ParsedCommits = { [issueKey]: [baseParsedCommit] };
 
     expect(
       parseCommits({
@@ -63,14 +67,14 @@ describe("parseCommits", () => {
       }),
     ).toStrictEqual({
       parsedCommits,
-    })
-  })
+    });
+  });
 
   test("parseCommits return parsed commits if same issueKey", () => {
-    const commits: Commits = [baseCommit, baseCommit]
+    const commits: Commits = [baseCommit, baseCommit];
     const parsedCommits: ParsedCommits = {
       [issueKey]: [baseParsedCommit, baseParsedCommit],
-    }
+    };
 
     expect(
       parseCommits({
@@ -82,8 +86,8 @@ describe("parseCommits", () => {
       }),
     ).toStrictEqual({
       parsedCommits,
-    })
-  })
+    });
+  });
 
   test("parseCommits return parsed commits if different issueKey", () => {
     const commits: Commits = [
@@ -95,7 +99,7 @@ describe("parseCommits", () => {
         ...baseCommit,
         message: `${projectKey}-2 ${comment}`,
       },
-    ]
+    ];
     const parsedCommits: ParsedCommits = {
       [`${projectKey}-1`]: [
         {
@@ -111,7 +115,7 @@ describe("parseCommits", () => {
           issueKey: `${projectKey}-2`,
         },
       ],
-    }
+    };
 
     expect(
       parseCommits({
@@ -123,8 +127,8 @@ describe("parseCommits", () => {
       }),
     ).toStrictEqual({
       parsedCommits,
-    })
-  })
+    });
+  });
 
   test("parseCommits return a parsed commit with fix_keyword", () => {
     const commits: Commits = [
@@ -132,18 +136,18 @@ describe("parseCommits", () => {
         ...baseCommit,
         message: `${issueKey} ${comment} ${fixKeyword}`,
       },
-    ]
+    ];
     const parsedCommits: ParsedCommits = {
       [issueKey]: [
         {
           ...baseParsedCommit,
           message: commits[0].message,
-          comment: comment,
+          comment,
           keywords: fixKeyword,
           isFix: true,
         },
       ],
-    }
+    };
 
     expect(
       parseCommits({
@@ -155,8 +159,8 @@ describe("parseCommits", () => {
       }),
     ).toStrictEqual({
       parsedCommits,
-    })
-  })
+    });
+  });
 
   test("parseCommits return a parsed commit with close_keyword", () => {
     const commits: Commits = [
@@ -164,18 +168,18 @@ describe("parseCommits", () => {
         ...baseCommit,
         message: `${issueKey} ${comment} ${closeKeyword}`,
       },
-    ]
+    ];
     const parsedCommits: ParsedCommits = {
       [issueKey]: [
         {
           ...baseParsedCommit,
           message: commits[0].message,
-          comment: comment,
+          comment,
           keywords: closeKeyword,
           isClose: true,
         },
       ],
-    }
+    };
 
     expect(
       parseCommits({
@@ -187,8 +191,8 @@ describe("parseCommits", () => {
       }),
     ).toStrictEqual({
       parsedCommits,
-    })
-  })
+    });
+  });
 
   test("parseCommits return a parsed commit with fix_keyword and close_keyword", () => {
     const commits: Commits = [
@@ -196,7 +200,7 @@ describe("parseCommits", () => {
         ...baseCommit,
         message: `${issueKey} ${comment} ${fixKeyword} ${closeKeyword}`,
       },
-    ]
+    ];
     const parsedCommits: ParsedCommits = {
       [issueKey]: [
         {
@@ -208,7 +212,7 @@ describe("parseCommits", () => {
           isClose: true,
         },
       ],
-    }
+    };
 
     expect(
       parseCommits({
@@ -220,16 +224,16 @@ describe("parseCommits", () => {
       }),
     ).toStrictEqual({
       parsedCommits,
-    })
-  })
+    });
+  });
 
   test("parseCommits return a parsed commit when message is only issueKey", () => {
     const commits: Commits = [
       {
         ...baseCommit,
-        message: `${issueKey}`,
+        message: issueKey,
       },
-    ]
+    ];
     const parsedCommits: ParsedCommits = {
       [issueKey]: [
         {
@@ -238,7 +242,7 @@ describe("parseCommits", () => {
           comment: "",
         },
       ],
-    }
+    };
 
     expect(
       parseCommits({
@@ -250,11 +254,11 @@ describe("parseCommits", () => {
       }),
     ).toStrictEqual({
       parsedCommits,
-    })
-  })
+    });
+  });
 
   test("parseCommits return null when no commits", () => {
-    const commits: Commits = []
+    const commits: Commits = [];
     expect(
       parseCommits({
         commits,
@@ -265,8 +269,8 @@ describe("parseCommits", () => {
       }),
     ).toStrictEqual({
       parsedCommits: null,
-    })
-  })
+    });
+  });
 
   test("parseCommits return null when issueKey is not specified", () => {
     const commits: Commits = [
@@ -274,7 +278,7 @@ describe("parseCommits", () => {
         ...baseCommit,
         message: "BAMBOO DISCO",
       },
-    ]
+    ];
     expect(
       parseCommits({
         commits,
@@ -285,6 +289,6 @@ describe("parseCommits", () => {
       }),
     ).toStrictEqual({
       parsedCommits: null,
-    })
-  })
-})
+    });
+  });
+});

@@ -4,12 +4,12 @@
   "description": "Notify commit messages to Backlog issue",
   "main": "dist/index.js",
   "scripts": {
-    "build": "npm run lint -- --fix && npm run format && npm run compile",
+    "build": "pnpm run lint --fix && pnpm run format && pnpm run compile",
     "compile": "ncc build ./src/main.ts -m -s --target es2022 --license index.js.LICENSE.txt",
-    "lint": "eslint --ext .ts ./src/ --max-warnings 0",
+    "lint": "eslint",
     "format": "prettier --write .",
     "prepare": "husky",
-    "preinstall": "npx only-allow npm",
+    "preinstall": "npx only-allow pnpm",
     "test": "jest"
   },
   "repository": {
@@ -38,15 +38,10 @@
     "@types/jest": "29.5.13",
     "@types/lodash.template": "4.5.3",
     "@types/node": "20.16.11",
-    "@typescript-eslint/eslint-plugin": "7.18.0",
-    "@typescript-eslint/parser": "7.18.0",
     "@vercel/ncc": "0.38.2",
     "all-contributors-cli": "6.26.1",
-    "eslint": "8.57.1",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-import": "2.31.0",
-    "eslint-plugin-n": "17.11.1",
-    "eslint-plugin-promise": "6.6.0",
+    "eslint": "9.12.0",
+    "eslint-config-love": "89.0.0",
     "eslint-plugin-regexp": "2.6.0",
     "husky": "9.1.6",
     "jest": "29.7.0",
@@ -60,6 +55,8 @@
     "node": "20.18.0"
   },
   "engines": {
-    "node": "^20.0.0"
-  }
+    "node": "20.18.0",
+    "pnpm": "9.12.2"
+  },
+  "packageManager": "pnpm@9.12.2"
 }

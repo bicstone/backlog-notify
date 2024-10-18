@@ -1,27 +1,27 @@
-export type Configs = {
-  projectKey: string
-  apiHost: string
-  apiKey: string
-  githubEventPath: string
-  fixKeywords: string[]
-  closeKeywords: string[]
-  pushCommentTemplate: string
-  prOpenedCommentTemplate: string
-  prReopenedCommentTemplate: string
-  prReadyForReviewCommentTemplate: string
-  prClosedCommentTemplate: string
-  prMergedCommentTemplate: string
-  commitMessageRegTemplate: string
-  prTitleRegTemplate: string
-  fixStatusId: string
-  closeStatusId: string
+export interface Configs {
+  projectKey: string;
+  apiHost: string;
+  apiKey: string;
+  githubEventPath: string;
+  fixKeywords: string[];
+  closeKeywords: string[];
+  pushCommentTemplate: string;
+  prOpenedCommentTemplate: string;
+  prReopenedCommentTemplate: string;
+  prReadyForReviewCommentTemplate: string;
+  prClosedCommentTemplate: string;
+  prMergedCommentTemplate: string;
+  commitMessageRegTemplate: string;
+  prTitleRegTemplate: string;
+  fixStatusId: string;
+  closeStatusId: string;
 }
 
 export type RequiredConfigKeys =
   | "projectKey"
   | "apiHost"
   | "apiKey"
-  | "githubEventPath"
+  | "githubEventPath";
 
 export const defaultConfigs: Omit<Configs, RequiredConfigKeys> = {
   fixKeywords: ["#fix", "#fixes", "#fixed"],
@@ -67,7 +67,7 @@ export const defaultConfigs: Omit<Configs, RequiredConfigKeys> = {
     "$",
   fixStatusId: "3",
   closeStatusId: "4",
-}
+};
 
 /**
  * Parses and validations the action configuration
@@ -111,11 +111,11 @@ export const getConfigs = (): Configs => {
       getConfig("pr_title_reg_template") || defaultConfigs.prTitleRegTemplate,
     fixStatusId: getConfig("fix_status_id") || defaultConfigs.fixStatusId,
     closeStatusId: getConfig("close_status_id") || defaultConfigs.closeStatusId,
-  }
-}
+  };
+};
 
-type InputOptions = {
-  required?: boolean
+interface InputOptions {
+  required?: boolean;
 }
 
 /**
@@ -129,17 +129,17 @@ type InputOptions = {
  */
 
 const getConfig = (name: string, options: InputOptions = {}): string => {
-  const key = name.toUpperCase()
-  const input = process.env[`INPUT_${key}`]
-  const env = process.env[key]
-  const val: string = input || env || ""
+  const key = name.toUpperCase();
+  const input = process.env[`INPUT_${key}`];
+  const env = process.env[key];
+  const val: string = input || env || "";
 
   if (options.required && !val) {
-    throw new Error(`Input required and not supplied: ${name}`)
+    throw new Error(`Input required and not supplied: ${name}`);
   }
 
-  return val.trim()
-}
+  return val.trim();
+};
 
 /**
  * Gets the values of an multiline input.
@@ -155,7 +155,7 @@ export function getMultilineInput(
 ): string[] {
   const inputs: string[] = getConfig(name, options)
     .split("\n")
-    .filter((x) => x !== "")
+    .filter((x) => x !== "");
 
-  return inputs.map((input) => input.trim())
+  return inputs.map((input) => input.trim());
 }

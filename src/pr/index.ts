@@ -1,9 +1,9 @@
-import { startGroup, endGroup, info } from "../common/stdout"
-import { PullRequestEvent } from "@octokit/webhooks-types"
+import { startGroup, endGroup, info } from "../common/stdout";
+import type { PullRequestEvent } from "@octokit/webhooks-types";
 
-import type { Configs } from "../main/getConfigs"
-import { parsePullRequest } from "./parsePullRequest"
-import { postComments } from "./postComments"
+import type { Configs } from "../main/getConfigs";
+import { parsePullRequest } from "./parsePullRequest";
+import { postComments } from "./postComments";
 
 export type PrProps = Pick<
   Configs,
@@ -21,8 +21,8 @@ export type PrProps = Pick<
   | "prMergedCommentTemplate"
   | "prTitleRegTemplate"
 > & {
-  event: PullRequestEvent
-}
+  event: PullRequestEvent;
+};
 
 export const pr = async ({
   event,
@@ -40,20 +40,20 @@ export const pr = async ({
   prMergedCommentTemplate,
   prTitleRegTemplate,
 }: PrProps): Promise<string> => {
-  startGroup("プルリクエストを取得中")
+  startGroup("プルリクエストを取得中");
   const { parsedPullRequest } = parsePullRequest({
     event,
     projectKey,
     fixKeywords,
     closeKeywords,
     prTitleRegTemplate,
-  })
+  });
   if (!parsedPullRequest) {
-    return "課題キーのついたプルリクエストが見つかりませんでした。"
+    return "課題キーのついたプルリクエストが見つかりませんでした。";
   }
-  endGroup()
+  endGroup();
 
-  startGroup("コメント送信中")
+  startGroup("コメント送信中");
 
   const result = await postComments({
     parsedPullRequest,
@@ -66,27 +66,27 @@ export const pr = async ({
     prMergedCommentTemplate,
     apiHost,
     apiKey,
-  })
+  });
 
   if (result.isFailure) {
-    return result.error
+    return result.error;
   }
 
-  startGroup(`${parsedPullRequest.issueKey}:`)
+  startGroup(`${parsedPullRequest.issueKey}:`);
 
-  info(parsedPullRequest.title)
+  info(parsedPullRequest.title);
 
   if (parsedPullRequest.isFix) {
-    info(`${parsedPullRequest.issueKey}を処理済みにしました。`)
+    info(`${parsedPullRequest.issueKey}を処理済みにしました。`);
   }
 
   if (parsedPullRequest.isClose) {
-    info(`${parsedPullRequest.issueKey}を完了にしました。`)
+    info(`${parsedPullRequest.issueKey}を完了にしました。`);
   }
 
-  endGroup()
+  endGroup();
 
-  endGroup()
+  endGroup();
 
-  return "正常に送信しました。"
-}
+  return "正常に送信しました。";
+};

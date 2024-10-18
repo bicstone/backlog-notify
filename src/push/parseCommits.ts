@@ -1,22 +1,22 @@
-import { Commit } from "@octokit/webhooks-types"
-import template from "lodash.template"
+import type { Commit } from "@octokit/webhooks-types";
+import template from "lodash.template";
 
-export type ParsedCommits = Record<string, ParsedCommit[]>
+export type ParsedCommits = Record<string, ParsedCommit[]>;
 
 export type ParsedCommit = {
-  issueKey: string | null
-  comment: string
-  keywords: string
-  isFix: boolean
-  isClose: boolean
-} & Commit
+  issueKey: string | null;
+  comment: string;
+  keywords: string;
+  isFix: boolean;
+  isClose: boolean;
+} & Commit;
 
-type ParseCommitsProps = {
-  commits: Commit[]
-  projectKey: string
-  fixKeywords: string[]
-  closeKeywords: string[]
-  commitMessageRegTemplate: string
+interface ParseCommitsProps {
+  commits: Commit[];
+  projectKey: string;
+  fixKeywords: string[];
+  closeKeywords: string[];
+  commitMessageRegTemplate: string;
 }
 
 /**
@@ -35,7 +35,7 @@ export const parseCommits = ({
   closeKeywords,
   commitMessageRegTemplate,
 }: ParseCommitsProps): { parsedCommits: ParsedCommits | null } => {
-  const parsedCommits: ParsedCommits = {}
+  const parsedCommits: ParsedCommits = {};
   const commitMessageReg = RegExp(
     template(commitMessageRegTemplate)({
       projectKey,
@@ -43,7 +43,7 @@ export const parseCommits = ({
       closeKeywords,
     }),
     "s",
-  )
+  );
 
   commits.forEach((commit) => {
     const { parsedCommit } = parseCommit({
@@ -51,29 +51,29 @@ export const parseCommits = ({
       fixKeywords,
       closeKeywords,
       commitMessageReg,
-    })
-    if (!parsedCommit?.issueKey) return
+    });
+    if (!parsedCommit?.issueKey) return;
 
     if (parsedCommits[parsedCommit.issueKey]) {
-      parsedCommits[parsedCommit.issueKey].push(parsedCommit)
+      parsedCommits[parsedCommit.issueKey].push(parsedCommit);
     } else {
-      parsedCommits[parsedCommit.issueKey] = [parsedCommit]
+      parsedCommits[parsedCommit.issueKey] = [parsedCommit];
     }
-  })
+  });
 
-  const commitCount = Object.keys(parsedCommits).length
+  const commitCount = Object.keys(parsedCommits).length;
   if (commitCount === 0) {
-    return { parsedCommits: null }
+    return { parsedCommits: null };
   }
 
-  return { parsedCommits }
-}
+  return { parsedCommits };
+};
 
-type ParseCommitProps = {
-  commit: Commit
-  fixKeywords: string[]
-  closeKeywords: string[]
-  commitMessageReg: RegExp
+interface ParseCommitProps {
+  commit: Commit;
+  fixKeywords: string[];
+  closeKeywords: string[];
+  commitMessageReg: RegExp;
 }
 
 const parseCommit = ({
@@ -82,13 +82,13 @@ const parseCommit = ({
   closeKeywords,
   commitMessageReg,
 }: ParseCommitProps): { parsedCommit: ParsedCommit | null } => {
-  const match = commit.message.match(commitMessageReg)
+  const match = commit.message.match(commitMessageReg);
 
   if (!match) {
-    return { parsedCommit: null }
+    return { parsedCommit: null };
   }
 
-  const [, issueKey = null, comment = "", keywords = ""] = match
+  const [, issueKey = null, comment = "", keywords = ""] = match;
 
   return {
     parsedCommit: {
@@ -99,5 +99,5 @@ const parseCommit = ({
       isFix: fixKeywords.includes(keywords),
       isClose: closeKeywords.includes(keywords),
     },
-  }
-}
+  };
+};
