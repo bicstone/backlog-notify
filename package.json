@@ -29,7 +29,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash.template": "4.5.0",
-    "result-type-ts": "2.1.3"
+    "result-type-ts": "2.1.4"
   },
   "devDependencies": {
     "@actions/core": "1.11.1",
