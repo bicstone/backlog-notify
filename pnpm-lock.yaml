@@ -43,8 +43,8 @@ importers:
         specifier: 9.13.0
         version: 9.13.0
       eslint-config-love:
-        specifier: 89.0.1
-        version: 89.0.1(@typescript-eslint/parser@8.8.0(eslint@9.13.0)(typescript@5.6.3))(eslint@9.13.0)(typescript@5.6.3)
+        specifier: 96.0.0
+        version: 96.0.0(@typescript-eslint/parser@8.8.0(eslint@9.13.0)(typescript@5.6.3))(eslint@9.13.0)(typescript@5.6.3)
       eslint-plugin-regexp:
         specifier: 2.6.0
         version: 2.6.0(eslint@9.13.0)
@@ -954,8 +954,8 @@ packages:
     peerDependencies:
       eslint: '>=6.0.0'
 
-  eslint-config-love@89.0.1:
-    resolution: {integrity: sha512-rtZOoxrdWpIBRlQGH9E3E6ACwAHMxznfImaR0zbgh/ESHLQFaa8w4Akx5JOqJsyA6KmtsrgWzhDY5KxjopSFew==}
+  eslint-config-love@96.0.0:
+    resolution: {integrity: sha512-IoXpOWvPL8Me8zACmldwjknRfZ2HhA7HJ563mTaT4hEd5aPvecdOsvwTdGTJTYfeJPcZApIloMCyUJS1OjA1dA==}
     peerDependencies:
       eslint: ^9.0.0
       typescript: '*'
@@ -3404,7 +3404,7 @@ snapshots:
       eslint: 9.13.0
       semver: 7.6.3
 
-  eslint-config-love@89.0.1(@typescript-eslint/parser@8.8.0(eslint@9.13.0)(typescript@5.6.3))(eslint@9.13.0)(typescript@5.6.3):
+  eslint-config-love@96.0.0(@typescript-eslint/parser@8.8.0(eslint@9.13.0)(typescript@5.6.3))(eslint@9.13.0)(typescript@5.6.3):
     dependencies:
       '@typescript-eslint/utils': 8.8.0(eslint@9.13.0)(typescript@5.6.3)
       eslint: 9.13.0
