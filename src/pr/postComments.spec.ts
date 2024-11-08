@@ -64,19 +64,17 @@ const getEvent = <T extends PullRequestEvent>(event: T): T => ({
 const getParsedPullRequest = (
   event: PullRequestEvent,
   parsedPullRequest?: Partial<ParsedPullRequest>,
-): ParsedPullRequest => {
-  return {
-    pr: event.pull_request,
-    action: event.action,
-    sender: event.sender,
-    issueKey,
-    title,
-    keywords: "",
-    isFix: false,
-    isClose: false,
-    ...parsedPullRequest,
-  };
-};
+): ParsedPullRequest => ({
+  pr: event.pull_request,
+  action: event.action,
+  sender: event.sender,
+  issueKey,
+  title,
+  keywords: "",
+  isFix: false,
+  isClose: false,
+  ...parsedPullRequest,
+});
 
 const getConfigs = (
   parsedPullRequest: ParsedPullRequest,
