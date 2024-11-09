@@ -41,7 +41,7 @@
     "@vercel/ncc": "0.38.2",
     "all-contributors-cli": "6.26.1",
     "eslint": "9.14.0",
-    "eslint-config-love": "96.0.0",
+    "eslint-config-love": "97.0.0",
     "eslint-plugin-regexp": "2.6.0",
     "husky": "9.1.6",
     "jest": "29.7.0",

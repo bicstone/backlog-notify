@@ -75,44 +75,42 @@ export const defaultConfigs: Omit<Configs, RequiredConfigKeys> = {
  * @throws {Error} Will throw an error if missing required input
  */
 
-export const getConfigs = (): Configs => {
-  return {
-    projectKey: getConfig("project_key", { required: true }),
-    apiHost: getConfig("api_host", { required: true }),
-    apiKey: getConfig("api_key", { required: true }),
-    githubEventPath: getConfig("github_event_path", { required: true }),
-    fixKeywords: getConfig("fix_keywords")
-      ? getMultilineInput("fix_keywords")
-      : defaultConfigs.fixKeywords,
-    closeKeywords: getConfig("close_keywords")
-      ? getMultilineInput("close_keywords")
-      : defaultConfigs.closeKeywords,
-    pushCommentTemplate:
-      getConfig("push_comment_template") || defaultConfigs.pushCommentTemplate,
-    prOpenedCommentTemplate:
-      getConfig("pr_opened_comment_template") ||
-      defaultConfigs.prOpenedCommentTemplate,
-    prReopenedCommentTemplate:
-      getConfig("pr_reopened_comment_template") ||
-      defaultConfigs.prReopenedCommentTemplate,
-    prReadyForReviewCommentTemplate:
-      getConfig("pr_ready_for_review_comment_template") ||
-      defaultConfigs.prReadyForReviewCommentTemplate,
-    prClosedCommentTemplate:
-      getConfig("pr_closed_comment_template") ||
-      defaultConfigs.prClosedCommentTemplate,
-    prMergedCommentTemplate:
-      getConfig("pr_merged_comment_template") ||
-      defaultConfigs.prMergedCommentTemplate,
-    commitMessageRegTemplate:
-      getConfig("commit_message_reg_template") ||
-      defaultConfigs.commitMessageRegTemplate,
-    prTitleRegTemplate:
-      getConfig("pr_title_reg_template") || defaultConfigs.prTitleRegTemplate,
-    fixStatusId: getConfig("fix_status_id") || defaultConfigs.fixStatusId,
-    closeStatusId: getConfig("close_status_id") || defaultConfigs.closeStatusId,
-  };
-};
+export const getConfigs = (): Configs => ({
+  projectKey: getConfig("project_key", { required: true }),
+  apiHost: getConfig("api_host", { required: true }),
+  apiKey: getConfig("api_key", { required: true }),
+  githubEventPath: getConfig("github_event_path", { required: true }),
+  fixKeywords: getConfig("fix_keywords")
+    ? getMultilineInput("fix_keywords")
+    : defaultConfigs.fixKeywords,
+  closeKeywords: getConfig("close_keywords")
+    ? getMultilineInput("close_keywords")
+    : defaultConfigs.closeKeywords,
+  pushCommentTemplate:
+    getConfig("push_comment_template") || defaultConfigs.pushCommentTemplate,
+  prOpenedCommentTemplate:
+    getConfig("pr_opened_comment_template") ||
+    defaultConfigs.prOpenedCommentTemplate,
+  prReopenedCommentTemplate:
+    getConfig("pr_reopened_comment_template") ||
+    defaultConfigs.prReopenedCommentTemplate,
+  prReadyForReviewCommentTemplate:
+    getConfig("pr_ready_for_review_comment_template") ||
+    defaultConfigs.prReadyForReviewCommentTemplate,
+  prClosedCommentTemplate:
+    getConfig("pr_closed_comment_template") ||
+    defaultConfigs.prClosedCommentTemplate,
+  prMergedCommentTemplate:
+    getConfig("pr_merged_comment_template") ||
+    defaultConfigs.prMergedCommentTemplate,
+  commitMessageRegTemplate:
+    getConfig("commit_message_reg_template") ||
+    defaultConfigs.commitMessageRegTemplate,
+  prTitleRegTemplate:
+    getConfig("pr_title_reg_template") || defaultConfigs.prTitleRegTemplate,
+  fixStatusId: getConfig("fix_status_id") || defaultConfigs.fixStatusId,
+  closeStatusId: getConfig("close_status_id") || defaultConfigs.closeStatusId,
+});
 
 interface InputOptions {
   required?: boolean;
