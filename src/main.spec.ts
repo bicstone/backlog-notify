@@ -29,26 +29,24 @@ const pullRequestEvents = (webhooks.find((v) => v.name === "pull_request")
 
 describe("main", () => {
   beforeEach(() => {
-    mocked(getConfigs).mockImplementation(() => {
-      return {
-        projectKey: "projectKey",
-        apiHost: "apiHost",
-        apiKey: "apiKey",
-        githubEventPath: "githubEventPath",
-        fixKeywords: ["fixKeyword"],
-        closeKeywords: ["closeKeyword"],
-        pushCommentTemplate: "pushCommentTemplate",
-        prOpenedCommentTemplate: "prOpenedCommentTemplate",
-        prReopenedCommentTemplate: "prReopenedCommentTemplate",
-        prReadyForReviewCommentTemplate: "prReadyForReviewCommentTemplate",
-        prClosedCommentTemplate: "prClosedCommentTemplate",
-        prMergedCommentTemplate: "prMergedCommentTemplate",
-        commitMessageRegTemplate: "commitMessageRegTemplate",
-        prTitleRegTemplate: "prTitleRegTemplate",
-        fixStatusId: "fixStatusId",
-        closeStatusId: "closeStatusId",
-      };
-    });
+    mocked(getConfigs).mockImplementation(() => ({
+      projectKey: "projectKey",
+      apiHost: "apiHost",
+      apiKey: "apiKey",
+      githubEventPath: "githubEventPath",
+      fixKeywords: ["fixKeyword"],
+      closeKeywords: ["closeKeyword"],
+      pushCommentTemplate: "pushCommentTemplate",
+      prOpenedCommentTemplate: "prOpenedCommentTemplate",
+      prReopenedCommentTemplate: "prReopenedCommentTemplate",
+      prReadyForReviewCommentTemplate: "prReadyForReviewCommentTemplate",
+      prClosedCommentTemplate: "prClosedCommentTemplate",
+      prMergedCommentTemplate: "prMergedCommentTemplate",
+      commitMessageRegTemplate: "commitMessageRegTemplate",
+      prTitleRegTemplate: "prTitleRegTemplate",
+      fixStatusId: "fixStatusId",
+      closeStatusId: "closeStatusId",
+    }));
     mocked(info).mockImplementation((m) => m);
     mocked(setFailed).mockImplementation((m) => m);
   });

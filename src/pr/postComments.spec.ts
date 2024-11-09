@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { postComments, type PostCommentsProps } from "./postComments";
 import type { ParsedPullRequest } from "./parsePullRequest";
 import type { PullRequestEvent } from "@octokit/webhooks-types";
 import webhooks from "@octokit/webhooks-examples";
 
 const login = "login";
-const html_url = "html_url";
+const htmlUrl = "html_url";
 const fixStatusId = "fixStatusId";
 const closeStatusId = "closeStatusId";
 const apiHost = "apiHost";
@@ -53,7 +52,7 @@ const getEvent = <T extends PullRequestEvent>(event: T): T => ({
   pull_request: {
     ...event.pull_request,
     title,
-    html_url,
+    html_url: htmlUrl,
   },
   sender: {
     ...event.sender,
@@ -64,19 +63,17 @@ const getEvent = <T extends PullRequestEvent>(event: T): T => ({
 const getParsedPullRequest = (
   event: PullRequestEvent,
   parsedPullRequest?: Partial<ParsedPullRequest>,
-): ParsedPullRequest => {
-  return {
-    pr: event.pull_request,
-    action: event.action,
-    sender: event.sender,
-    issueKey,
-    title,
-    keywords: "",
-    isFix: false,
-    isClose: false,
-    ...parsedPullRequest,
-  };
-};
+): ParsedPullRequest => ({
+  pr: event.pull_request,
+  action: event.action,
+  sender: event.sender,
+  issueKey,
+  title,
+  keywords: "",
+  isFix: false,
+  isClose: false,
+  ...parsedPullRequest,
+});
 
 const getConfigs = (
   parsedPullRequest: ParsedPullRequest,
@@ -124,7 +121,7 @@ describe("postComments", () => {
     "opened, reopened, ready_for_review",
     (_event) => {
       const event = getEvent(_event);
-      const comment = `${event.action},${login},${title},${html_url}`;
+      const comment = `${event.action},${login},${title},${htmlUrl}`;
 
       it("post a comment to Backlog API", async () => {
         const parsedPullRequest = getParsedPullRequest(event);
@@ -208,7 +205,7 @@ describe("postComments", () => {
       ..._event,
       pull_request: { ..._event.pull_request, merged: true },
     } as PullRequestEvent);
-    const comment = `merged,${login},${title},${html_url}`;
+    const comment = `merged,${login},${title},${htmlUrl}`;
 
     it("post a comment to Backlog API", async () => {
       const parsedPullRequest = getParsedPullRequest(event);
@@ -283,7 +280,7 @@ describe("postComments", () => {
 
   describe.each(closedEvents)("closed", (_event) => {
     const event = getEvent(_event);
-    const comment = `closed,${login},${title},${html_url}`;
+    const comment = `closed,${login},${title},${htmlUrl}`;
 
     it("post a comment to Backlog API", async () => {
       const parsedPullRequest = getParsedPullRequest(event);

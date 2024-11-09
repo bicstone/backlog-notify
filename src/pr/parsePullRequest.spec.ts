@@ -49,19 +49,17 @@ const getConfigs = (
 const getParsedPullRequest = (
   event: PullRequestEvent,
   parsedPullRequest?: Partial<ParsedPullRequest>,
-): ParsedPullRequest => {
-  return {
-    pr: event.pull_request,
-    action: event.action,
-    sender: event.sender,
-    issueKey,
-    title,
-    keywords: "",
-    isFix: false,
-    isClose: false,
-    ...parsedPullRequest,
-  };
-};
+): ParsedPullRequest => ({
+  pr: event.pull_request,
+  action: event.action,
+  sender: event.sender,
+  issueKey,
+  title,
+  keywords: "",
+  isFix: false,
+  isClose: false,
+  ...parsedPullRequest,
+});
 
 describe.each(events)("parsePullRequest", (_event) => {
   test("return parsed pull request", () => {
