@@ -18,6 +18,9 @@ export default [
       "@typescript-eslint/prefer-nullish-coalescing": "warn",
       "@typescript-eslint/prefer-destructuring": "warn",
       "@typescript-eslint/no-base-to-string": "warn",
+      "@typescript-eslint/no-unsafe-type-assertion": "warn",
+      "max-nested-callbacks": "warn",
+      complexity: "warn",
     },
   },
   {
