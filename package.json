@@ -53,11 +53,11 @@
   },
   "volta": {
     "node": "20.19.0",
-    "pnpm": "10.8.0"
+    "pnpm": "10.8.1"
   },
   "engines": {
     "node": "20.19.0",
-    "pnpm": "10.8.0"
+    "pnpm": "10.8.1"
   },
-  "packageManager": "pnpm@10.8.0"
+  "packageManager": "pnpm@10.8.1"
 }
