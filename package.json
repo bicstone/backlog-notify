@@ -37,7 +37,7 @@
     "@octokit/webhooks-types": "7.6.1",
     "@types/jest": "29.5.14",
     "@types/lodash.template": "4.5.3",
-    "@types/node": "20.17.47",
+    "@types/node": "20.17.50",
     "@vercel/ncc": "0.38.3",
     "all-contributors-cli": "6.26.1",
     "eslint": "9.27.0",
