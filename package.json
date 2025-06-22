@@ -35,7 +35,7 @@
     "@actions/core": "1.11.1",
     "@octokit/webhooks-examples": "7.6.1",
     "@octokit/webhooks-types": "7.6.1",
-    "@types/jest": "29.5.14",
+    "@types/jest": "30.0.0",
     "@types/lodash.template": "4.5.3",
     "@types/node": "20.19.1",
     "@vercel/ncc": "0.38.3",
