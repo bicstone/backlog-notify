@@ -52,11 +52,11 @@
     "typescript": "5.8.3"
   },
   "volta": {
-    "node": "20.19.2",
+    "node": "20.19.3",
     "pnpm": "10.12.1"
   },
   "engines": {
-    "node": "20.19.2",
+    "node": "20.19.3",
     "pnpm": "10.12.1"
   },
   "packageManager": "pnpm@10.12.1"
