@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Backlog Notify
-        uses: bicstone/backlog-notify@v6
+        uses: bicstone/backlog-notify@16ccdad0b348af56705f92890c04c4fdd387f95b # v6.0.0
         with:
           project_key: PROJECT_KEY
           api_host: example.backlog.jp
@@ -134,7 +134,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Backlog Notify
-        uses: bicstone/backlog-notify@v6
+        uses: bicstone/backlog-notify@16ccdad0b348af56705f92890c04c4fdd387f95b # v6.0.0
         with:
           # 必須設定 (The following are required settings)
           project_key: PROJECT_KEY
