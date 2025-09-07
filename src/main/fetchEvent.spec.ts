@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import { fetchEvent } from "./fetchEvent";
 import webhooks from "@octokit/webhooks-examples";
 

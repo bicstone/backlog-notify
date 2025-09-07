@@ -1,5 +1,5 @@
 import { Result } from "result-type-ts";
-import { URLSearchParams } from "url";
+import { URLSearchParams } from "node:url";
 import template from "lodash.template";
 import type { ParsedPullRequest } from "./parsePullRequest";
 

@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import type { Schema } from "@octokit/webhooks-types";
 
 /**
