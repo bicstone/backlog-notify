@@ -37,7 +37,7 @@
     "@octokit/webhooks-types": "7.6.1",
     "@types/jest": "30.0.0",
     "@types/lodash.template": "4.5.3",
-    "@types/node": "20.19.11",
+    "@types/node": "22.18.1",
     "@vercel/ncc": "0.38.3",
     "all-contributors-cli": "6.26.1",
     "eslint": "9.34.0",
@@ -52,11 +52,11 @@
     "typescript": "5.9.2"
   },
   "volta": {
-    "node": "20.19.4",
+    "node": "22.19.0",
     "pnpm": "10.15.0"
   },
   "engines": {
-    "node": "20.19.4",
+    "node": "22.19.0",
     "pnpm": "10.15.0"
   },
   "packageManager": "pnpm@10.15.0"
