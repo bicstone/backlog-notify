@@ -291,4 +291,244 @@ describe("parseCommits", () => {
       parsedCommits: null,
     });
   });
+  //
+  describe("Named capture groups", () => {
+    const namedCaptureGroupTemplate =
+      "^(?:" +
+      "(?<issueKey><%= projectKey %>\\-\\d+)\\s*(?<comment>.*?)(?:\\s*(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>))?" +
+      "|" +
+      "(?<comment>.*?)\\s*(?:(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)\\s*)?\\(?(?<issueKey><%= projectKey %>\\-\\d+)\\)?" +
+      ")$";
+
+    test("parseCommits with named groups - project key at start", () => {
+      const commits: Commits = [
+        {
+          ...baseCommit,
+          message: `${issueKey} ${comment}`,
+        },
+      ];
+      const parsedCommits: ParsedCommits = {
+        [issueKey]: [
+          {
+            ...baseParsedCommit,
+            message: commits[0].message,
+          },
+        ],
+      };
+
+      expect(
+        parseCommits({
+          commits,
+          projectKey,
+          fixKeywords,
+          closeKeywords,
+          commitMessageRegTemplate: namedCaptureGroupTemplate,
+        }),
+      ).toStrictEqual({
+        parsedCommits,
+      });
+    });
+
+    test("parseCommits with named groups - project key at end", () => {
+      const commits: Commits = [
+        {
+          ...baseCommit,
+          message: `${comment} ${issueKey}`,
+        },
+      ];
+      const parsedCommits: ParsedCommits = {
+        [issueKey]: [
+          {
+            ...baseParsedCommit,
+            message: commits[0].message,
+          },
+        ],
+      };
+
+      expect(
+        parseCommits({
+          commits,
+          projectKey,
+          fixKeywords,
+          closeKeywords,
+          commitMessageRegTemplate: namedCaptureGroupTemplate,
+        }),
+      ).toStrictEqual({
+        parsedCommits,
+      });
+    });
+
+    test("parseCommits with named groups - project key at end with parentheses", () => {
+      const commits: Commits = [
+        {
+          ...baseCommit,
+          message: `${comment} (${issueKey})`,
+        },
+      ];
+      const parsedCommits: ParsedCommits = {
+        [issueKey]: [
+          {
+            ...baseParsedCommit,
+            message: commits[0].message,
+          },
+        ],
+      };
+
+      expect(
+        parseCommits({
+          commits,
+          projectKey,
+          fixKeywords,
+          closeKeywords,
+          commitMessageRegTemplate: namedCaptureGroupTemplate,
+        }),
+      ).toStrictEqual({
+        parsedCommits,
+      });
+    });
+
+    test("parseCommits with named groups - project key at start with fix keyword", () => {
+      const commits: Commits = [
+        {
+          ...baseCommit,
+          message: `${issueKey} ${comment} ${fixKeyword}`,
+        },
+      ];
+      const parsedCommits: ParsedCommits = {
+        [issueKey]: [
+          {
+            ...baseParsedCommit,
+            message: commits[0].message,
+            keywords: fixKeyword,
+            isFix: true,
+          },
+        ],
+      };
+
+      expect(
+        parseCommits({
+          commits,
+          projectKey,
+          fixKeywords,
+          closeKeywords,
+          commitMessageRegTemplate: namedCaptureGroupTemplate,
+        }),
+      ).toStrictEqual({
+        parsedCommits,
+      });
+    });
+
+    test("parseCommits with named groups - project key at end with close keyword", () => {
+      const commits: Commits = [
+        {
+          ...baseCommit,
+          message: `${comment} ${closeKeyword} ${issueKey}`,
+        },
+      ];
+      const parsedCommits: ParsedCommits = {
+        [issueKey]: [
+          {
+            ...baseParsedCommit,
+            message: commits[0].message,
+            keywords: closeKeyword,
+            isClose: true,
+          },
+        ],
+      };
+
+      expect(
+        parseCommits({
+          commits,
+          projectKey,
+          fixKeywords,
+          closeKeywords,
+          commitMessageRegTemplate: namedCaptureGroupTemplate,
+        }),
+      ).toStrictEqual({
+        parsedCommits,
+      });
+    });
+
+    test("parseCommits with named groups - project key at end with parentheses and fix keyword", () => {
+      const commits: Commits = [
+        {
+          ...baseCommit,
+          message: `${comment} ${fixKeyword} (${issueKey})`,
+        },
+      ];
+      const parsedCommits: ParsedCommits = {
+        [issueKey]: [
+          {
+            ...baseParsedCommit,
+            message: commits[0].message,
+            keywords: fixKeyword,
+            isFix: true,
+          },
+        ],
+      };
+
+      expect(
+        parseCommits({
+          commits,
+          projectKey,
+          fixKeywords,
+          closeKeywords,
+          commitMessageRegTemplate: namedCaptureGroupTemplate,
+        }),
+      ).toStrictEqual({
+        parsedCommits,
+      });
+    });
+
+    test("parseCommits with named groups - project key only", () => {
+      const commits: Commits = [
+        {
+          ...baseCommit,
+          message: issueKey,
+        },
+      ];
+      const parsedCommits: ParsedCommits = {
+        [issueKey]: [
+          {
+            ...baseParsedCommit,
+            message: commits[0].message,
+            comment: "",
+          },
+        ],
+      };
+
+      expect(
+        parseCommits({
+          commits,
+          projectKey,
+          fixKeywords,
+          closeKeywords,
+          commitMessageRegTemplate: namedCaptureGroupTemplate,
+        }),
+      ).toStrictEqual({
+        parsedCommits,
+      });
+    });
+
+    test("parseCommits with named groups - no match returns null", () => {
+      const commits: Commits = [
+        {
+          ...baseCommit,
+          message: "No project key here",
+        },
+      ];
+
+      expect(
+        parseCommits({
+          commits,
+          projectKey,
+          fixKeywords,
+          closeKeywords,
+          commitMessageRegTemplate: namedCaptureGroupTemplate,
+        }),
+      ).toStrictEqual({
+        parsedCommits: null,
+      });
+    });
+  });
 });
