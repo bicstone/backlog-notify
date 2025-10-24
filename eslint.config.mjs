@@ -27,4 +27,10 @@ export default [
     ...eslintPluginRegexp.configs["flat/recommended"],
     files: ["src/**/*.ts"],
   },
+  {
+    files: ["**/*.spec.ts"],
+    rules: {
+      "max-lines": "off",
+    },
+  },
 ];

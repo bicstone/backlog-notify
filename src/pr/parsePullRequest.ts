@@ -4,6 +4,7 @@ import type {
   User,
 } from "@octokit/webhooks-types";
 import template from "lodash.template";
+import { extractMatchGroups } from "../common/extractMatchGroups";
 
 export interface ParsedPullRequest {
   pr: PullRequest;
@@ -45,9 +46,13 @@ export const parsePullRequest = ({
 
   const match = event.pull_request.title.match(prTitleReg);
 
-  const [, issueKey = null, title = "", keywords = ""] = match ?? [];
+  if (!match) {
+    return { parsedPullRequest: null };
+  }
 
-  if (!match || !issueKey) {
+  const { issueKey, content: title, keywords } = extractMatchGroups(match);
+
+  if (!issueKey) {
     return { parsedPullRequest: null };
   }
 
@@ -57,7 +62,7 @@ export const parsePullRequest = ({
       action: event.action,
       sender: event.sender,
       issueKey,
-      title,
+      title: title.trim(),
       keywords,
       isFix: fixKeywords.includes(keywords),
       isClose: closeKeywords.includes(keywords),

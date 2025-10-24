@@ -1,5 +1,6 @@
 import type { Commit } from "@octokit/webhooks-types";
 import template from "lodash.template";
+import { extractMatchGroups } from "../common/extractMatchGroups";
 
 export type ParsedCommits = Record<string, ParsedCommit[]>;
 
@@ -88,13 +89,17 @@ const parseCommit = ({
     return { parsedCommit: null };
   }
 
-  const [, issueKey = null, comment = "", keywords = ""] = match;
+  const { issueKey, content: comment, keywords } = extractMatchGroups(match);
+
+  if (!issueKey) {
+    return { parsedCommit: null };
+  }
 
   return {
     parsedCommit: {
       ...commit,
       issueKey,
-      comment,
+      comment: comment.trim(),
       keywords,
       isFix: fixKeywords.includes(keywords),
       isClose: closeKeywords.includes(keywords),
