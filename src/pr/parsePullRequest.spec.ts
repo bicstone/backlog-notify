@@ -137,4 +137,120 @@ describe.each(events)("parsePullRequest", (_event) => {
       parsedPullRequest,
     });
   });
+
+  describe("Named capture groups", () => {
+    const namedCaptureGroupTemplate =
+      "^(?:" +
+      "(?<issueKey><%= projectKey %>\\-\\d+)\\s*(?<comment>.*?)(?:\\s*(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>))?" + // Key first
+      "|" +
+      "(?<comment>.*?)\\s*(?:(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)\\s*)?\\(?(?<issueKey><%= projectKey %>\\-\\d+)\\)?" + // Key last, keywords before key
+      ")$";
+
+    test("parsePullRequest with named groups - project key at start", () => {
+      const event = getEvent(_event, `${issueKey} ${title}`);
+      const configs = getConfigs(event, {
+        prTitleRegTemplate: namedCaptureGroupTemplate,
+      });
+      const parsedPullRequest = getParsedPullRequest(event);
+
+      expect(parsePullRequest(configs)).toStrictEqual({
+        parsedPullRequest,
+      });
+    });
+
+    test("parsePullRequest with named groups - project key at end", () => {
+      const event = getEvent(_event, `${title} ${issueKey}`);
+      const configs = getConfigs(event, {
+        prTitleRegTemplate: namedCaptureGroupTemplate,
+      });
+      const parsedPullRequest = getParsedPullRequest(event);
+
+      expect(parsePullRequest(configs)).toStrictEqual({
+        parsedPullRequest,
+      });
+    });
+
+    test("parsePullRequest with named groups - project key at end with parentheses", () => {
+      const event = getEvent(_event, `${title} (${issueKey})`);
+      const configs = getConfigs(event, {
+        prTitleRegTemplate: namedCaptureGroupTemplate,
+      });
+      const parsedPullRequest = getParsedPullRequest(event);
+
+      expect(parsePullRequest(configs)).toStrictEqual({
+        parsedPullRequest,
+      });
+    });
+
+    test("parsePullRequest with named groups - project key at start with fix keyword", () => {
+      const event = getEvent(_event, `${issueKey} ${title} ${fixKeyword}`);
+      const configs = getConfigs(event, {
+        prTitleRegTemplate: namedCaptureGroupTemplate,
+      });
+      const parsedPullRequest = getParsedPullRequest(event, {
+        keywords: fixKeyword,
+        isFix: true,
+      });
+
+      expect(parsePullRequest(configs)).toStrictEqual({
+        parsedPullRequest,
+      });
+    });
+
+    test("parsePullRequest with named groups - project key at end with close keyword", () => {
+      const event = getEvent(_event, `${title} ${closeKeyword} ${issueKey}`);
+      const configs = getConfigs(event, {
+        prTitleRegTemplate: namedCaptureGroupTemplate,
+      });
+      const parsedPullRequest = getParsedPullRequest(event, {
+        keywords: closeKeyword,
+        isClose: true,
+      });
+
+      expect(parsePullRequest(configs)).toStrictEqual({
+        parsedPullRequest,
+      });
+    });
+
+    test("parsePullRequest with named groups - project key at end with parentheses and fix keyword", () => {
+      const event = getEvent(_event, `${title} ${fixKeyword} (${issueKey})`);
+      const configs = getConfigs(event, {
+        prTitleRegTemplate: namedCaptureGroupTemplate,
+      });
+      const parsedPullRequest = getParsedPullRequest(event, {
+        keywords: fixKeyword,
+        isFix: true,
+      });
+
+      expect(parsePullRequest(configs)).toStrictEqual({
+        parsedPullRequest,
+      });
+    });
+
+    test("parsePullRequest with named groups - project key only", () => {
+      const event = getEvent(_event, issueKey);
+      const configs = getConfigs(event, {
+        prTitleRegTemplate: namedCaptureGroupTemplate,
+      });
+      const parsedPullRequest = getParsedPullRequest(event, {
+        title: "",
+      });
+
+      expect(parsePullRequest(configs)).toStrictEqual({
+        parsedPullRequest,
+      });
+    });
+
+    test("parsePullRequest with named groups - no match returns null", () => {
+      const event = getEvent(_event, "No project key here");
+      const configs = getConfigs(event, {
+        prTitleRegTemplate: namedCaptureGroupTemplate,
+      });
+      const parsedPullRequest = null;
+
+      expect(parsePullRequest(configs)).toStrictEqual({
+        parsedPullRequest,
+      });
+    });
+  });
 });
