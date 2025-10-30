@@ -3,9 +3,7 @@
   "projectOwner": "bicstone",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "files": [
-    "README.md"
-  ],
+  "files": ["README.md"],
   "imageSize": 100,
   "commit": false,
   "commitConvention": "eslint",
@@ -29,57 +27,42 @@
       "name": "takeshi.kondo",
       "avatar_url": "https://avatars.githubusercontent.com/u/1284496?v=4",
       "profile": "https://github.com/stmon19",
-      "contributions": [
-        "bug",
-        "code"
-      ]
+      "contributions": ["bug", "code"]
     },
     {
       "login": "suzuken",
       "name": "Kenta SUZUKI",
       "avatar_url": "https://avatars.githubusercontent.com/u/491428?v=4",
       "profile": "http://suzuken.hatenablog.jp/",
-      "contributions": [
-        "doc"
-      ]
+      "contributions": ["doc"]
     },
     {
       "login": "mantaroh",
       "name": "mantaroh",
       "avatar_url": "https://avatars.githubusercontent.com/u/3241026?v=4",
       "profile": "https://twitter.com/_mantaroh_",
-      "contributions": [
-        "ideas"
-      ]
+      "contributions": ["ideas"]
     },
     {
       "login": "hynjnk",
       "name": "Hyunjoon KIM",
       "avatar_url": "https://avatars.githubusercontent.com/u/38238305?v=4",
       "profile": "https://github.com/hynjnk",
-      "contributions": [
-        "ideas",
-        "code"
-      ]
+      "contributions": ["ideas", "code"]
     },
     {
       "login": "shuyahonda",
       "name": "Shuya Honda",
       "avatar_url": "https://avatars.githubusercontent.com/u/1390857?v=4",
       "profile": "https://github.com/shuyahonda",
-      "contributions": [
-        "ideas"
-      ]
+      "contributions": ["ideas"]
     },
     {
       "login": "ipavlushin",
       "name": "Ivan Pavlushin",
       "avatar_url": "https://avatars.githubusercontent.com/u/10075662?v=4",
       "profile": "https://github.com/ipavlushin",
-      "contributions": [
-        "ideas",
-        "code"
-      ]
+      "contributions": ["ideas", "code"]
     }
   ],
   "contributorsPerLine": 7,
