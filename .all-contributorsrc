@@ -56,8 +56,16 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/1390857?v=4",
       "profile": "https://github.com/shuyahonda",
       "contributions": ["ideas"]
+    },
+    {
+      "login": "ipavlushin",
+      "name": "Ivan Pavlushin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10075662?v=4",
+      "profile": "https://github.com/ipavlushin",
+      "contributions": ["ideas", "code"]
     }
   ],
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs"
 }
