@@ -43,8 +43,8 @@ importers:
         specifier: 9.39.1
         version: 9.39.1
       eslint-config-love:
-        specifier: 133.0.0
-        version: 133.0.0(@typescript-eslint/parser@8.42.0(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.1)(typescript@5.9.3)
+        specifier: 134.0.0
+        version: 134.0.0(@typescript-eslint/parser@8.42.0(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.1)(typescript@5.9.3)
       eslint-plugin-regexp:
         specifier: 2.10.0
         version: 2.10.0(eslint@9.39.1)
@@ -1099,8 +1099,8 @@ packages:
     peerDependencies:
       eslint: '>=6.0.0'
 
-  eslint-config-love@133.0.0:
-    resolution: {integrity: sha512-lhTwETWa8Zn3d/3YkvE1WIAxDeZAYw+gJ0pZqCNiQ3KWLJh1Ic7xgLm4JPOSciS+YWGWfu8TGoSdXAJ61tbETg==}
+  eslint-config-love@134.0.0:
+    resolution: {integrity: sha512-kDMgnb3jtFqRL6g1WjZrWpkv1p4sKpbvnzZ3hw4VcbFtwtAx5iQToi89Wb0YvajdncJCxiodcjupmfDk1pc6Ww==}
     peerDependencies:
       eslint: ^9.35.0
       typescript: '*'
@@ -3293,7 +3293,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.7.2
+      semver: 7.7.3
       ts-api-utils: 2.1.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -3837,9 +3837,9 @@ snapshots:
   eslint-compat-utils@0.5.1(eslint@9.39.1):
     dependencies:
       eslint: 9.39.1
-      semver: 7.7.2
+      semver: 7.7.3
 
-  eslint-config-love@133.0.0(@typescript-eslint/parser@8.42.0(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.1)(typescript@5.9.3):
+  eslint-config-love@134.0.0(@typescript-eslint/parser@8.42.0(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.1)(typescript@5.9.3):
     dependencies:
       '@typescript-eslint/utils': 8.42.0(eslint@9.39.1)(typescript@5.9.3)
       eslint: 9.39.1
@@ -3925,7 +3925,7 @@ snapshots:
       globals: 15.15.0
       globrex: 0.1.2
       ignore: 5.3.2
-      semver: 7.7.2
+      semver: 7.7.3
       ts-declaration-location: 1.0.7(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
@@ -4422,7 +4422,7 @@ snapshots:
       '@babel/parser': 7.28.4
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
-      semver: 7.7.2
+      semver: 7.7.3
     transitivePeerDependencies:
       - supports-color
 
@@ -4885,7 +4885,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.2
+      semver: 7.7.3
 
   make-error@1.3.6: {}
 
