@@ -1,6 +1,6 @@
 import template from "lodash.template";
 
-const refReg = /refs\/[a-z]*\/(.*)/;
+const refReg = /refs\/[a-z]*\/(?<name>.*)/;
 const refUrlTemplate = template("<%= repositoryHtmlUrl %>/tree/<%= name %>");
 
 export interface ParsedRef {
@@ -19,7 +19,7 @@ export const parseRef = (
   repositoryHtmlUrl: string,
 ): ParsedRef | undefined => {
   // e.g. Get name `feature/foo ` for ref `refs/heads/feature/foo`
-  const name = refReg.exec(ref)?.[1];
+  const name = refReg.exec(ref)?.groups?.name;
   if (!name) return;
 
   const url = refUrlTemplate({ repositoryHtmlUrl, name });
