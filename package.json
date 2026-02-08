@@ -32,7 +32,7 @@
     "result-type-ts": "2.2.0"
   },
   "devDependencies": {
-    "@actions/core": "2.0.2",
+    "@actions/core": "2.0.3",
     "@octokit/webhooks-examples": "7.6.1",
     "@octokit/webhooks-types": "7.6.1",
     "@types/jest": "30.0.0",
