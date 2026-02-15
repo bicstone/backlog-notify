@@ -15,7 +15,7 @@ const issueKey = `${projectKey}-1`;
 const title = "Hare Hare Yukai!";
 const prTitleRegTemplate =
   "^" +
-  "(<%= projectKey %>-\\d+)\\s?" +
+  "(<%= projectKey %>\\-\\d+)\\s?" +
   "(.*?)?\\s?" +
   "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
   "$";
@@ -141,9 +141,9 @@ describe.each(events)("parsePullRequest", (_event) => {
   describe("Named capture groups", () => {
     const namedCaptureGroupTemplate =
       "^(?:" +
-      "(?<issueKey><%= projectKey %>-\\d+)\\s*(?<comment>.*?)(?:\\s*(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>))?" + // Key first
+      "(?<issueKey><%= projectKey %>\\-\\d+)\\s*(?<comment>.*?)(?:\\s*(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>))?" + // Key first
       "|" +
-      "(?<comment>.*?)\\s*(?:(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)\\s*)?\\(?(?<issueKey><%= projectKey %>-\\d+)\\)?" + // Key last, keywords before key
+      "(?<comment>.*?)\\s*(?:(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)\\s*)?\\(?(?<issueKey><%= projectKey %>\\-\\d+)\\)?" + // Key last, keywords before key
       ")$";
 
     test("parsePullRequest with named groups - project key at start", () => {

@@ -43,7 +43,7 @@ export const parseCommits = ({
       fixKeywords,
       closeKeywords,
     }),
-    "su",
+    "s",
   );
 
   commits.forEach((commit) => {

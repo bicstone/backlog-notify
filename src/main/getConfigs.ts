@@ -55,13 +55,13 @@ export const defaultConfigs: Omit<Configs, RequiredConfigKeys> = {
     "+ [<%= title %>](<%= pr.html_url %>) (#<%= pr.number %>)",
   commitMessageRegTemplate:
     "^" +
-    "(<%= projectKey %>-\\d+)\\s?" +
+    "(<%= projectKey %>\\-\\d+)\\s?" +
     "(.*?)?\\s?" +
     "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
     "$",
   prTitleRegTemplate:
     "^" +
-    "(<%= projectKey %>-\\d+)\\s?" +
+    "(<%= projectKey %>\\-\\d+)\\s?" +
     "(.*?)?\\s?" +
     "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
     "$",

@@ -14,7 +14,7 @@ const closeKeyword = "#close";
 const closeKeywords = [closeKeyword];
 const commitMessageRegTemplate =
   "^" +
-  "(<%= projectKey %>-\\d+)\\s?" +
+  "(<%= projectKey %>\\-\\d+)\\s?" +
   "(.*?)?\\s?" +
   "(<% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)?" +
   "$";
@@ -295,9 +295,9 @@ describe("parseCommits", () => {
   describe("Named capture groups", () => {
     const namedCaptureGroupTemplate =
       "^(?:" +
-      "(?<issueKey><%= projectKey %>-\\d+)\\s*(?<comment>.*?)(?:\\s*(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>))?" +
+      "(?<issueKey><%= projectKey %>\\-\\d+)\\s*(?<comment>.*?)(?:\\s*(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>))?" +
       "|" +
-      "(?<comment>.*?)\\s*(?:(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)\\s*)?\\(?(?<issueKey><%= projectKey %>-\\d+)\\)?" +
+      "(?<comment>.*?)\\s*(?:(?<keywords><% print(fixKeywords.join('|')) %>|<% print(closeKeywords.join('|')) %>)\\s*)?\\(?(?<issueKey><%= projectKey %>\\-\\d+)\\)?" +
       ")$";
 
     test("parseCommits with named groups - project key at start", () => {
