@@ -26,6 +26,10 @@ export default [
   {
     ...eslintPluginRegexp.configs["flat/recommended"],
     files: ["src/**/*.ts"],
+    rules: {
+      ...eslintPluginRegexp.configs["flat/recommended"].rules,
+      "require-unicode-regexp": "off",
+    },
   },
   {
     files: ["**/*.spec.ts"],
