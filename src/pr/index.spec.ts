@@ -1,4 +1,4 @@
-import { info, setFailed } from "../common/stdout";
+import { info } from "../common/stdout";
 import { mocked } from "jest-mock";
 import webhooks from "@octokit/webhooks-examples";
 
@@ -53,8 +53,6 @@ describe.each(pullRequestEvents)("index", (event) => {
   });
 
   beforeEach(() => {
-    mocked(info).mockImplementation((m) => m);
-    mocked(setFailed).mockImplementation((m) => m);
     mocked(parsePullRequest).mockImplementation(() => ({
       parsedPullRequest: getParsedPullRequest(),
     }));

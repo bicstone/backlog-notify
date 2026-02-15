@@ -1,4 +1,4 @@
-import { info, setFailed } from "../common/stdout";
+import { info } from "../common/stdout";
 import { mocked } from "jest-mock";
 import webhooks from "@octokit/webhooks-examples";
 
@@ -52,8 +52,6 @@ describe.each(pushEvents)("index", (event) => {
       name: "",
       url: "",
     }));
-    mocked(info).mockImplementation((m) => m);
-    mocked(setFailed).mockImplementation((m) => m);
   });
 
   test("resolve with the message", async () => {

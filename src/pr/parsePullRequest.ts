@@ -41,7 +41,7 @@ export const parsePullRequest = ({
       fixKeywords,
       closeKeywords,
     }),
-    "s",
+    "su",
   );
 
   const match = event.pull_request.title.match(prTitleReg);

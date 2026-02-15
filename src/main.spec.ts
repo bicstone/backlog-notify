@@ -47,8 +47,6 @@ describe("main", () => {
       fixStatusId: "fixStatusId",
       closeStatusId: "closeStatusId",
     }));
-    mocked(info).mockImplementation((m) => m);
-    mocked(setFailed).mockImplementation((m) => m);
   });
 
   describe.each(pushEventsWithCommits)(
