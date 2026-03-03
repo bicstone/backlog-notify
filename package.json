@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "prepare": "husky",
     "preinstall": "npx only-allow pnpm",
-    "test": "jest"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -32,24 +32,21 @@
     "result-type-ts": "2.2.0"
   },
   "devDependencies": {
-    "@actions/core": "2.0.3",
+    "@actions/core": "3.0.0",
     "@octokit/webhooks-examples": "7.6.1",
     "@octokit/webhooks-types": "7.6.1",
-    "@types/jest": "30.0.0",
     "@types/lodash.template": "4.5.3",
     "@types/node": "24.10.13",
     "@vercel/ncc": "0.38.4",
+    "@vitest/eslint-plugin": "1.6.9",
     "all-contributors-cli": "6.26.1",
     "eslint": "9.39.2",
     "eslint-config-love": "151.0.0",
     "eslint-plugin-regexp": "3.0.0",
     "husky": "9.1.7",
-    "jest": "30.2.0",
-    "jest-mock": "30.2.0",
     "prettier": "3.8.1",
-    "ts-jest": "29.4.6",
-    "ts-node": "10.9.2",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "4.0.18"
   },
   "volta": {
     "node": "24.13.1",

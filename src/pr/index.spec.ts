@@ -1,5 +1,4 @@
 import { info } from "../common/stdout";
-import { mocked } from "jest-mock";
 import webhooks from "@octokit/webhooks-examples";
 
 import type { PullRequestEvent } from "@octokit/webhooks-types";
@@ -9,9 +8,9 @@ import { type ParsedPullRequest, parsePullRequest } from "./parsePullRequest";
 import { postComments } from "./postComments";
 import { Result } from "result-type-ts";
 
-jest.mock("../common/stdout");
-jest.mock("./parsePullRequest");
-jest.mock("./postComments");
+vi.mock("../common/stdout");
+vi.mock("./parsePullRequest");
+vi.mock("./postComments");
 
 const pullRequestEvents = (webhooks.find((v) => v.name === "pull_request")
   ?.examples ?? []) as PullRequestEvent[];
@@ -53,10 +52,10 @@ describe.each(pullRequestEvents)("index", (event) => {
   });
 
   beforeEach(() => {
-    mocked(parsePullRequest).mockImplementation(() => ({
+    vi.mocked(parsePullRequest).mockImplementation(() => ({
       parsedPullRequest: getParsedPullRequest(),
     }));
-    mocked(postComments).mockImplementation(
+    vi.mocked(postComments).mockImplementation(
       async () => await Promise.resolve(Result.success("OK")),
     );
   });
@@ -73,7 +72,7 @@ describe.each(pullRequestEvents)("index", (event) => {
   });
 
   test("resolve with the message when pr title with fix_keyword", async () => {
-    mocked(parsePullRequest).mockImplementation(() => ({
+    vi.mocked(parsePullRequest).mockImplementation(() => ({
       parsedPullRequest: getParsedPullRequest({ isFix: true }),
     }));
 
@@ -89,7 +88,7 @@ describe.each(pullRequestEvents)("index", (event) => {
   });
 
   test("resolve with the message when pr title with close_keyword", async () => {
-    mocked(parsePullRequest).mockImplementation(() => ({
+    vi.mocked(parsePullRequest).mockImplementation(() => ({
       parsedPullRequest: getParsedPullRequest({ isClose: true }),
     }));
 
@@ -104,8 +103,8 @@ describe.each(pullRequestEvents)("index", (event) => {
     expect(info).toHaveBeenCalledWith(`${issueKey}を完了にしました。`);
   });
 
-  test("not continue and resolve processing when pr title without issueKey", async () => {
-    mocked(postComments).mockImplementation(
+  test("not continue and resolve processing when postComments returns failure", async () => {
+    vi.mocked(postComments).mockImplementation(
       async () => await Promise.resolve(Result.failure("failed")),
     );
 
@@ -117,7 +116,7 @@ describe.each(pullRequestEvents)("index", (event) => {
   });
 
   test("not continue and resolve processing when pr title without issueKey", async () => {
-    mocked(parsePullRequest).mockImplementation(() => ({
+    vi.mocked(parsePullRequest).mockImplementation(() => ({
       parsedPullRequest: null,
     }));
 
