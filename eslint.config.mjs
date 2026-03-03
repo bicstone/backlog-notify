@@ -1,5 +1,6 @@
 import eslintConfigLove from "eslint-config-love";
 import eslintPluginRegexp from "eslint-plugin-regexp";
+import eslintPluginVitest from "@vitest/eslint-plugin";
 
 /**
  * @type {import("eslint").Linter.Config[]}
@@ -33,7 +34,10 @@ export default [
   },
   {
     files: ["**/*.spec.ts"],
+    plugins: { vitest: eslintPluginVitest },
     rules: {
+      ...eslintPluginVitest.configs.recommended.rules,
+      "vitest/no-conditional-expect": "warn",
       "max-lines": "off",
     },
   },

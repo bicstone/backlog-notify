@@ -104,10 +104,10 @@ const getFetchOptions = (
 });
 
 describe("postComments", () => {
-  let fetchSpy = jest.spyOn(global, "fetch");
+  let fetchSpy = vi.spyOn(global, "fetch");
 
   beforeEach(() => {
-    fetchSpy = jest.spyOn(global, "fetch");
+    fetchSpy = vi.spyOn(global, "fetch");
     fetchSpy.mockImplementation(
       async () =>
         await Promise.resolve({

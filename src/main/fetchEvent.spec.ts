@@ -4,8 +4,8 @@ import webhooks from "@octokit/webhooks-examples";
 
 const pushEvents = webhooks.find((v) => v.name === "push")?.examples ?? [];
 
-jest.mock("fs");
-const mockedFs = fs as jest.Mocked<typeof fs>;
+vi.mock("node:fs");
+const mockedFs = vi.mocked(fs, true);
 
 const path = "event.json";
 const encoding = "utf8";

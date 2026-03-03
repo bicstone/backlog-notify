@@ -1,5 +1,4 @@
 import { info, setFailed } from "./common/stdout";
-import { mocked } from "jest-mock";
 import webhooks from "@octokit/webhooks-examples";
 
 import type { PullRequestEvent, PushEvent } from "@octokit/webhooks-types";
@@ -10,11 +9,11 @@ import { fetchEvent } from "./main/fetchEvent";
 import { push } from "./push";
 import { pr } from "./pr";
 
-jest.mock("./common/stdout");
-jest.mock("./main/getConfigs");
-jest.mock("./main/fetchEvent");
-jest.mock("./push");
-jest.mock("./pr");
+vi.mock("./common/stdout");
+vi.mock("./main/getConfigs");
+vi.mock("./main/fetchEvent");
+vi.mock("./push");
+vi.mock("./pr");
 
 const pushEvents = (webhooks.find((v) => v.name === "push")?.examples ??
   []) as PushEvent[];
@@ -29,7 +28,7 @@ const pullRequestEvents = (webhooks.find((v) => v.name === "pull_request")
 
 describe("main", () => {
   beforeEach(() => {
-    mocked(getConfigs).mockImplementation(() => ({
+    vi.mocked(getConfigs).mockImplementation(() => ({
       projectKey: "projectKey",
       apiHost: "apiHost",
       apiKey: "apiKey",
@@ -53,10 +52,10 @@ describe("main", () => {
     "push event with commits",
     (pushEvent) => {
       test("main resolve with the message", async () => {
-        mocked(fetchEvent).mockImplementation(() => ({
+        vi.mocked(fetchEvent).mockImplementation(() => ({
           event: pushEvent,
         }));
-        mocked(push).mockImplementation(
+        vi.mocked(push).mockImplementation(
           async () => await Promise.resolve("push!"),
         );
 
@@ -76,7 +75,7 @@ describe("main", () => {
     "push event without commits",
     (pushEvent) => {
       test("main not continue and resolve processing when 0 commits", async () => {
-        mocked(fetchEvent).mockImplementation(() => ({
+        vi.mocked(fetchEvent).mockImplementation(() => ({
           event: pushEvent,
         }));
 
@@ -94,10 +93,12 @@ describe("main", () => {
 
   describe.each(pullRequestEvents)("pull request event", (prEvent) => {
     test("main resolve with the message", async () => {
-      mocked(fetchEvent).mockImplementation(() => ({
+      vi.mocked(fetchEvent).mockImplementation(() => ({
         event: prEvent,
       }));
-      mocked(pr).mockImplementation(async () => await Promise.resolve("pr!"));
+      vi.mocked(pr).mockImplementation(
+        async () => await Promise.resolve("pr!"),
+      );
 
       await expect(main()).resolves.not.toThrow();
 
@@ -112,7 +113,7 @@ describe("main", () => {
 
   describe("unexpected event", () => {
     test("main not continue and resolve processing when the event cannot be loaded", async () => {
-      mocked(fetchEvent).mockImplementation(() => ({
+      vi.mocked(fetchEvent).mockImplementation(() => ({
         event: null as unknown as PushEvent,
       }));
 
@@ -128,7 +129,7 @@ describe("main", () => {
 
     test("main calls setFailed when an error", async () => {
       const error = Error("error!");
-      mocked(fetchEvent).mockImplementation(() => {
+      vi.mocked(fetchEvent).mockImplementation(() => {
         throw error;
       });
 
@@ -143,7 +144,7 @@ describe("main", () => {
 
     test("main calls setFailed when an unexpected error", async () => {
       const error = "error!";
-      mocked(fetchEvent).mockImplementation(() => {
+      vi.mocked(fetchEvent).mockImplementation(() => {
         // eslint-disable-next-line @typescript-eslint/only-throw-error -- expected unexpected error
         throw error;
       });
