@@ -28,7 +28,7 @@
   "author": "Oishi Takanori",
   "license": "MIT",
   "dependencies": {
-    "lodash.template": "4.5.0",
+    "lodash.template": "4.18.1",
     "result-type-ts": "2.2.0"
   },
   "devDependencies": {
