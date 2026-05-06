@@ -204,7 +204,7 @@ describe("postComments", () => {
     const event = getEvent({
       ..._event,
       pull_request: { ..._event.pull_request, merged: true },
-    } as PullRequestEvent);
+    });
     const comment = `merged,${login},${title},${htmlUrl}`;
 
     it("post a comment to Backlog API", async () => {
@@ -247,7 +247,7 @@ describe("postComments", () => {
       const event = getEvent({
         ..._event,
         pull_request: { ..._event.pull_request, draft: true },
-      } as PullRequestEvent);
+      });
       const parsedPullRequest = getParsedPullRequest(event);
       const configs = getConfigs(parsedPullRequest);
       const result = await postComments(configs);
@@ -316,7 +316,7 @@ describe("postComments", () => {
       const event = getEvent({
         ..._event,
         pull_request: { ..._event.pull_request, draft: true },
-      } as PullRequestEvent);
+      });
       const parsedPullRequest = getParsedPullRequest(event);
       const configs = getConfigs(parsedPullRequest);
       const result = await postComments(configs);
