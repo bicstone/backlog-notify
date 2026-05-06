@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       lodash.template:
-        specifier: 4.5.0
-        version: 4.5.0
+        specifier: 4.18.0
+        version: 4.18.0
       result-type-ts:
         specifier: 2.2.0
         version: 2.2.0
@@ -1285,9 +1285,9 @@ packages:
   lodash._reinterpolate@3.0.0:
     resolution: {integrity: sha512-xYHt68QRoYGjeeM/XOE1uJtvXQAgvszfBhjV4yvsQH0u2i9I6cI6c6/eG4Hh3UAOVn0y/xAXwmTzEay49Q//HA==}
 
-  lodash.template@4.5.0:
-    resolution: {integrity: sha512-84vYFxIkmidUiFxidA/KjjH9pAycqW+h980j7Fuz5qxRtO9pgB7MDFTdys1N7A5mcucRiDyEq4fusljItR1T/A==}
-    deprecated: This package is deprecated. Use https://socket.dev/npm/package/eta instead.
+  lodash.template@4.18.0:
+    resolution: {integrity: sha512-VbCU2mYTHF/JUjasKG50ozrbli//eixCFmKBiAfvmz0cGt7iywc087M7zxflSoEQFS0Xtv0RqpE8ko8BXv3TOQ==}
+    deprecated: Bad release. Please use lodash.template@4.5.0 instead.
 
   lodash.templatesettings@4.2.0:
     resolution: {integrity: sha512-stgLz+i3Aa9mZgnjr/O+v9ruKZsPsndy7qPZOchbqk2cnTU1ZaldKK+v7m54WoKIyxiuMZTKT2H81F8BeAc3ZQ==}
@@ -3158,7 +3158,7 @@ snapshots:
 
   lodash._reinterpolate@3.0.0: {}
 
-  lodash.template@4.5.0:
+  lodash.template@4.18.0:
     dependencies:
       lodash._reinterpolate: 3.0.0
       lodash.templatesettings: 4.2.0
