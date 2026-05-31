@@ -38,7 +38,7 @@
     "@types/lodash.template": "4.5.3",
     "@types/node": "24.12.4",
     "@vercel/ncc": "0.38.4",
-    "@vitest/eslint-plugin": "1.6.17",
+    "@vitest/eslint-plugin": "1.6.18",
     "all-contributors-cli": "6.26.1",
     "eslint": "10.4.0",
     "eslint-config-love": "154.0.0",
@@ -46,7 +46,7 @@
     "husky": "9.1.7",
     "prettier": "3.8.3",
     "typescript": "6.0.3",
-    "vitest": "4.1.6"
+    "vitest": "4.1.7"
   },
   "volta": {
     "node": "24.15.0",
