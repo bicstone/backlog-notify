@@ -40,7 +40,7 @@
     "@vercel/ncc": "0.38.4",
     "@vitest/eslint-plugin": "1.6.18",
     "all-contributors-cli": "6.26.1",
-    "eslint": "10.4.0",
+    "eslint": "10.4.1",
     "eslint-config-love": "154.0.0",
     "eslint-plugin-regexp": "3.1.0",
     "husky": "9.1.7",
