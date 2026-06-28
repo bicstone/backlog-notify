@@ -46,7 +46,7 @@
     "husky": "9.1.7",
     "prettier": "3.8.4",
     "typescript": "6.0.3",
-    "vitest": "4.1.8"
+    "vitest": "4.1.9"
   },
   "volta": {
     "node": "24.16.0",
