@@ -41,7 +41,7 @@
     "@vitest/eslint-plugin": "1.6.23",
     "all-contributors-cli": "6.26.1",
     "eslint": "10.7.0",
-    "eslint-config-love": "154.0.0",
+    "eslint-config-love": "154.1.0",
     "eslint-plugin-regexp": "3.1.1",
     "husky": "9.1.7",
     "prettier": "3.9.5",
