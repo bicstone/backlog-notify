@@ -2,6 +2,11 @@
   "extends": ["github>bicstone/renovate-config"],
   "packageRules": [
     {
+      "allowedVersions": "<7",
+      "description": "typescript-eslint が TypeScript 7 に未対応のため v6 系に固定する (対応後にこのルールを削除する)",
+      "matchPackageNames": ["typescript"]
+    },
+    {
       "automerge": true,
       "groupName": "devDependencies",
       "matchDepTypes": ["devDependencies"],
