@@ -43,8 +43,8 @@ importers:
         specifier: 10.9.1
         version: 10.9.1(supports-color@7.2.0)
       eslint-config-love:
-        specifier: 155.0.0
-        version: 155.0.0(eslint@10.9.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+        specifier: 156.0.0
+        version: 156.0.0(eslint@10.9.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       eslint-plugin-regexp:
         specifier: 3.2.0
         version: 3.2.0(eslint@10.9.1(supports-color@7.2.0))
@@ -235,11 +235,11 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@eslint-community/eslint-plugin-eslint-comments@4.6.0':
-    resolution: {integrity: sha512-2EX2bBQq1ez++xz2o9tEeEQkyvfieWgUFMH4rtJJri2q0Azvhja3hZGXsjPXs31R4fQkZDtWzNDDK2zQn5UE5g==}
+  '@eslint-community/eslint-plugin-eslint-comments@4.8.0':
+    resolution: {integrity: sha512-bzGg2H83F9p55TKzlNUS/LWb1WF2OqdVX67FK1OadDPLVOhabFRERC7TiDJzk//LedaVnRS5uqK/2f/AZ/+VyA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
+      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
 
   '@eslint-community/eslint-utils@4.9.1':
     resolution: {integrity: sha512-phrYmNiYppR7znFEdqgfWHXR6NCkZEK7hwWDHZUjit/2/U0r6XvkDl0SYnoM51Hq7FhCGdLDT6zxCCOY1hexsQ==}
@@ -711,10 +711,10 @@ packages:
     peerDependencies:
       eslint: '>=6.0.0'
 
-  eslint-config-love@155.0.0:
-    resolution: {integrity: sha512-3FNiSSfnR5ypBNALxcVXVMQIrEJV4KouUxdeV/8fMT74wCuMa/DL9vgDOneM7LQMn05U8DsqfKQ0uO0MCigxLw==}
+  eslint-config-love@156.0.0:
+    resolution: {integrity: sha512-Ri6W0dd/Qixf2Pt4tVC5VBDjaurDY1JoNEbpH96GGM14J+X4wHMQDLrlPsqAd7BmKzA/rEQsxYwcgDFZ96GBVg==}
     peerDependencies:
-      eslint: ^9.35.0
+      eslint: ^10.0.0
       typescript: '*'
 
   eslint-plugin-es-x@7.8.0:
@@ -736,11 +736,11 @@ packages:
       typescript:
         optional: true
 
-  eslint-plugin-promise@7.2.1:
-    resolution: {integrity: sha512-SWKjd+EuvWkYaS+uN2csvj0KoP43YTu7+phKQ5v+xw6+A0gutVX2yqCeCkC3uLCJFiPfR2dD8Es5L7yUsmvEaA==}
+  eslint-plugin-promise@7.3.0:
+    resolution: {integrity: sha512-6uGiOR0INuujr6PEQmeSSP7GbIMJ/ebEXXiEzb/nOj68LknH5Pxzb/AbZivmr6VE6TkTE8rTjRK9zhKpK6HsRA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
-      eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
+      eslint: ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
 
   eslint-plugin-regexp@3.2.0:
     resolution: {integrity: sha512-4yq47CnLxyfHFKJEo5kvNaiJ0aDtBxSJWk4M2LiamplUXdWxdlzDYqImb/ZVCp+2BqkQjBAmw4Xc07Q8SXVDZg==}
@@ -1457,7 +1457,7 @@ snapshots:
   '@esbuild/win32-x64@0.27.3':
     optional: true
 
-  '@eslint-community/eslint-plugin-eslint-comments@4.6.0(eslint@10.9.1(supports-color@7.2.0))':
+  '@eslint-community/eslint-plugin-eslint-comments@4.8.0(eslint@10.9.1(supports-color@7.2.0))':
     dependencies:
       escape-string-regexp: 4.0.0
       eslint: 10.9.1(supports-color@7.2.0)
@@ -1908,13 +1908,13 @@ snapshots:
       eslint: 10.9.1(supports-color@7.2.0)
       semver: 7.7.3
 
-  eslint-config-love@155.0.0(eslint@10.9.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
+  eslint-config-love@156.0.0(eslint@10.9.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3):
     dependencies:
-      '@eslint-community/eslint-plugin-eslint-comments': 4.6.0(eslint@10.9.1(supports-color@7.2.0))
+      '@eslint-community/eslint-plugin-eslint-comments': 4.8.0(eslint@10.9.1(supports-color@7.2.0))
       '@typescript-eslint/utils': 8.59.0(eslint@10.9.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       eslint: 10.9.1(supports-color@7.2.0)
       eslint-plugin-n: 18.0.1(eslint@10.9.1(supports-color@7.2.0))(typescript@6.0.3)
-      eslint-plugin-promise: 7.2.1(eslint@10.9.1(supports-color@7.2.0))
+      eslint-plugin-promise: 7.3.0(eslint@10.9.1(supports-color@7.2.0))
       typescript: 6.0.3
       typescript-eslint: 8.59.0(eslint@10.9.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
     transitivePeerDependencies:
@@ -1942,7 +1942,7 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
-  eslint-plugin-promise@7.2.1(eslint@10.9.1(supports-color@7.2.0)):
+  eslint-plugin-promise@7.3.0(eslint@10.9.1(supports-color@7.2.0)):
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1(eslint@10.9.1(supports-color@7.2.0))
       eslint: 10.9.1(supports-color@7.2.0)
