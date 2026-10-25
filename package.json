@@ -40,13 +40,13 @@
     "@vercel/ncc": "0.45.0",
     "@vitest/eslint-plugin": "1.6.27",
     "all-contributors-cli": "6.26.1",
-    "eslint": "10.12.0",
+    "eslint": "10.13.0",
     "eslint-config-love": "158.0.0",
     "eslint-plugin-regexp": "3.3.1",
     "husky": "9.1.7",
     "prettier": "3.9.10",
     "typescript": "6.0.3",
-    "vitest": "5.0.3"
+    "vitest": "5.0.5"
   },
   "volta": {
     "node": "24.22.1",
