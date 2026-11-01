@@ -38,7 +38,7 @@
     "@types/lodash.template": "4.5.3",
     "@types/node": "24.19.2",
     "@vercel/ncc": "0.45.0",
-    "@vitest/eslint-plugin": "1.6.27",
+    "@vitest/eslint-plugin": "1.6.28",
     "all-contributors-cli": "6.26.1",
     "eslint": "10.13.0",
     "eslint-config-love": "158.0.0",
