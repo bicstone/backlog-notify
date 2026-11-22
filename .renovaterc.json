@@ -7,6 +7,11 @@
       "matchPackageNames": ["typescript"]
     },
     {
+      "allowedVersions": "<25",
+      "description": "GitHub Actions の runs.using が node24 までしか対応していないため v24 系に固定する (対応後に action.yml の runs.using と合わせてこのルールを削除する)",
+      "matchPackageNames": ["node", "@types/node"]
+    },
+    {
       "automerge": true,
       "groupName": "devDependencies",
       "matchDepTypes": ["devDependencies"],
